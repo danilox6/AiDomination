@@ -5,10 +5,17 @@ import java.io.Serializable;
 import net.yura.domination.engine.core.Player;
 import net.yura.domination.engine.core.RiskGame;
 
+/**
+ * Classe astratta che fa da superclasse a tutte le AI
+ * 
+ * @author Danilo Iannelli <daniloiannelli6@gmail.com>
+ *
+ */
 public abstract class AI implements Serializable{
 	
-	private String name, id;
-	private AI aiCapital, aiMission;
+	protected String name;
+	protected String id;
+	protected AI aiCapital, aiMission;
 	protected RiskGame game;
 	protected Player player;
 	
@@ -30,10 +37,16 @@ public abstract class AI implements Serializable{
 
 	public AI(){}
 	
-	public AI(String name, String id) {
-		super();
+	/**
+	 * Crea un AI
+	 * @param id id univoco. DEVE iniziare con "ai " e NON DEVE contenere ulteriori spazi (es. "ai crap" è un id valido).
+	 * @param name nome che verrà mostrato sull'interfaccia grafica
+	 */
+	public AI(String id, String name) {
+		if(!id.startsWith("ai ") || id.substring(3).contains(" "))
+			throw new IllegalArgumentException("L'id deve inizare con \"id \" e non deve contenere ulteriori spazi vuoti " );
 		this.name = name;
-		this.id = "ai "+id;
+		this.id = id;
 	}
 
 	public String getName() {
@@ -48,10 +61,18 @@ public abstract class AI implements Serializable{
 		return aiCapital;
 	}
 
+	/**
+	 * Utilizzato per fornire all'AI una implementazione apposita per la modalità "Capital"
+	 * @param aiCapital
+	 */
 	public void setCapitalAI(AI aiCapital) {
 		this.aiCapital = aiCapital;
 	}
 
+	/**
+	 * Utilizzato per fornire all'AI una implementazione apposita per la modalità "Mission"
+	 * @param aiCapital
+	 */
 	public AI getMissionAI() {
 		return aiMission;
 	}

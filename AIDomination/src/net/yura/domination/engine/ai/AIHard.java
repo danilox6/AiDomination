@@ -14,10 +14,10 @@ import net.yura.domination.engine.core.Player;
 
 public class AIHard extends AIEasy {
 
-	public AIHard(String name, String id) {
-		super(name, id);
-		// TODO Auto-generated constructor stub
+	public AIHard(String id, String name) {
+		super(id, name);
 	}
+	
 	public AIHard(){
 		super();
 	}

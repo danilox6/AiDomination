@@ -12,9 +12,9 @@ import net.yura.domination.engine.core.Country;
 
 public class AIEasy extends AICrap {
 
-    public AIEasy(String name, String id) {
-		super(name, id);
-		// TODO Auto-generated constructor stub
+ 
+	public AIEasy(String id, String name) {
+		super(id, name);
 	}
     
     public AIEasy(){

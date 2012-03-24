@@ -16,13 +16,15 @@ import net.yura.domination.engine.core.RiskGame;
 
 public class AICrap extends AI{
 
-    public AICrap(String name, String id) {
-		super(name, id);  
-	}
+   
     
     public AICrap(){
     	super();
     }
+
+	public AICrap(String id, String name) {
+		super(id, name);
+	}
 
 	protected Random r = new Random(); // this was always static
 
