@@ -34,19 +34,28 @@ public abstract class AI implements Serializable{
 	public void setPlayer(Player player) {
 		this.player = player;
 	}
-
-	public AI(){}
 	
 	/**
-	 * Crea un AI
-	 * @param id id univoco. DEVE iniziare con "ai " e NON DEVE contenere ulteriori spazi (es. "ai crap" è un id valido).
-	 * @param name nome che verrà mostrato sull'interfaccia grafica
+	 * Assegna un id all'AI
+	 * @param id
+	 * @return this
 	 */
-	public AI(String id, String name) {
+	public AI setID(String id){
 		if(!id.startsWith("ai ") || id.substring(3).contains(" "))
 			throw new IllegalArgumentException("L'id deve inizare con \"id \" e non deve contenere ulteriori spazi vuoti " );
-		this.name = name;
 		this.id = id;
+		return this;
+	}
+	
+	/**
+	 * Assegna un nome all'AI
+	 * 
+	 * @param name
+	 * @return this
+	 */
+	public AI setName(String name){
+		this.name = name;
+		return this;
 	}
 
 	public String getName() {
@@ -64,21 +73,25 @@ public abstract class AI implements Serializable{
 	/**
 	 * Utilizzato per fornire all'AI una implementazione apposita per la modalità "Capital"
 	 * @param aiCapital
+	 * @return this
 	 */
-	public void setCapitalAI(AI aiCapital) {
+	public AI setCapitalAI(AI aiCapital) {
 		this.aiCapital = aiCapital;
+		return this;
 	}
 
 	/**
 	 * Utilizzato per fornire all'AI una implementazione apposita per la modalità "Mission"
 	 * @param aiCapital
+	 * @return this
 	 */
 	public AI getMissionAI() {
 		return aiMission;
 	}
 
-	public void setMissionAI(AI aiMission) {
+	public AI setMissionAI(AI aiMission) {
 		this.aiMission = aiMission;
+		return this;
 	}
 	
 	@Override

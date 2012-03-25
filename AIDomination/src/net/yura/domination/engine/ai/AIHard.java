@@ -14,14 +14,6 @@ import net.yura.domination.engine.core.Player;
 
 public class AIHard extends AIEasy {
 
-	public AIHard(String id, String name) {
-		super(id, name);
-	}
-	
-	public AIHard(){
-		super();
-	}
-
 	@SuppressWarnings("rawtypes")
 	public String getPlaceArmies() {
 

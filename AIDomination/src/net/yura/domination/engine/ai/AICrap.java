@@ -18,13 +18,6 @@ public class AICrap extends AI{
 
    
     
-    public AICrap(){
-    	super();
-    }
-
-	public AICrap(String id, String name) {
-		super(id, name);
-	}
 
 	protected Random r = new Random(); // this was always static
 

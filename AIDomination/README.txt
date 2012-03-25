@@ -23,16 +23,22 @@ Ora invece, ad ogni Player è associato un oggetto AI. Oltre agli attributi game
 di una stringa id e una stringa name:
 La stringa id è una stringa univoca che serve per far identificare l'ai dal parser.
 Per essere processata dal parser DEVE iniziare con "ai " e non deve contenere ulteriori spazi (es. "ai crap" è un id valido).
+Viene attribito tramite il metodo setId(String id);
+
 Il nome invece gli viene attribuito per fare in modo che non venga cercato nel ResourceBoundle.
 Quando serve al gioco per essere mostrato a video, viene recuperato con un getName()...
+Viene attribito tramite il metodo setName(String name);
 
 Per supportare la possibilità di usare diverse Ai a seconda della modalità di gioco,
-(come fa AIHard) ho aggiunto ad AI.java i metodi setCapitalAI e setMissionAI
+(come fa AIHard) ho aggiunto ad AI.java i metodi setCapitalAI(AI ai) e setMissionAI(AI ai)
 
+i metodi setName(), setID(), setCapitalAI() e setMissionAI() restituiscono this per far utilizzare i metodi a cascata
 
 Ho aggiunto la classe net.yura.domination.engine.ai.AIManager.
 Questa serve per integrare le AI nel gioco.
 nel metodo .setup() vanno instanziate le AI; queste vengono aggiunte ad una HashMap usando come chiave l'id
+È preferibile aggiungere le AI tramite i metodi addAI(AI ai) o addAIs(AI... ais) dato che effettuano alcuni controlli
+sulla validità delle AI.
 
 il metodo getAI(String id) viene chiamato dal parser quanto ha bisogno di risolvere l'ai
 il metodo gerAIs() viene utilizzato dall'interfaccia per ottenere la lista di tutte le AI al fine

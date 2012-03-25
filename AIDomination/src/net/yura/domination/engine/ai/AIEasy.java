@@ -12,14 +12,6 @@ import net.yura.domination.engine.core.Country;
 
 public class AIEasy extends AICrap {
 
- 
-	public AIEasy(String id, String name) {
-		super(id, name);
-	}
-    
-    public AIEasy(){
-    	super();
-    }
 
 	protected class Attack {
 	Country source;

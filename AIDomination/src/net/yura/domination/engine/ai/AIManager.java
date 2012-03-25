@@ -14,24 +14,19 @@ public class AIManager {
 	
 	/**
 	 * Utilizzato per integrare le Ai nel gioco
-	 * Per far ciò, instanziare una AI ed aggiungerla alla mappa.
-	 * Occhio a scegliere chiavi diverse
+	 * Per far ci&ograve, instanziare una AI ed aggiungerla alla mappa.
+	 * &Egrave; preferibile usare i metodi addAI o addAIs dato che
+	 * fanno qualche controllo sulla validità dell'AI 
 	 * 
 	 */
 	public static void setup(){
-		AI ai;
-		ai = new AIHuman(); 
-		AIs.put(ai.getId(), ai);
-		ai = new AICrap("ai crap", "AI Crap");
-		AIs.put(ai.getId(), ai);
-		ai = new AIEasy("ai easy", "AI Easy");
-		AIs.put(ai.getId(), ai);
-		ai = new AIHard("ai hard", "AI Hard");
-		ai.setCapitalAI(new AIHardCapital());
-		ai.setMissionAI(new AIHardMission());
-		AIs.put(ai.getId(), ai);
-		ai = new AIVeryHard("ai veryhard", "AI Molto Difficile");
-		AIs.put(ai.getId(), ai);
+		addAIs(
+			new AIHuman(),
+			new AICrap().setID("ai crap").setName("AI Crap"),
+			new AIEasy().setID("ai easy").setName("AI Easy"),
+			new AIHard().setID("ai hard").setName("AI Hard").setCapitalAI(new AIHardCapital()).setMissionAI(new AIHardMission()),
+			new AIVeryHard().setID("ai veryhard").setName("AI Molto Difficile")
+		);
 	}
 	
 	/**
@@ -41,6 +36,33 @@ public class AIManager {
 	 */
 	public static AI getAI(String id){
 		return AIs.get(id);
+	}
+	
+	/**
+	 * Aggiunge una AI all'AIManager controllando che l'AI sia valida
+	 * 
+	 * @param ai
+	 */
+	public static void addAI(AI ai){
+		try{
+			ai.getName().toString(); //Serve solo per far scaturire un eventuale NullPointerExeption
+			String id = ai.getId();
+			if (AIs.containsKey(id))
+				throw new IllegalArgumentException("Esiste già una AI con id: "+id);
+			AIs.put(id, ai);
+		}catch (NullPointerException e) {
+			throw new IllegalArgumentException("L'AI deve avere nome e id non null");
+		}
+	}
+	
+	/**
+	 * Aggiunge più AI
+	 * 
+	 * @param ais
+	 */
+	public static void addAIs(AI... ais){
+		for (AI ai: ais)
+			addAI(ai);
 	}
 	
 	/**

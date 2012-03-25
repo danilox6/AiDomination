@@ -2510,7 +2510,7 @@ public class Risk extends Thread {
 
 					if ( game.getState() == RiskGame.STATE_DEFEND_YOURSELF && game.getCurrentPlayer().getAutoDefend() ) {
 
-						parser( AIPlayer.getOutput(game, new AICrap("AI Crap", "crap")) );
+						parser( AIPlayer.getOutput(game, new AICrap().setID("ai crap").setName("AI Crap")) );
 
 					}
 
