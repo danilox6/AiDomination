@@ -1,8 +1,14 @@
 package net.yura.domination.engine.ai;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import net.yura.domination.engine.core.Card;
@@ -92,8 +98,90 @@ public class AISimple extends AI{
 	}
 
 	private String getArmyPlacement() {
-		// TODO Auto-generated method stub
+		Continent[] continents = game.getContinents();
+		final Map<Continent, Integer> accessPoints = new HashMap<Continent, Integer>();
+		
+		
+		for(Continent continent : continents) {
+			accessPoints.put(continent, getAccessPoints(continent));
+		}
+		
+		Arrays.sort(continents, new Comparator<Continent>() {
+
+			@Override
+			public int compare(Continent arg0, Continent arg1) {
+				int comparation = new Float(getForceRatio(arg0)).compareTo(getForceRatio(arg1));
+				return comparation == 0
+					? accessPoints.get(arg0).compareTo(accessPoints.get(arg1))
+					: comparation;
+			}
+			
+		});
+		
+		int armiesOwned = player.getExtraArmies();
+		int defendableContinents = continents.length;
+		float defendQuota = 0;
+		
+		for(int i = defendableContinents; i > 0; --i) {
+			float totalThreatLevel = 0;
+			float totalAccessPoints = 0;
+			
+			for(int j = 0; j < defendableContinents; ++j) {
+				totalThreatLevel += getThreatLevel(continents[j]);
+				totalAccessPoints += accessPoints.get(continents[j]);
+			}
+			
+			defendQuota = totalThreatLevel / totalAccessPoints;
+			if(defendQuota < 1.0)
+				break;
+		}
+		
 		return null;
+	}
+	
+	private int getThreatLevel(Continent continent) {
+		int threatLevel = 0;
+		for(Country country : (Vector<Country>) continent.getTerritoriesContained()) {
+			if(country.getOwner() != player) 
+				continue;
+			
+			for(Country neighbour : (Vector<Country>) country.getNeighbours()) {
+				if(neighbour.getOwner() != player && neighbour.getArmies() >= country.getArmies()) 
+					threatLevel++;
+			}
+		}
+		
+		return threatLevel;
+	}
+	
+	private int getAccessPoints(Continent continent) {
+		int accessPoints = 0;
+		for(Country country : (Vector<Country>)continent.getTerritoriesContained()) {
+			if(country.getOwner() != player) 
+				continue;
+			
+			Vector<Country> neighbours = country.getNeighbours();
+			for(Country neighbour : neighbours) {
+				if(neighbour.getOwner() != player)	
+					accessPoints++;
+			}
+		}
+		
+		return accessPoints;
+	}
+	
+	private float getForceRatio(Continent arg0) {
+		float myForces = 0.0f;
+		float otherForces = 0.0f;
+		for(Country c : (Vector<Country>) arg0.getTerritoriesContained()) {
+			if(c.getOwner() == player) {
+				myForces++;
+			} else {
+				otherForces++;
+			}
+		}
+		
+		return myForces / otherForces;
 	}
 
 	@Override
