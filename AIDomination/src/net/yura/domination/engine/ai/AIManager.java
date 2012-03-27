@@ -25,7 +25,8 @@ public class AIManager {
 			new AICrap().setID("ai crap").setName("AI Crap"),
 			new AIEasy().setID("ai easy").setName("AI Easy"),
 			new AIHard().setID("ai hard").setName("AI Hard").setCapitalAI(new AIHardCapital()).setMissionAI(new AIHardMission()),
-			new AIRandom().setID("ai random").setName("AI Random")
+			new AIRandom().setID("ai random").setName("AI Random"),
+			new AISimple().setID("ai simple").setName("AI Simple")
 		);
 	}
 	

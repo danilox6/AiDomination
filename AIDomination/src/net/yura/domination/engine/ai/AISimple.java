@@ -3,6 +3,7 @@ package net.yura.domination.engine.ai;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Vector;
 
 import net.yura.domination.engine.core.Card;
@@ -25,7 +26,7 @@ public class AISimple extends AI{
 			else if(c.getName().equals(Card.CANNON)) cannons.add(c);
 			else if(c.getName().equals(Card.CAVALRY)) cavalry.add(c);
 			else if(c.getName().equals(Card.INFANTRY)) infantry.add(c);
-			
+
 		}
 		if (wildcards.size()>0){
 			if(cannons.size()>1) return "trade wildcard "+ cannons.get(0).getCountry().getColor() + " " + cannons.get(1).getCountry().getColor();
@@ -34,7 +35,7 @@ public class AISimple extends AI{
 		}
 		if(cannons.size()>0 && cavalry.size()>0 && infantry.size()>0)
 			return "trade "                                	
-				+ cannons.get(0).getCountry().getColor()+" "+ cavalry.get(0).getCountry().getColor()+" " + infantry.get(0).getCountry().getColor();
+			+ cannons.get(0).getCountry().getColor()+" "+ cavalry.get(0).getCountry().getColor()+" " + infantry.get(0).getCountry().getColor();
 		if(cavalry.size()>2) 
 			return "trade "+cavalry.get(0).getCountry().getColor() + " " + cavalry.get(1).getCountry().getColor()+ " " + cavalry.get(2).getCountry().getColor();
 		if(infantry.size()>2)
@@ -46,21 +47,32 @@ public class AISimple extends AI{
 
 	@Override
 	public String getPlaceArmies() {
-		Continent[] continents = game.getContinents();
-		for(Continent c:continents){
-			Vector<Country> countries = c.getTerritoriesContained();
-			for(Country co:countries){
-				
-			}
-		}
-		
 		return null;
 	}
 
 	@Override
 	public String getAttack() {
-		// TODO Auto-generated method stub
-		return null;
+		Vector<Country> countries = player.getTerritoriesOwned();
+		Country attacker = null;
+		Country defender = null;
+		for(Country c : countries){
+			Vector<Country> nCountries = c.getNeighbours();
+			for(Country nc: nCountries){
+				if(nc.getOwner()!=player){
+					if(attacker == null && defender == null){
+						attacker = c;
+						defender = nc;
+					}
+					if ((c.getArmies() - nc.getArmies()) > (attacker.getArmies() - defender.getArmies())){
+						attacker = c;
+						defender = nc;
+					}
+				}
+			}	
+		}
+		if(attacker==null)
+			return "endattack";
+		return "attack "+attacker.getColor() + " " + defender.getColor();
 	}
 
 	@Override
@@ -71,14 +83,12 @@ public class AISimple extends AI{
 
 	@Override
 	public String getBattleWon() {
-		// TODO Auto-generated method stub
-		return null;
+		return "moveall";
 	}
 
 	@Override
 	public String getTacMove() {
-		// TODO Auto-generated method stub
-		return null;
+		return "nomove";
 	}
 
 	@Override
