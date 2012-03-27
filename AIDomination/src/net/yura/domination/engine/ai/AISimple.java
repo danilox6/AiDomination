@@ -59,7 +59,7 @@ public class AISimple extends AI{
 
 	@Override
 	public String getAttack() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -83,8 +83,11 @@ public class AISimple extends AI{
 
 	@Override
 	public String getAutoDefendString() {
-		// TODO Auto-generated method stub
-		return null;
+		int n=((Country)game.getDefender()).getArmies();
+        if (n > game.getMaxDefendDice()) {
+            return "roll "+game.getMaxDefendDice();
+        }
+    return "roll "+n;
 	}
 
 	@Override
