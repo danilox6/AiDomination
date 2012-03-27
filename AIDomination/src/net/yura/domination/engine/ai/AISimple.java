@@ -1,5 +1,6 @@
 package net.yura.domination.engine.ai;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -97,7 +98,7 @@ public class AISimple extends AI{
 
 	@Override
 	public String getAttack() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -120,7 +121,11 @@ public class AISimple extends AI{
 
 	@Override
 	public String getAutoDefendString() {
-		return "roll " + (game.getAttacker().getArmies() >= 2 ? 2 : 1);
+		int n=((Country)game.getDefender()).getArmies();
+        if (n > game.getMaxDefendDice()) {
+            return "roll "+game.getMaxDefendDice();
+        }
+    return "roll "+n;
 	}
 
 	@Override
