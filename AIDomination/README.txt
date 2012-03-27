@@ -2,7 +2,7 @@ Ho cercato di togliere la maggior parte delle cose inutili ai nostri fini.
 Ho lasciato solo l'interfaccia "FlashGui".
 Non ci sono più i problemi del linking delle risorse esterne.
 
-Il tutto si avvia dalla classe net.yura.domination.ui.flashgu.MainMenu
+Il tutto si avvia dalla classe net.yura.domination.ui.flashgui.MainMenu
 presente nella source folder src_swing.
 
 Ho cercato di sistemare alla meglio le API per creare una nuova AI.

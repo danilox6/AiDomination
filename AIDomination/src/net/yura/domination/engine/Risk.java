@@ -772,7 +772,7 @@ public class Risk extends Thread {
 
 					controller.showDiceResults( att, def );
 
-					try{ Thread.sleep(1000); }
+					try{ Thread.sleep(1/*000*/); }
 					catch(InterruptedException e){}
 
 				}
@@ -2245,7 +2245,7 @@ public class Risk extends Thread {
 
 								controller.setNODDefender(dice);
 
-								try{ Thread.sleep(500); }
+								try{ Thread.sleep(1/*500*/); }
 								catch(InterruptedException e){}
 
 							}

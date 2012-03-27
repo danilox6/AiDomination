@@ -13,7 +13,7 @@ public class AIPlayer {
 	private static AIEasy aihardm = new AIHardMission();
 	private static AIVeryHard aiveryhard = new AIVeryHard();
 */
-	private static int wait=500;
+	private static int wait=1;//=500;
 
 	public static int getWait() {
 
