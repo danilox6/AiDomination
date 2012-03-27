@@ -1,6 +1,5 @@
 package net.yura.domination.engine.ai;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -10,12 +9,14 @@ import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 
 public class AISimple extends AI{
+	private static final long serialVersionUID = -5026514597239780686L;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getTrade() {
 		Vector<Card> cards = player.getCards();
 		if(cards.size()<3) return "endtrade";
-		String output= "";
+
 		List<Card> wildcards = new LinkedList<Card>();
 		List<Card> cannons = new LinkedList<Card>();
 		List<Card> infantry = new LinkedList<Card>();
@@ -43,17 +44,54 @@ public class AISimple extends AI{
 			return "trade "+cannons.get(0).getCountry().getColor() + " " + cannons.get(1).getCountry().getColor()+" "+cannons.get(2).getCountry().getColor();
 		return "endtrade";
 	}
-
-	@Override
-	public String getPlaceArmies() {
+	
+	@SuppressWarnings("unchecked")
+	public String getInitialArmyPlacement() {
 		Continent[] continents = game.getContinents();
-		for(Continent c:continents){
-			Vector<Country> countries = c.getTerritoriesContained();
-			for(Country co:countries){
-				
+		
+		Country[] candidates = new Country[continents.length];
+		int[] candidateScores = new int[continents.length];
+		int[] freeCountries = new int[continents.length];
+		
+		for(int i = 0; i < continents.length; ++i){
+			for(Country country:(Vector<Country>)continents[i].getTerritoriesContained()) {
+				if(country.getOwner() == null) {
+					freeCountries[i]++;
+					
+					int score = 0;
+					for(Country neightbour: (Vector<Country>) country.getNeighbours()) {
+						if(neightbour.getOwner() == player || neightbour.getContinent() != continents[i])
+							score++;
+					}
+					
+					if(score > candidateScores[i] || candidates[i] == null) {
+						candidateScores[i] = score;
+						candidates[i] = country;
+					}	
+				}
 			}
 		}
 		
+		int lowestCount = 100;
+		int bestContinent = 0;
+		for(int i = 0; i < freeCountries.length; ++i) {
+			if(freeCountries[i] > 0 && freeCountries[i] < lowestCount) {
+				lowestCount = freeCountries[i];
+				bestContinent = i;
+			}
+		}
+		
+		return "placearmies " + candidates[bestContinent].getColor() + " 1";
+	}
+
+	@Override
+	public String getPlaceArmies() {
+		return game.NoEmptyCountries() ? getArmyPlacement() : getInitialArmyPlacement();
+
+	}
+
+	private String getArmyPlacement() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -65,8 +103,7 @@ public class AISimple extends AI{
 
 	@Override
 	public String getRoll() {
-		// TODO Auto-generated method stub
-		return null;
+		return "roll "+ Math.min(game.getAttacker().getArmies(), 3);
 	}
 
 	@Override
@@ -83,8 +120,7 @@ public class AISimple extends AI{
 
 	@Override
 	public String getAutoDefendString() {
-		// TODO Auto-generated method stub
-		return null;
+		return "roll " + (game.getAttacker().getArmies() >= 2 ? 2 : 1);
 	}
 
 	@Override
