@@ -70,23 +70,23 @@ public class FlashRiskAdapter implements RiskListener {
 		newgameframe = new NewGameFrame(myrisk);
 
 
-		if (RiskUIUtil.checkForNoSandbox()) {
-                    
-                    try {
-                      //  net.yura.mobile.logging.Logger.setLogger( new net.yura.swingme.core.J2SELogger() );
-                    }
-                    catch (Throwable th) { }
-                    
-                    // catch everything in my PrintStream
-                    try {
-                        net.yura.grasshopper.PopupBug.initSimple(RiskUtil.GAME_NAME,
-                                Risk.RISK_VERSION+" FlashGUI" // "(save: " + RiskGame.SAVE_VERSION + " network: "+RiskGame.NETWORK_VERSION+")"
-                                , TranslationBundle.getBundle().getLocale().toString());
-                    }
-                    catch(Throwable th) {
-                        System.out.println("Grasshopper not loaded");
-                    }
-		}
+//		if (RiskUIUtil.checkForNoSandbox()) {
+//                    
+//                    try {
+//                    	net.yura.mobile.logging.Logger.setLogger( new net.yura.swingme.core.J2SELogger() );
+//                    }
+//                    catch (Throwable th) { }
+//                    
+//                    // catch everything in my PrintStream
+//                    try {
+//                        net.yura.grasshopper.PopupBug.initSimple(RiskUtil.GAME_NAME,
+//                                Risk.RISK_VERSION+" FlashGUI" // "(save: " + RiskGame.SAVE_VERSION + " network: "+RiskGame.NETWORK_VERSION+")"
+//                                , TranslationBundle.getBundle().getLocale().toString());
+//                    }
+//                    catch(Throwable th) {
+//                        System.out.println("Grasshopper not loaded");
+//                    }
+//		}
 	}
 
 	/**

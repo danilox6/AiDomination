@@ -647,7 +647,7 @@ public class MainMenu extends JPanel implements MouseInputListener, KeyListener 
 	public static void main(String[] argv) {
 
 		RiskUIUtil.parseArgs(argv);
-		AIManager.setup();
+		
 		MainMenu mm = newMainMenuFrame( new Risk(),JFrame.EXIT_ON_CLOSE );
 
 		mm.addLobbyButton();

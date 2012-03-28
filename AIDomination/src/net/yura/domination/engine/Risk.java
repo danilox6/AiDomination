@@ -16,23 +16,34 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import net.yura.domination.engine.ai.AI;
 import net.yura.domination.engine.ai.AICrap;
 import net.yura.domination.engine.ai.AIManager;
 import net.yura.domination.engine.ai.AIPlayer;
 import net.yura.domination.engine.core.Card;
+import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 import net.yura.domination.engine.core.Mission;
 import net.yura.domination.engine.core.Player;
 import net.yura.domination.engine.core.RiskGame;
 import net.yura.domination.engine.translation.TranslationBundle;
+import net.yura.domination.logger.RiskLogger;
 
 /**
  * <p> Main Risk Class </p>
@@ -42,6 +53,8 @@ import net.yura.domination.engine.translation.TranslationBundle;
 public class Risk extends Thread {
 
 	public static String RISK_VERSION;
+
+	private Logger logger = Logger.getLogger(RiskLogger.LOGGER); 
 
 	private StringTokenizer StringT;
 	protected RiskController controller;
@@ -62,6 +75,20 @@ public class Risk extends Thread {
 	//private SealedObject Undo;
 	private ByteArrayOutputStream Undo = new ByteArrayOutputStream();
 
+	private boolean writtenReceivedAttack = false;
+	
+	private static boolean logOwnedCards;
+	private static boolean logOwnedCountries;
+	private static boolean logPlaceArmies;
+	private static boolean logTradeCards;
+	private static boolean logAttacks;
+	private static boolean logReceivedAttacks;
+	private static boolean logBattleDetails;
+	private static boolean logBattleWon;
+	private static boolean logTacMove;
+	
+	private boolean tradedCards = false;
+	
 	protected boolean unlimitedLocalMode;
 	private boolean autoplaceall;
 	private boolean battle;
@@ -85,6 +112,9 @@ public class Risk extends Thread {
 
 	public Risk() {
 		super(RiskUtil.GAME_NAME+"-GAME-THREAD");
+
+		AIManager.setup();
+		RiskLogger.setup();
 
 		resb = TranslationBundle.getBundle();
 
@@ -772,7 +802,7 @@ public class Risk extends Thread {
 
 					controller.showDiceResults( att, def );
 
-					try{ Thread.sleep(1/*000*/); }
+					try{ Thread.sleep(1000); }
 					catch(InterruptedException e){}
 
 				}
@@ -915,8 +945,8 @@ public class Risk extends Thread {
 			String echo = message.substring( Addr.length()+1 );
 
 			if (game != null && game.getCurrentPlayer() != null && game.getState()!=RiskGame.STATE_GAME_OVER ) {
-				
-/*
+
+				/*
 				if ( ((Player)game.getCurrentPlayer()).getType()==Player.PLAYER_HUMAN ) { // if the player is human
 					controller.sendMessage( ((Player)game.getCurrentPlayer()).getName()+ "("+resb.getString("newgame.player.type.human")+")>"+echo, false, false );
 				}
@@ -929,7 +959,7 @@ public class Risk extends Thread {
 				else if ( ((Player)game.getCurrentPlayer()).getType()==Player.PLAYER_AI_HARD ) { // if the player is AI
 					controller.sendMessage( ((Player)game.getCurrentPlayer()).getName()+ "("+resb.getString("newgame.player.type.hardai")+")>"+echo, false, false );
 				}
-*/
+				 */
 				controller.sendMessage( ((Player)game.getCurrentPlayer()).getName()+ "("+game.getCurrentPlayer().getAI().getName()+")>"+echo, false, false );
 			}
 			else {
@@ -1022,14 +1052,14 @@ public class Risk extends Thread {
 										if (game.getState() == RiskGame.STATE_NEW_GAME ) {
 
 											// should never return false
-													if ( game.delPlayer( patc.getName() ) ) {
+											if ( game.delPlayer( patc.getName() ) ) {
 
-														c--;
+												c--;
 
-														controller.delPlayer( patc.getName() );
+												controller.delPlayer( patc.getName() );
 
-														patc = null;
-													}
+												patc = null;
+											}
 
 										}
 										else {
@@ -1863,6 +1893,17 @@ public class Risk extends Thread {
 
 						if ( noa != 0 ) { // if the trade WAS SUCCESSFUL
 							output=RiskUtil.replaceAll(resb.getString( "core.trade.traded"), "{0}", "" + noa);
+
+							tradedCards = true; 
+							
+							if (logTradeCards && game.getCurrentPlayer().isLogged()){
+								StringBuilder log = new StringBuilder("    ");
+								log.append("-- Gioca il seguente Tris:\n      ");
+								log.append(getCardsString(Arrays.asList(cards)));
+								log.append("\n      Ricevendo un totale di "+ noa+ " armate aggiuntive;\n");
+								logger.info(log.toString());
+							}
+
 						}
 						else { output=resb.getString( "core.trade.error.unable"); }
 					}
@@ -1914,6 +1955,13 @@ public class Risk extends Thread {
 									output=output + whoWon();
 
 								}
+								
+								if(logPlaceArmies && game.getCurrentPlayer().isLogged()){
+									StringBuilder log = new StringBuilder("    ");
+									String s = num>1? " armate in ": " armata in ";
+									log.append("-- Piazza " + num + s + t.getName()+"\n");
+									logger.info(log.toString());
+								}
 
 							}
 							else { output=resb.getString( "core.place.error.unable"); }
@@ -1929,13 +1977,24 @@ public class Risk extends Thread {
 						if ( game.NoEmptyCountries() == false ) {
 
 							if (!replay) {
-
+								int c = 0;
 								if ( chatSocket == null) {
-									GameParser( "PLACE " + game.getEmptyCountry() );
+									c = game.getEmptyCountry();
+									if(logPlaceArmies && game.getCurrentPlayer().isLogged()){
+										Country t = game.getCountryInt(c);
+										logger.info("    -- Piazza 1 armata in " + t.getName()+"\n");
+									}
+									GameParser( "PLACE " + c );
 								}
 								else if ( myAddress.equals(Addr) ) { // if this is a network game
-									outChat.println( "PLACE " + game.getEmptyCountry() ); // recursive call
+									c = game.getEmptyCountry();
+									if(logPlaceArmies && game.getCurrentPlayer().isLogged()){
+										Country t = game.getCountryInt(c);
+										logger.info("    -- Piazza 1 armata in " + t.getName()+"\n");
+									}
+									outChat.println( "PLACE " + c ); // recursive call
 								}
+							
 
 
 							}
@@ -1958,7 +2017,7 @@ public class Risk extends Thread {
 
 				if (input.equals("attack")) {
 					if (StringT.countTokens()==2) {
-
+						
 						String arg1=GetNext();
 						String arg2=GetNext();
 						int a1=RiskGame.getNumber(arg1);
@@ -2000,6 +2059,16 @@ public class Risk extends Thread {
 
 								controller.showDice(a[1], true);
 							}
+							
+							writtenReceivedAttack = false;
+							tradedCards = false;
+							if(logAttacks && game.getCurrentPlayer().isLogged()){
+								StringBuilder log = new StringBuilder();
+								log.append("    -- Attacca " + country2.getName()+"("+country2.getOwner().getName() + ", "+country2.getOwner().getAI().getName() +")" + " da " + country1.getName()  +"\n");
+								if(!logBattleDetails)
+									log.append("       Armate attaccante: "+game.getAttacker().getArmies() +", Armate difensore: "+game.getDefender().getArmies()+"\n" );
+								logger.info(log.toString());
+							}
 
 						}
 						else { output=resb.getString( "core.attack.error.unable"); }
@@ -2009,6 +2078,7 @@ public class Risk extends Thread {
 				else if (input.equals("endattack")) {
 					if (StringT.hasMoreTokens()==false) {
 						if ( game.endAttack() ) {
+							tradedCards = false;
 							output=resb.getString( "core.attack.end.ended");
 						}
 						else { output=resb.getString( "core.attack.end.error.unable"); }
@@ -2038,8 +2108,7 @@ public class Risk extends Thread {
 
 
 							if (n > game.getMaxDefendDice() ) { n= game.getMaxDefendDice() ; }
-
-
+							
 							//Rolled attacking dice, {0} defend yourself! (you can use up to {1} dice to defend)
 							output = RiskUtil.replaceAll(RiskUtil.replaceAll(resb.getString( "core.roll.rolled")
 									, "{0}", ((Player)game.getCurrentPlayer()).getName())
@@ -2050,8 +2119,9 @@ public class Risk extends Thread {
 							if ( showHumanPlayerThereInfo(defendingPlayer) ) {
 								controller.showDice(n, false);
 							}
-
+							
 						}
+						
 						else { output=resb.getString( "core.roll.error.unable"); }
 					}
 					else { output=RiskUtil.replaceAll(resb.getString( "core.error.syntax"), "{0}", "roll number"); }
@@ -2083,7 +2153,7 @@ public class Risk extends Thread {
 						else {
 							noa=RiskGame.getNumber( num );
 						}
-
+						Player attacker = game.getAttacker().getOwner();
 						int mov=game.moveArmies(noa);
 
 						if ( mov != 0 ) {
@@ -2093,8 +2163,11 @@ public class Risk extends Thread {
 							if (mov == 2) {
 
 								output=output + whoWon();
-
+								logger.info(whoWon());
 							}
+							
+							if(logBattleWon && attacker.isLogged() && mov!=2)
+								logger.info("    -- Sposta "+noa+" armate nella nazione appena conquistata\n");
 
 						}
 						else { output=resb.getString( "core.move.error.unable"); }
@@ -2141,6 +2214,13 @@ public class Risk extends Thread {
 									, "{0}", "" + noa)
 									, "{1}", country1.getName()) // Display
 									, "{2}", country2.getName()); // Display
+							
+							
+							if(logTacMove && game.getCurrentPlayer().isLogged())
+								logger.info("    -- "+game.getCurrentPlayer().getName() +"("+game.getCurrentPlayer().getAI().getName()+") sposta " +noa+" armate da "+ country1.getName() + " a "+ country2.getName()+"\n");
+
+							
+							
 						}
 						else { output=resb.getString( "core.tacmove.error.unable"); }
 					}
@@ -2245,9 +2325,23 @@ public class Risk extends Thread {
 
 								controller.setNODDefender(dice);
 
-								try{ Thread.sleep(1/*500*/); }
+								try{ Thread.sleep(500); }
 								catch(InterruptedException e){}
 
+							}
+							
+							StringBuilder log = new StringBuilder();
+							if (logReceivedAttacks && !writtenReceivedAttack && game.getDefender().getOwner().isLogged() && (!game.getAttacker().getOwner().isLogged() || !logAttacks)){
+								log.append(" -- "+ game.getDefender().getOwner().getName()+"("+game.getDefender().getOwner().getAI().getName() +") è attaccato in "+game.getDefender()+
+										" da " + game.getAttacker().getName()+"("+game.getAttacker().getOwner().getName() + ", "+game.getAttacker().getOwner().getAI().getName() +")\n");
+								writtenReceivedAttack = true;
+								logger.info(log.toString());
+							}							
+							if(logBattleDetails && (game.getAttacker().getOwner().isLogged() || game.getDefender().getOwner().isLogged())){
+								log.append("         Armate attaccante: "+game.getAttacker().getArmies() +", Armate difensore: "+game.getDefender().getArmies()+"\n" );
+								log.append("         Dadi attaccante: "+ game.getAttackerDice() );
+								log.append(", Dadi difensore: "+ game.getDefenderDice()+"\n");
+								logger.info(log.toString());
 							}
 							// client does a roll, and this is not called
 							if ( !replay && (chatSocket == null || myAddress.equals(Addr)) ) { // recursive call
@@ -2514,19 +2608,54 @@ public class Risk extends Thread {
 
 					}
 
+
+
+
 					// || ((Player)game.getCurrentPlayer()).getType()==Player.PLAYER_NEUTRAL
 
-					else if ( ((Player)game.getCurrentPlayer()).getAI().getId().equals("human") ) {
+					else{
+						if(game.getState() == RiskGame.STATE_PLACE_ARMIES && !tradedCards ){
+							Player cPlayer = game.getCurrentPlayer();
+							StringBuilder playerInfo = new StringBuilder();
+							playerInfo.append("\n\n"+cPlayer.getName()+" "+cPlayer.getAI().getName());
+							if(game.NoEmptyCountries()){
+								playerInfo.append(" (Armate disponibili: "+ cPlayer.getExtraArmies()+")\n");
+								if(logOwnedCountries){
+									ArrayList<Continent> owned = getOwnedCountriesOrdered(cPlayer);
+									playerInfo.append(" Territori Posseduti:\n");
+									for(Continent c: owned){
+										playerInfo.append("  "+c.getName()+":\n");
+										Vector<Country> countries = c.getTerritoriesContained();
+										playerInfo.append("    ");
+										for(Country co: countries){
+											playerInfo.append(co.getName() + "("+co.getArmies()+" armate) - ");
+										}
+										playerInfo.append("\n");
+									}
+								}
+								
+								if(game.getSetup()){
+									tradedCards = true;
+									if(logOwnedCards){
+										playerInfo.append(" Carte Possedute:\n");
+										Vector<Card> cards = cPlayer.getCards();
+										playerInfo.append("    "+getCardsString(cards)+"\n");
+									}
+								}
+							}
+							logger.info(playerInfo + "\n");
+						}
+						if ( ((Player)game.getCurrentPlayer()).getAI().getId().equals("human") ) {
 
-						controller.needInput( game.getState() );
+							controller.needInput( game.getState() );
 
+						}
+						else {
+
+							AIPlayer.play(this);
+
+						}
 					}
-					else {
-
-						AIPlayer.play(this);
-
-					}
-
 				}
 				//else if ( game.getCurrentPlayer().getType()==Player.PLAYER_HUMAN ) {
 
@@ -2575,20 +2704,20 @@ public class Risk extends Thread {
 			String s = null;
 			/*
 			switch ( ((Player)game.getCurrentPlayer()).getType() ) {
-			
+
 			case Player.PLAYER_HUMAN: strId = "core.help.move.human"; break;
 			case Player.PLAYER_AI_CRAP: strId = "core.help.move.ai.crap"; break;
 			case Player.PLAYER_AI_EASY: strId = "core.help.move.ai.easy"; break;
 			case Player.PLAYER_AI_HARD: strId = "core.help.move.ai.hard"; break;
 			case Player.PLAYER_AI_VERY_HARD: s = "Molto Difficile move\\: ({0})"; break;
 			}
-		
+
 			if (s != null)
 				help = RiskUtil.replaceAll(s, "{0}", ((Player)game.getCurrentPlayer()).getName()) +" ";
 			else help = RiskUtil.replaceAll(resb.getString(strId), "{0}", ((Player)game.getCurrentPlayer()).getName()) +" ";
-				*/
+			 */
 			help = RiskUtil.replaceAll(((Player)game.getCurrentPlayer()).getAI().getName()+" move\\: ({0})", "{0}", ((Player)game.getCurrentPlayer()).getName()) +" ";
-			
+
 		}
 
 		if (game == null) {
@@ -3020,4 +3149,123 @@ public class Risk extends Thread {
 
 		unlimitedLocalMode = true;
 	}
+
+
+	public static boolean isLogAttacks() {
+		return logAttacks;
+	}
+
+	public static boolean isLogReceivedAttacks() {
+		return logReceivedAttacks;
+	}
+
+
+	/**
+	 * Se è <code>true</code> scrive nel log il piazzamento delle truppe
+	 * @param logPlaceArmies
+	 */
+	public static void setLogPlaceArmies(boolean logPlaceArmies) {
+		Risk.logPlaceArmies = logPlaceArmies;
+	}
+	/**
+	 * Se è <code>true</code> scrive nel log i tris giocati
+	 * @param logTradeCards
+	 */
+	public static void setLogTradeCards(boolean logTradeCards) {
+		Risk.logTradeCards = logTradeCards;
+	}
+
+	/**
+	 * Se è <code>true</code> scrive nel log gli attacchi effettuati
+	 * @param logAttacks
+	 */
+	public static void setLogAttacks(boolean logAttacks) {
+		Risk.logAttacks = logAttacks;
+	}
+
+	/**
+	 * Se è <code>true</code>, nel caso in cui il player attacante ha il logger disattivato,
+	 * vengono scritte informazioni sull'attacco ricevuto
+	 * @param logReceivedAttacks
+	 */
+	public static void setLogReceivedAttacks(boolean logReceivedAttacks) {
+		Risk.logReceivedAttacks = logReceivedAttacks;
+	}
+	
+	/**
+	 * Se è <code>true</code> scrive nel log informazioni dettagliate sull'attacco
+	 * ovvero le armate disponibili e il numero di dadi utilizzati in ogni lanciata di dadi
+	 * @param logBattleDetails
+	 */
+	public static void setLogBattleDetails(boolean logBattleDetails) {
+		Risk.logBattleDetails = logBattleDetails;
+	}
+
+	/**
+	 * Se è true scrive il numero di truppe spostate nella nazione appena conquistata
+	 * @param logBattleWon
+	 */
+	public static void setLogBattleWon(boolean logBattleWon) {
+		Risk.logBattleWon = logBattleWon;
+	}
+
+	/**
+	 * Se è true scrive gli spostamenti delle truppe per rafforzare le posizioni
+	 * @param logTacMove
+	 */
+	public static void setLogTacMove(boolean logTacMove) {
+		Risk.logTacMove = logTacMove;
+	}
+
+	public static void setLogOwnedCards(boolean logOwnedCards) {
+		Risk.logOwnedCards = logOwnedCards;
+	}
+
+	public static void setLogOwnedCountries(boolean logOwnedCountries) {
+		Risk.logOwnedCountries = logOwnedCountries;
+	}
+	
+	/**
+	 * Porcata che ordina le nazioni possedute per continente. I continenti sono ordinati
+	 * in base al bonus fornito
+	 * @param player
+	 * @return
+	 */
+	public ArrayList<Continent> getOwnedCountriesOrdered(Player player){
+		Vector<Country> countries = player.getTerritoriesOwned();
+		HashMap<String, Continent> ownedCountries = new HashMap<String, Continent>();
+		for (Country c: countries){
+			Continent continent = ownedCountries.get(c.getContinent().getIdString());
+			if (continent == null){
+				Continent oldContinent = c.getContinent();
+				continent = new Continent(oldContinent.getIdString(), oldContinent.getName(), oldContinent.getArmyValue(), oldContinent.getColor());
+				ownedCountries.put(continent.getIdString(), continent);
+			}
+			continent.addTerritoriesContained(c);
+		}
+		ArrayList<Continent> result = new ArrayList<Continent>(ownedCountries.values());
+		Collections.sort(result, new Comparator<Continent>() {
+			@Override
+			public int compare(Continent o1, Continent o2) {
+				return o2.getArmyValue() - o1.getArmyValue();
+			}
+		});
+		
+		return result;
+	}
+
+	public String getCardsString(Collection<Card> cards){
+		String s = "";
+		for(Card c: cards){
+			if(c.getName().equals(Card.WILDCARD))
+				s +="Wildcard | ";
+				else{
+					String hasCountry =  (game.getCurrentPlayer().getTerritoriesOwned().contains(c.getCountry()))? "(V)" : "(X)";
+					s += (c.getName() + ", " + c.getCountry().getName() + hasCountry + " | ");
+				}
+		}
+		return s.equals("")? "Nessuna": s;
+	}
+
+
 }

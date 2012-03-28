@@ -48,6 +48,7 @@ import net.yura.domination.engine.RiskUIUtil;
 import net.yura.domination.engine.RiskUtil;
 import net.yura.domination.engine.ai.AI;
 import net.yura.domination.engine.ai.AIManager;
+import net.yura.domination.engine.ai.AIPlayer;
 import net.yura.domination.engine.core.Player;
 import net.yura.domination.engine.core.RiskGame;
 import net.yura.domination.engine.guishared.AboutDialog;
@@ -95,7 +96,10 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 	private JRadioButton aismart;
 	private JRadioButton aicrap;
 	private JRadioButton aiveryhard;
-*/
+	 */
+	private JRadioButton normal;
+	private JRadioButton fast;
+	private JRadioButton turbo;
 
 	private JRadioButton fixed;
 	private JRadioButton increasing;
@@ -178,8 +182,8 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		nothing.setVisible(false);
 
 		if (t) {
-                    RiskUtil.loadPlayers(myrisk,getClass());
-                }
+			RiskUtil.loadPlayers(myrisk,getClass());
+		}
 
 	}
 
@@ -313,7 +317,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		sortOutButton( fixed );
 		fixed.setBounds(160,390,90,25);
 
-                italianLike = new JRadioButton(resb.getString("newgame.cardmode.italianlike"));
+		italianLike = new JRadioButton(resb.getString("newgame.cardmode.italianlike"));
 		sortOutButton( italianLike );
 		italianLike.setBounds(160,410,90,25);
 
@@ -385,13 +389,13 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		playerTypeButtonGroup.add ( aismart );
 		playerTypeButtonGroup.add ( aicrap );
 		playerTypeButtonGroup.add (aiveryhard);
-		*/
-		
+		 */
+
 		//String[] difficulties = { resb.getString("newgame.player.type.human"), resb.getString("newgame.player.type.crapai"), resb.getString("newgame.player.type.easyai"), resb.getString("newgame.player.type.hardai"), "Molto Difficile" };
 		aiChooser = new JComboBox(AIManager.getAIs().toArray());
 		aiChooser.setBounds(520, 335, 150 , 28);
-		
-		
+
+
 		color = "black";
 		thecolor = Color.black;
 
@@ -404,6 +408,21 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		sortOutButton( addplayer , newgame.getSubimage(437, 413, w, h) , newgame.getSubimage(700, 419, w, h) , newgame.getSubimage(700, 450, w, h) );
 		addplayer.addActionListener( this );
 		addplayer.setBounds(437, 413, 115 , 31 );
+
+		ButtonGroup speedRadioButtons = new ButtonGroup();
+		normal = new JRadioButton("Normale");
+		normal.addActionListener(this);
+		normal.setBounds(340, 450, 100 , 31 );
+		fast = new JRadioButton("Veloce");
+		fast.addActionListener(this);
+		fast.setSelected(true);
+		fast.setBounds(440, 450, 100 , 31 );
+		turbo = new JRadioButton("Turbo");
+		turbo.addActionListener(this);
+		turbo.setBounds(540, 450, 100 , 31 );
+		speedRadioButtons.add(normal);
+		speedRadioButtons.add(fast);
+		speedRadioButtons.add(turbo);
 
 		cancel = new JButton(resb.getString("newgame.cancel"));
 		sortOutButton( cancel , newgame.getSubimage(41, 528, w, h) , newgame.getSubimage(700, 233, w, h) , newgame.getSubimage(700, 264, w, h) );
@@ -445,7 +464,11 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		ngp.add(aismart);
 		ngp.add(aicrap);
 		ngp.add(aiveryhard);
-		*/
+		 */
+		ngp.add(normal);
+		ngp.add(fast);
+		ngp.add(turbo);
+
 		ngp.add(aiChooser);
 		ngp.add(playerColor);
 
@@ -486,7 +509,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 						exitForm();
 					}
 				}
-		);
+				);
 
 
 		//accelerators
@@ -495,7 +518,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		human		.setMnemonic( 'u');
 		ai			.setMnemonic( 'e');
 		aismart		.setMnemonic( 'h');
-		*/
+		 */
 		domination	.setMnemonic( 'd');		
 		capital		.setMnemonic( 'c');
 		mission		.setMnemonic( 'm');
@@ -508,38 +531,38 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		 * set up the cycle list
 		 */
 		arCycleList = new Component[]{
-			chooseMap,
-			defaultMap,
-			chooseCards,
-			defaultCards,
+				chooseMap,
+				defaultMap,
+				chooseCards,
+				defaultCards,
 
-			domination,
-			capital,
-			mission,
+				domination,
+				capital,
+				mission,
 
-			AutoPlaceAll,
+				AutoPlaceAll,
 
-			//remove player buttons
-			null,//1 - pos 8 UPDATE THE POSITION IF ADDING MORE BUTTONS TO THE CYCLE LIST
-			null,
-			null,
-			null,//4
-			null,
-			null,//6
+				//remove player buttons
+				null,//1 - pos 8 UPDATE THE POSITION IF ADDING MORE BUTTONS TO THE CYCLE LIST
+				null,
+				null,
+				null,//4
+				null,
+				null,//6
 
-			resetplayers,
-			playerName,
-			playerColor,
-			/*
+				resetplayers,
+				playerName,
+				playerColor,
+				/*
 			human,
 			ai,
 			aismart,
-			*/
-			addplayer,
+				 */
+				addplayer,
 
-			cancel,
-			help,
-			start
+				cancel,
+				help,
+				start
 		};
 		nRemoveButtonPos = 8;
 	}//private void initGUI()
@@ -579,18 +602,18 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 	public void addPlayer(final AI type,final String name,final Color color,final String ip) {
 
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-		    public void run() {
+			public void run() {
 
-			final playerPanel player = new playerPanel(type, name, color, ip);
+				final playerPanel player = new playerPanel(type, name, color, ip);
 
-			PlayersPanel.add(player);
-			PlayersPanel.validate();
-			PlayersPanel.repaint();
+				PlayersPanel.add(player);
+				PlayersPanel.validate();
+				PlayersPanel.repaint();
 
-			//let it cycle
-			arCycleList[nRemoveButtonPos + PlayersPanel.getComponents().length - 1] = player.getRemoveButton();
+				//let it cycle
+				arCycleList[nRemoveButtonPos + PlayersPanel.getComponents().length - 1] = player.getRemoveButton();
 
-		    }
+			}
 		});
 	}
 
@@ -601,37 +624,37 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 	public void delPlayer(final String name) {
 
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-		    public void run() {
+			public void run() {
 
-			Component[] players = PlayersPanel.getComponents();
+				Component[] players = PlayersPanel.getComponents();
 
-			for (int c=0; c < players.length ; c++) {
+				for (int c=0; c < players.length ; c++) {
 
-				if ( ((playerPanel)players[c]).getName().equals(name) ) {
+					if ( ((playerPanel)players[c]).getName().equals(name) ) {
 
-					PlayersPanel.remove(c);
-					PlayersPanel.validate();
-					PlayersPanel.repaint();
+						PlayersPanel.remove(c);
+						PlayersPanel.validate();
+						PlayersPanel.repaint();
 
-					int nCyclePos = nRemoveButtonPos + c;
+						int nCyclePos = nRemoveButtonPos + c;
 
-					//remove it from the cycle list
-					arCycleList[nCyclePos] = null;
-					//and now move the playerpanels above one down
+						//remove it from the cycle list
+						arCycleList[nCyclePos] = null;
+						//and now move the playerpanels above one down
 
-					for (int d = nCyclePos + 1; d < nRemoveButtonPos + 6; d++) {
-						arCycleList[d - 1] = arCycleList[d];
+						for (int d = nCyclePos + 1; d < nRemoveButtonPos + 6; d++) {
+							arCycleList[d - 1] = arCycleList[d];
+						}
+						//last has to be null
+						arCycleList[nRemoveButtonPos + 5] = null;
+
+						break;
 					}
-					//last has to be null
-					arCycleList[nRemoveButtonPos + 5] = null;
 
-					break;
 				}
 
+
 			}
-
-
-		    }
 		});
 
 	}
@@ -646,7 +669,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 	private void exitForm() {
 
 		//if (localgame) {
-			myrisk.parser("closegame");
+		myrisk.parser("closegame");
 		//}
 		//else {
 		//	myrisk.parser("leave");
@@ -724,7 +747,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 
 						}
 					}
-			);
+					);
 
 			add(remove);
 
@@ -745,7 +768,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 
 			g.drawString( name, 10, 20);
 
-/*
+			/*
 			if (type == Player.PLAYER_HUMAN) {
 				g.drawString( resb.getString("newgame.player.type.human"), 120, 20);
 			}
@@ -761,8 +784,8 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 			else {
 				g.drawString( resb.getString("newgame.player.type.crapai"), 120, 20);
 			}
-			*/
-			
+			 */
+
 			g.drawString(type.getName(), 120, 20);
 
 			//if (localgame) { g.drawString( resb.getString("newgame.type.local"), 140, 20); }
@@ -806,7 +829,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 
 			((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-//			  destination		source
+			//			  destination		source
 			g.drawImage(newgame,0,0,700,600,     0,0,700,600,this);
 
 			if (localgame) {
@@ -850,7 +873,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f);
 			g2.setComposite(ac);
 
-//			  destination		source
+			//			  destination		source
 			g.drawImage(newgame,370,395,500,500,     700,0,830,105,this);
 
 			for (int c=0; c< Colors.length ; c++) {
@@ -925,8 +948,8 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 			else if (aismart.isSelected())	{ type = "ai hard"; }
 			else if (aiveryhard.isSelected()) { type = "ai veryhard"; }
 			else			{ type = "ai crap"; }
-			*/
-		
+			 */
+
 
 			myrisk.parser("newplayer "+ ((AI)aiChooser.getSelectedItem()).getId() +" "+ color +" "+ playerName.getText() );
 
@@ -938,12 +961,15 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 			if (
 					(players.length >= 2 && players.length <= RiskGame.MAX_PLAYERS )
 					// || (players.length == 2 && domination.isSelected() && ((playerPanel)players[0]).getType() == 0 && ((playerPanel)players[1]).getType() == 0 )
-			) {
+					) {
 
-                                if (localgame) {
-                                    RiskUtil.savePlayers(myrisk,getClass());
-                                }
+				if (localgame) {
+					RiskUtil.savePlayers(myrisk,getClass());
+				}
 
+				if(fast.isSelected())
+					AIPlayer.setWait(80);
+				
 				String type="";
 				if (domination.isSelected()) type = "domination";
 				else if (capital.isSelected()) type = "capital";
@@ -999,6 +1025,13 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 			AutoPlaceAll.setEnabled(true);
 
 		}
+		else if (e.getSource()==normal)
+			AIPlayer.setWait(500);
+		else if (e.getSource()==fast)
+			AIPlayer.setWait(100);
+		else if (e.getSource()==turbo)
+			AIPlayer.setWait(1);
+		
 	}
 
 	/**
@@ -1046,7 +1079,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 	{
 
 		myrisk.parser("autosetup");
-/*
+		/*
 		String strUsername = "appletuser";
 
 		if (Risk.applet == null) {
@@ -1060,7 +1093,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		myrisk.parser("newplayer ai easy yellow  ted");
 		myrisk.parser("newplayer ai hard magenta yura");
 		myrisk.parser("newplayer ai hard cyan    lala");
-*/
+		 */
 	}//public void resetPlayers()
 
 	class MyColor {
@@ -1193,7 +1226,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 
 		button.setMargin(new Insets(0,0,0,0));
 		button.setBorderPainted(false);
-//		button.setFocusPainted(false);
+		//		button.setFocusPainted(false);
 		button.setContentAreaFilled(false);
 
 		button.addFocusListener( new ImageButtonFocusListener(button));
@@ -1274,7 +1307,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 	public void keyReleased( KeyEvent event )
 	{
 		if (event.getSource() != colorChooser
-			&& event.getSource() != playerColor) {
+				&& event.getSource() != playerColor) {
 			return;
 		}
 

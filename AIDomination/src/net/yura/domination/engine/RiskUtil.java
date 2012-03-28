@@ -463,7 +463,7 @@ return Color.white;
                         System.out.println("Error trying to load: "+fileName);
                         RiskUtil.printStackTrace(ex);
                         if (c < 5) { // retry
-                                try { Thread.sleep(1/*000*/); } catch(Exception ex2) { }
+                                try { Thread.sleep(1000); } catch(Exception ex2) { }
                         }
                         else { // give up
                                 break;
