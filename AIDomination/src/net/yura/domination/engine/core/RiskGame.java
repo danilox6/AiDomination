@@ -1020,7 +1020,7 @@ transient - A keyword in the Java programming language that indicates that a fie
 				result[4]=mustmove;
 				
 				StringBuilder log = new StringBuilder();
-				if((Risk.isLogAttacks() && attacker.getOwner().isLogged()) || (Risk.isLogReceivedAttacks() && defender.getOwner().isLogged()))
+				if((Risk.isLogAttacks() && attacker.getOwner().isLogged()) || (Risk.isLogReceivedAttacks() && lostPlayer.isLogged()))
 					log.append("       Esito Battaglia: Attaccante: "+ attacker.getArmies() +", Difensore: 0\n");
 				log.append("    -- "+attacker.getOwner().getName()+"("+attacker.getOwner().getAI().getName()+") conquista "+ defender.getName()+"\n");
 				logger.info(log.toString());
@@ -2625,4 +2625,5 @@ System.out.print(str+"]\n");
 	}
 	return 0xff000000 | (r << 16) | (g << 8) | (b << 0);
     }
+   
 }

@@ -63,7 +63,7 @@ public class Player implements Serializable {
 
 		autoendgo=true;
 		
-		logged = true;
+		logged = false;
 
 		// well everyone wants this really, i hope
 		autodefend=true;

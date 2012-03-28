@@ -711,6 +711,8 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 
 			int w=80;
 			int h=25;
+			
+			final JCheckBox log = new JCheckBox("Log");
 
 			remove = new JButton(resb.getString("newgame.removeplayer"));
 
@@ -738,7 +740,17 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 
 			sortOutButton( remove , remove1 , remove2 , remove3 );
 			remove.setBounds(226, 3, 80 , 25 );
-
+			log.setBounds(170, 3, 80 , 25 );
+			
+			log.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					myrisk.logPlayer(name, log.isSelected());
+					
+				}
+			});
+			
 			remove.addActionListener(
 					new ActionListener() {
 						public void actionPerformed(ActionEvent a) {
@@ -750,6 +762,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 					);
 
 			add(remove);
+			add(log);
 
 		}
 
@@ -786,7 +799,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 			}
 			 */
 
-			g.drawString(type.getName(), 120, 20);
+			g.drawString(type.getName(), 80/*120*/, 20);
 
 			//if (localgame) { g.drawString( resb.getString("newgame.type.local"), 140, 20); }
 			//else { g.drawString( ip, 140, 20); }
@@ -958,28 +971,39 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 
 			Component[] players = PlayersPanel.getComponents();
 
-			if (
-					(players.length >= 2 && players.length <= RiskGame.MAX_PLAYERS )
-					// || (players.length == 2 && domination.isSelected() && ((playerPanel)players[0]).getType() == 0 && ((playerPanel)players[1]).getType() == 0 )
-					) {
+			if ((players.length >= 2 && players.length <= RiskGame.MAX_PLAYERS)
+			// || (players.length == 2 && domination.isSelected() &&
+			// ((playerPanel)players[0]).getType() == 0 &&
+			// ((playerPanel)players[1]).getType() == 0 )
+			) {
 
 				if (localgame) {
-					RiskUtil.savePlayers(myrisk,getClass());
+					RiskUtil.savePlayers(myrisk, getClass());
 				}
 
-				if(fast.isSelected())
+				if (fast.isSelected())
 					AIPlayer.setWait(80);
-				
-				String type="";
-				if (domination.isSelected()) type = "domination";
-				else if (capital.isSelected()) type = "capital";
-				else if (mission.isSelected()) type = "mission";
 
-				if (increasing.isSelected()) type += " increasing";
-				else if (fixed.isSelected()) type += " fixed";
-				else if (italianLike.isSelected()) type += " italianlike";
+				String type = "";
+				if (domination.isSelected())
+					type = "domination";
+				else if (capital.isSelected())
+					type = "capital";
+				else if (mission.isSelected())
+					type = "mission";
 
-				myrisk.parser("startgame " + type + (( AutoPlaceAll.isSelected() )?(" autoplaceall"):("")) + (( recycle.isSelected() )?(" recycle"):("")) );
+				if (increasing.isSelected())
+					type += " increasing";
+				else if (fixed.isSelected())
+					type += " fixed";
+				else if (italianLike.isSelected())
+					type += " italianlike";
+
+				myrisk.parser("startgame "
+						+ type
+						+ ((AutoPlaceAll.isSelected()) ? (" autoplaceall")
+								: (""))
+						+ ((recycle.isSelected()) ? (" recycle") : ("")));
 
 			}
 			else {

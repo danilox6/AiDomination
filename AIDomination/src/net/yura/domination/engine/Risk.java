@@ -2218,7 +2218,7 @@ public class Risk extends Thread {
 							
 							if(logTacMove && game.getCurrentPlayer().isLogged())
 								logger.info("    -- "+game.getCurrentPlayer().getName() +"("+game.getCurrentPlayer().getAI().getName()+") sposta " +noa+" armate da "+ country1.getName() + " a "+ country2.getName()+"\n");
-
+							tradedCards = false;
 							
 							
 						}
@@ -2614,37 +2614,46 @@ public class Risk extends Thread {
 					// || ((Player)game.getCurrentPlayer()).getType()==Player.PLAYER_NEUTRAL
 
 					else{
-						if(game.getState() == RiskGame.STATE_PLACE_ARMIES && !tradedCards ){
+						if(game.getState() == RiskGame.STATE_PLACE_ARMIES && !tradedCards && !(!game.getCurrentPlayer().isLogged() && game.getSetup() == false)){
 							Player cPlayer = game.getCurrentPlayer();
 							StringBuilder playerInfo = new StringBuilder();
+//							if(!cPlayer.isLogged() && )
+							
 							playerInfo.append("\n\n"+cPlayer.getName()+" "+cPlayer.getAI().getName());
 							if(game.NoEmptyCountries()){
 								playerInfo.append(" (Armate disponibili: "+ cPlayer.getExtraArmies()+")\n");
-								if(logOwnedCountries){
-									ArrayList<Continent> owned = getOwnedCountriesOrdered(cPlayer);
-									playerInfo.append(" Territori Posseduti:\n");
-									for(Continent c: owned){
-										playerInfo.append("  "+c.getName()+":\n");
-										Vector<Country> countries = c.getTerritoriesContained();
-										playerInfo.append("    ");
-										for(Country co: countries){
-											playerInfo.append(co.getName() + "("+co.getArmies()+" armate) - ");
+								if(cPlayer.isLogged()){
+									if(logOwnedCountries){
+										ArrayList<Continent> owned = getOwnedCountriesOrdered(cPlayer);
+										playerInfo.append(" Territori Posseduti:\n");
+										for(Continent c: owned){
+											playerInfo.append("  "+c.getName()+":\n");
+											Vector<Country> countries = c.getTerritoriesContained();
+											playerInfo.append("    ");
+											for(Country co: countries){
+												playerInfo.append(co.getName() + "("+co.getArmies()+" armate) - ");
+											}
+											playerInfo.append("\n");
 										}
-										playerInfo.append("\n");
 									}
-								}
-								
-								if(game.getSetup()){
-									tradedCards = true;
-									if(logOwnedCards){
-										playerInfo.append(" Carte Possedute:\n");
-										Vector<Card> cards = cPlayer.getCards();
-										playerInfo.append("    "+getCardsString(cards)+"\n");
+
+									if(game.getSetup()){
+										tradedCards = true;
+										if(logOwnedCards){
+											playerInfo.append(" Carte Possedute:\n");
+											Vector<Card> cards = cPlayer.getCards();
+											playerInfo.append("    "+getCardsString(cards)+"\n");
+										}
 									}
 								}
 							}
-							logger.info(playerInfo + "\n");
+							if(cPlayer.isLogged() && (logOwnedCards || logOwnedCountries))
+								playerInfo.append("\n");
+							logger.info(playerInfo.toString());
+
 						}
+
+						
 						if ( ((Player)game.getCurrentPlayer()).getAI().getId().equals("human") ) {
 
 							controller.needInput( game.getState() );
@@ -3266,6 +3275,16 @@ public class Risk extends Thread {
 		}
 		return s.equals("")? "Nessuna": s;
 	}
+	
+    public void logPlayer(String name, boolean b){
+    	Vector<Player> players = game.getPlayers();
+    	for(Player p: players){
+    		if(p.getName().equals(name)){
+    			p.setLogged(b);
+    			return;
+    		}
+    	}
+    }
 
 
 }
