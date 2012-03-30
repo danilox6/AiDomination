@@ -1,15 +1,6 @@
 package net.yura.domination.engine.ai;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import net.yura.domination.engine.core.Card;
 import net.yura.domination.engine.core.Continent;
@@ -99,11 +90,11 @@ public class AISimple extends AI{
 
 	private String getArmyPlacement() {
 		Continent[] continents = game.getContinents();
-		final Map<Continent, Integer> accessPoints = new HashMap<Continent, Integer>();
+		final Map<Continent, Set<Country>> accessPoints = new HashMap<Continent, Set<Country>>();
 		
 		
 		for(Continent continent : continents) {
-			accessPoints.put(continent, getAccessPoints(continent));
+			accessPoints.put(continent, getConfiningTerritories(continent));
 		}
 		
 		Arrays.sort(continents, new Comparator<Continent>() {
@@ -112,13 +103,13 @@ public class AISimple extends AI{
 			public int compare(Continent arg0, Continent arg1) {
 				int comparation = new Float(getForceRatio(arg0)).compareTo(getForceRatio(arg1));
 				return comparation == 0
-					? accessPoints.get(arg0).compareTo(accessPoints.get(arg1))
+					? new Integer(accessPoints.get(arg0).size()).compareTo(accessPoints.get(arg1).size())
 					: comparation;
 			}
 			
 		});
 		
-		int armiesOwned = player.getExtraArmies();
+		int extraArmies = player.getExtraArmies();
 		int defendableContinents = continents.length;
 		float defendQuota = 0;
 		
@@ -127,8 +118,8 @@ public class AISimple extends AI{
 			float totalAccessPoints = 0;
 			
 			for(int j = 0; j < defendableContinents; ++j) {
-				totalThreatLevel += getThreatLevel(continents[j]);
-				totalAccessPoints += accessPoints.get(continents[j]);
+				totalThreatLevel += getThreatLevel(accessPoints.get(continents[j]));
+				totalAccessPoints += accessPoints.get(continents[j]).size();
 			}
 			
 			defendQuota = totalThreatLevel / totalAccessPoints;
@@ -136,54 +127,96 @@ public class AISimple extends AI{
 				break;
 		}
 		
-		return null;
+		
+		
+		List<Country> borders = new LinkedList<Country>();
+		for(int i = 0; i < defendableContinents; ++i) {
+			borders.addAll(accessPoints.get(continents[i]));
+		}
+		
+		Collections.sort(borders, new Comparator<Country>() {
+
+			@Override
+			public int compare(Country arg0, Country arg1) {
+				return getDefenseNeeded(arg1) - getDefenseNeeded(arg0);
+			}
+		});
+		
+		int armiesForDefense = (int) Math.floor(defendQuota * extraArmies);
+		if(armiesForDefense > 0) {			
+			Country mostNeedful = borders.get(0);
+			return "placearmies " + mostNeedful.getColor() + " " + Math.min(getDefenseNeeded(mostNeedful), armiesForDefense);
+		}
+		
+		Country strongest = borders.get(borders.size() - 1);
+		return "placearmies " + strongest.getColor() + " " + extraArmies;
 	}
 	
-	private int getThreatLevel(Continent continent) {
+	private int getThreatLevel(Set<Country> countries) {
 		int threatLevel = 0;
-		for(Country country : (Vector<Country>) continent.getTerritoriesContained()) {
-			if(country.getOwner() != player) 
-				continue;
-			
-			for(Country neighbour : (Vector<Country>) country.getNeighbours()) {
-				if(neighbour.getOwner() != player && neighbour.getArmies() >= country.getArmies()) 
-					threatLevel++;
-			}
+		for(Country country : countries) {
+			if(getDefenseNeeded(country) > 0)
+				threatLevel++;
 		}
 		
 		return threatLevel;
 	}
 	
-	private int getAccessPoints(Continent continent) {
-		int accessPoints = 0;
-		for(Country country : (Vector<Country>)continent.getTerritoriesContained()) {
+	@SuppressWarnings("unchecked")
+	private int getDefenseNeeded(Country country) {
+		if(country.getOwner() != player) 
+			return 0;
+		
+		int neededArmies = 0, countryArmies = country.getArmies();
+		for(Country neighbour : (Vector<Country>) country.getNeighbours()) {
+			if(neighbour.getOwner() != player && neighbour.getArmies() >= countryArmies + neededArmies) 
+				neededArmies = neighbour.getArmies() - countryArmies + 1;
+		}
+		
+		return neededArmies;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Set<Country> getConfiningTerritories(Continent continent) {
+		LinkedList<Country> toVisit = new LinkedList<Country>();
+		Set<Country> visited = new HashSet<Country>();
+		Set<Country> confiningTerritories = new HashSet<Country>();
+		
+		toVisit.addAll(continent.getTerritoriesContained());
+		while(toVisit.size() > 0) {
+			Country country = toVisit.remove();
 			if(country.getOwner() != player) 
 				continue;
 			
 			Vector<Country> neighbours = country.getNeighbours();
 			for(Country neighbour : neighbours) {
-				if(neighbour.getOwner() != player)	
-					accessPoints++;
+				visited.add(neighbour);
+				if(neighbour.getOwner() != player)
+					confiningTerritories.add(neighbour);
+				else if(!visited.contains(neighbour))
+					toVisit.addLast(neighbour);
 			}
 		}
 		
-		return accessPoints;
+		return confiningTerritories;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private float getForceRatio(Continent arg0) {
 		float myForces = 0.0f;
 		float otherForces = 0.0f;
 		for(Country c : (Vector<Country>) arg0.getTerritoriesContained()) {
 			if(c.getOwner() == player) {
-				myForces++;
+				myForces += c.getArmies();
 			} else {
-				otherForces++;
+				otherForces += c.getArmies();
 			}
 		}
 		
-		return myForces / otherForces;
+		return myForces / (myForces + otherForces);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getAttack() {
 		Vector<Country> countries = player.getTerritoriesOwned();
@@ -226,11 +259,7 @@ public class AISimple extends AI{
 
 	@Override
 	public String getAutoDefendString() {
-		int n=((Country)game.getDefender()).getArmies();
-        if (n > game.getMaxDefendDice()) {
-            return "roll "+game.getMaxDefendDice();
-        }
-    	return "roll "+n;
+    	return "roll "+ Math.min(game.getDefender().getArmies(), game.getMaxDefendDice());
 	}
 
 	@Override
