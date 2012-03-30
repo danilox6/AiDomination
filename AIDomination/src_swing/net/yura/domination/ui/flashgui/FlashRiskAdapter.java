@@ -4,9 +4,13 @@ package net.yura.domination.ui.flashgui;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+
 import java.awt.Cursor;
 import java.io.IOException;
 import javax.swing.JOptionPane;
@@ -19,6 +23,7 @@ import net.yura.domination.engine.core.Country;
 import net.yura.domination.engine.core.RiskGame;
 import net.yura.domination.engine.guishared.PicturePanel;
 import net.yura.domination.engine.translation.TranslationBundle;
+import net.yura.domination.logger.RiskLogger;
 
 /**
  * <p> Risk Listener for FlashGUI </p>
@@ -39,7 +44,7 @@ public class FlashRiskAdapter implements RiskListener {
 	private int nod;
 	private int nogames;
 
-        public FlashRiskAdapter(Risk r) {
+	public FlashRiskAdapter(Risk r) {
 
 		myrisk = r;
 
@@ -70,23 +75,23 @@ public class FlashRiskAdapter implements RiskListener {
 		newgameframe = new NewGameFrame(myrisk);
 
 
-//		if (RiskUIUtil.checkForNoSandbox()) {
-//                    
-//                    try {
-//                    	net.yura.mobile.logging.Logger.setLogger( new net.yura.swingme.core.J2SELogger() );
-//                    }
-//                    catch (Throwable th) { }
-//                    
-//                    // catch everything in my PrintStream
-//                    try {
-//                        net.yura.grasshopper.PopupBug.initSimple(RiskUtil.GAME_NAME,
-//                                Risk.RISK_VERSION+" FlashGUI" // "(save: " + RiskGame.SAVE_VERSION + " network: "+RiskGame.NETWORK_VERSION+")"
-//                                , TranslationBundle.getBundle().getLocale().toString());
-//                    }
-//                    catch(Throwable th) {
-//                        System.out.println("Grasshopper not loaded");
-//                    }
-//		}
+		//				if (RiskUIUtil.checkForNoSandbox()) {
+		//		                    
+		//		                    try {
+		//		                    	net.yura.mobile.logging.Logger.setLogger( new net.yura.swingme.core.J2SELogger() );
+		//		                    }
+		//		                    catch (Throwable th) { }
+		//		                    
+		//		                    // catch everything in my PrintStream
+		//		                    try {
+		//		                        net.yura.grasshopper.PopupBug.initSimple(RiskUtil.GAME_NAME,
+		//		                                Risk.RISK_VERSION+" FlashGUI" // "(save: " + RiskGame.SAVE_VERSION + " network: "+RiskGame.NETWORK_VERSION+")"
+		//		                                , TranslationBundle.getBundle().getLocale().toString());
+		//		                    }
+		//		                    catch(Throwable th) {
+		//		                        System.out.println("Grasshopper not loaded");
+		//		                    }
+		//				}
 	}
 
 	/**
@@ -109,12 +114,12 @@ public class FlashRiskAdapter implements RiskListener {
 	}
 
 	public void sendDebug(String a) {
-            try {
-                net.yura.grasshopper.PopupBug.log( a + System.getProperty("line.separator") );
-            }
-            catch(Throwable th) {
-            }
-        }
+		try {
+			net.yura.grasshopper.PopupBug.log( a + System.getProperty("line.separator") );
+		}
+		catch(Throwable th) {
+		}
+	}
 
 	public void showMessageDialog(String a) {
 
@@ -173,7 +178,7 @@ public class FlashRiskAdapter implements RiskListener {
 			}
 			//else { // this will update the state in the gameframe
 
-				gameFrame.needInput(s);
+			gameFrame.needInput(s);
 
 			//}
 
@@ -280,22 +285,22 @@ public class FlashRiskAdapter implements RiskListener {
 	 * @param localGame If the game is a local game
 	 */
 	public void newGame(boolean localGame) {
+		if(!RiskLogger.isMultipleGameLogger()){
+			menu.hideJoinDialog(localGame);
 
-		menu.hideJoinDialog(localGame);
+			newgameframe.setup(localGame);
 
-		newgameframe.setup(localGame);
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			Dimension frameSize = newgameframe.getSize();
+			frameSize.height = ((frameSize.height > screenSize.height) ? screenSize.height : frameSize.height);
+			frameSize.width = ((frameSize.width > screenSize.width) ? screenSize.width : frameSize.width);
+			newgameframe.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
 
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension frameSize = newgameframe.getSize();
-		frameSize.height = ((frameSize.height > screenSize.height) ? screenSize.height : frameSize.height);
-		frameSize.width = ((frameSize.width > screenSize.width) ? screenSize.width : frameSize.width);
-		newgameframe.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+			RiskUIUtil.findParentFrame(menu).setVisible(false);
 
-		RiskUIUtil.findParentFrame(menu).setVisible(false);
-
-		newgameframe.setVisible(true);
-		newgameframe.requestFocus();
-
+			newgameframe.setVisible(true);
+			newgameframe.requestFocus();
+		}
 	}
 
 	/**
@@ -316,42 +321,47 @@ public class FlashRiskAdapter implements RiskListener {
 	 * @param s If the game is a local game
 	 */
 	public void startGame(boolean s) {
+		if(!RiskLogger.isMultipleGameLogger()){
+			if ( newgameframe.isVisible() ) {
+				newgameframe.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			}
+			else {
+				menu.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			}
 
-		if ( newgameframe.isVisible() ) {
-			newgameframe.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			try {
+				pp.load();
+			}
+			catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+			gameFrame.setup(s);
+
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			Dimension frameSize = gameFrame.getSize();
+			frameSize.height = ((frameSize.height > screenSize.height) ? screenSize.height : frameSize.height);
+			frameSize.width = ((frameSize.width > screenSize.width) ? screenSize.width : frameSize.width);
+			gameFrame.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+
+			if ( newgameframe.isVisible() ) {
+				newgameframe.setVisible(false);
+			}
+			else {
+				RiskUIUtil.findParentFrame(menu).setVisible(false);
+			}
+
+			gameFrame.setVisible(true);
+
+			// this should not have to be here, but is the only way to get rid of it
+			battledialog.setVisible(false);
+
+			gameFrame.requestFocus();
+		}else{
+			if ( newgameframe.isVisible() )
+				newgameframe.setVisible(false);
+
 		}
-		else {
-			menu.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		}
-
-		try {
-			pp.load();
-		}
-		catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		gameFrame.setup(s);
-
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension frameSize = gameFrame.getSize();
-		frameSize.height = ((frameSize.height > screenSize.height) ? screenSize.height : frameSize.height);
-		frameSize.width = ((frameSize.width > screenSize.width) ? screenSize.width : frameSize.width);
-		gameFrame.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-
-		if ( newgameframe.isVisible() ) {
-			newgameframe.setVisible(false);
-		}
-		else {
-			RiskUIUtil.findParentFrame(menu).setVisible(false);
-		}
-
-		gameFrame.setVisible(true);
-
-		// this should not have to be here, but is the only way to get rid of it
-		battledialog.setVisible(false);
-
-		gameFrame.requestFocus();
 
 	}
 
@@ -360,42 +370,46 @@ public class FlashRiskAdapter implements RiskListener {
 	 */
 	public void closeGame() {
 
-		if ( gameFrame.isVisible() ) {
+		if(!RiskLogger.isMultipleGameLogger()){
+			if ( gameFrame.isVisible() ) {
 
-                        pp.stopAni(); // stop any animations
-                    
-			gameFrame.setVisible(false);
+				pp.stopAni(); // stop any animations
 
+				gameFrame.setVisible(false);
+
+			}
+			else {
+				newgameframe.setVisible(false);
+
+			}
+
+			nogames++;
+
+			try {
+				net.yura.grasshopper.PopupBug.clearLog();
+				net.yura.grasshopper.PopupBug.log( "game "+nogames+" closed, log cleared"+System.getProperty("line.separator") );
+			}
+			catch(Throwable th) {
+			}
+
+			newgameframe.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+			System.gc();
+
+
+
+
+			RiskUIUtil.findParentFrame(menu).setVisible(true);
+
+
+
+
+
+			menu.requestFocus();
+			menu.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}else{
+//			newgameframe.setVisible(true);
 		}
-		else {
-			newgameframe.setVisible(false);
-
-		}
-
-		nogames++;
-
-                try {
-                    net.yura.grasshopper.PopupBug.clearLog();
-                    net.yura.grasshopper.PopupBug.log( "game "+nogames+" closed, log cleared"+System.getProperty("line.separator") );
-                }
-                catch(Throwable th) {
-                }
-
-		newgameframe.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-
-		System.gc();
-
-
-
-
-		RiskUIUtil.findParentFrame(menu).setVisible(true);
-
-
-
-
-
-		menu.requestFocus();
-		menu.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
 	}
 
@@ -414,12 +428,12 @@ public class FlashRiskAdapter implements RiskListener {
 	 * @param p The image of the map
 	 */
 	public void showMapPic(RiskGame p) {
-            ImageIcon i=null;
-            try {
-                i = new ImageIcon( PicturePanel.getImage(p) );
-            }
-            catch (Throwable th) { }
-            newgameframe.setMap( i ); // SCALE_DEFAULT
+		ImageIcon i=null;
+		try {
+			i = new ImageIcon( PicturePanel.getImage(p) );
+		}
+		catch (Throwable th) { }
+		newgameframe.setMap( i ); // SCALE_DEFAULT
 	}
 
 	/**

@@ -14,417 +14,417 @@ import net.yura.domination.engine.core.RiskGame;
 
 public class RiskController {
 
-    private Vector obs;
+	private Vector obs;
 
-    public RiskController() {
-	obs = new Vector();
-    }
-
-    /**
-     * Adds an observer to the set of observers for this object, provided
-     * that it is not the same as some observer already in the set.
-     * The order in which notifications will be delivered to multiple
-     * observers is not specified. See the class comment.
-     *
-     * @param   o   an observer to be added.
-     * @throws NullPointerException   if the parameter o is null.
-     */
-    public synchronized void addListener(RiskListener o) {
-        if (o == null)
-            throw new NullPointerException();
-	if (!obs.contains(o)) {
-	    obs.addElement(o);
+	public RiskController() {
+		obs = new Vector();
 	}
-    }
 
-    public int countListeners() {
-
-	return obs.size();
-
-    }
-
-    /**
-     * Deletes an observer from the set of observers of this object.
-     * Passing <CODE>null</CODE> to this method will have no effect.
-     * @param   o   the observer to be deleted.
-     */
-    public synchronized void deleteListener(RiskListener o) {
-        obs.removeElement(o);
-    }
-
-
-    public void sendMessage(String output, boolean redrawNeeded, boolean repaintNeeded) {
-
-        Object[] arrLocal;
-
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
-
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).sendMessage(output,redrawNeeded,repaintNeeded);
+	/**
+	 * Adds an observer to the set of observers for this object, provided
+	 * that it is not the same as some observer already in the set.
+	 * The order in which notifications will be delivered to multiple
+	 * observers is not specified. See the class comment.
+	 *
+	 * @param   o   an observer to be added.
+	 * @throws NullPointerException   if the parameter o is null.
+	 */
+	public synchronized void addListener(RiskListener o) {
+		if (o == null)
+			throw new NullPointerException();
+		if (!obs.contains(o)) {
+			obs.addElement(o);
+		}
 	}
-	catch(Exception ex) {
-	    RiskUtil.printStackTrace(ex);
+
+	public int countListeners() {
+
+		return obs.size();
+
 	}
-    }
 
-    public void needInput(int s) {
-
-        Object[] arrLocal;
-
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
-
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).needInput(s);
-        }
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
-
-    public void noInput() {
-
-        Object[] arrLocal;
-
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
-
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).noInput();
+	/**
+	 * Deletes an observer from the set of observers of this object.
+	 * Passing <CODE>null</CODE> to this method will have no effect.
+	 * @param   o   the observer to be deleted.
+	 */
+	public synchronized void deleteListener(RiskListener o) {
+		obs.removeElement(o);
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void setGameStatus(String state) {
 
-        Object[] arrLocal;
+	public void sendMessage(String output, boolean redrawNeeded, boolean repaintNeeded) {
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		Object[] arrLocal;
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).setGameStatus(state);
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
+
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).sendMessage(output,redrawNeeded,repaintNeeded);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void newGame(boolean t) {
+	public void needInput(int s) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).newGame(t);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).needInput(s);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void startGame(boolean s) {
+	public void noInput() {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).startGame(s);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).noInput();
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void closeGame() {
+	public void setGameStatus(String state) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).closeGame();
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).setGameStatus(state);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void setSlider(int min, int c1num, int c2num) {
+	public void newGame(boolean t) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).setSlider(min,c1num,c2num);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).newGame(t);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void armiesLeft(int l, boolean s) {
+	public void startGame(boolean s) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).armiesLeft(l,s);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).startGame(s);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void showDice(int n, boolean w) {
+	public void closeGame() {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).showDice(n,w);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).closeGame();
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void showMapPic(RiskGame p) {
+	public void setSlider(int min, int c1num, int c2num) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).showMapPic(p);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).setSlider(min,c1num,c2num);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void showCardsFile(String c, boolean m) {
+	public void armiesLeft(int l, boolean s) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).showCardsFile(c, m);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).armiesLeft(l,s);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void serverState(boolean s) {
+	public void showDice(int n, boolean w) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).serverState(s);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).showDice(n,w);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void openBattle(int c1num, int c2num) {
+	public void showMapPic(RiskGame p) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).openBattle(c1num,c2num);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).showMapPic(p);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void closeBattle() {
+	public void showCardsFile(String c, boolean m) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).closeBattle();
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).showCardsFile(c, m);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void addPlayer(AI type, String name, int color, String ip) {
+	public void serverState(boolean s) {
 
-    	Object[] arrLocal;
+		Object[] arrLocal;
 
-    	synchronized (this) {
-    		arrLocal = obs.toArray();
-    	}
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-    	try {
-    		for (int i = arrLocal.length-1; i>=0; i--)
-    			((RiskListener)arrLocal[i]).addPlayer(type, name, color, ip);
-    	}
-    	catch(Exception ex) {
-    		RiskUtil.printStackTrace(ex);
-    	}
-    }
-
-    public void delPlayer(String name) {
-
-        Object[] arrLocal;
-
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
-
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).delPlayer(name);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).serverState(s);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void showDiceResults(int[] att, int[] def) {
+	public void openBattle(int c1num, int c2num) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).showDiceResults(att,def);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).openBattle(c1num,c2num);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void setNODAttacker(int n) {
+	public void closeBattle() {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).setNODAttacker(n);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).closeBattle();
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void setNODDefender(int n) {
+	public void addPlayer(AI type, String name, int color, String ip) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).setNODDefender(n);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).addPlayer(type, name, color, ip);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void sendDebug(String a) {
+	public void delPlayer(String name) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).sendDebug(a);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).delPlayer(name);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
 
-    public void showMessageDialog(String a) {
+	public void showDiceResults(int[] att, int[] def) {
 
-        Object[] arrLocal;
+		Object[] arrLocal;
 
-	synchronized (this) {
-            arrLocal = obs.toArray();
-        }
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
 
-	try {
-            for (int i = arrLocal.length-1; i>=0; i--)
-                ((RiskListener)arrLocal[i]).showMessageDialog(a);
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).showDiceResults(att,def);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
 	}
-        catch(Exception ex) {
-            RiskUtil.printStackTrace(ex);
-        }
-    }
+
+	public void setNODAttacker(int n) {
+
+		Object[] arrLocal;
+
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
+
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).setNODAttacker(n);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
+	}
+
+	public void setNODDefender(int n) {
+
+		Object[] arrLocal;
+
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
+
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).setNODDefender(n);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
+	}
+
+	public void sendDebug(String a) {
+
+		Object[] arrLocal;
+
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
+
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).sendDebug(a);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
+	}
+
+	public void showMessageDialog(String a) {
+
+		Object[] arrLocal;
+
+		synchronized (this) {
+			arrLocal = obs.toArray();
+		}
+
+		try {
+			for (int i = arrLocal.length-1; i>=0; i--)
+				((RiskListener)arrLocal[i]).showMessageDialog(a);
+		}
+		catch(Exception ex) {
+			RiskUtil.printStackTrace(ex);
+		}
+	}
 
 }

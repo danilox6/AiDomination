@@ -55,6 +55,7 @@ import net.yura.domination.engine.guishared.AboutDialog;
 import net.yura.domination.engine.guishared.BadgeButton;
 import net.yura.domination.engine.guishared.RiskFileFilter;
 import net.yura.domination.engine.translation.TranslationBundle;
+import net.yura.domination.logger.RiskLogger;
 
 /**
  * <p> New Game Frame for FlashGUI </p>
@@ -72,6 +73,9 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 	private JTextField cardsFile;
 	private JPanel PlayersPanel;
 
+	private JTextField numPartite;
+	private JCheckBox multipleGames;
+	
 	private JButton chooseMap;
 	private JButton defaultMap;
 
@@ -432,13 +436,34 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		help = new JButton(); // 335 528
 		sortOutButton( help , newgame.getSubimage(781, 526, 30 , 30) , newgame.getSubimage(794, 171, 30 , 30) , newgame.getSubimage(794, 202, 30 , 30) );
 		help.addActionListener( this );
-		help.setBounds(335, 529, 30 , 30 ); // should be 528
+		help.setBounds(300, 529, 30 , 30 ); // should be 528
 
 		start = new JButton(resb.getString("newgame.startgame"));
 		sortOutButton( start , newgame.getSubimage(544, 528, w, h) , newgame.getSubimage(700, 295, w, h) , newgame.getSubimage(700, 326, w, h) );
 		start.addActionListener( this );
 		start.setBounds(544, 528, 115 , 31 );
+		
+		multipleGames = new JCheckBox("Avvia più partite:");
+		multipleGames.setSelected(false);
+		multipleGames.setBounds(348, 529, 150 , 31 );
+		numPartite = new JTextField("10");
+		numPartite.setBounds(495, 532, 40 , 25);
+		numPartite.setEnabled(false);
+		
+		multipleGames.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				turbo.doClick();
+				numPartite.setEnabled(multipleGames.isSelected());
+				RiskLogger.setMultipleGameLogger(multipleGames.isSelected());
+			}
+		});
+		
 
+		ngp.add(multipleGames);
+		ngp.add(numPartite);
+		
 		ngp.add(mapPic);
 		ngp.add(chooseMap);
 		ngp.add(defaultMap);
@@ -983,28 +1008,35 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 
 				if (fast.isSelected())
 					AIPlayer.setWait(80);
+				if (multipleGames.isSelected()){
+					AIPlayer.setWait(1);
+					RiskLogger.setGamesNumber(Integer.parseInt(numPartite.getText()));
+					RiskLogger.setRisk(myrisk);
+				}else{
 
-				String type = "";
-				if (domination.isSelected())
-					type = "domination";
-				else if (capital.isSelected())
-					type = "capital";
-				else if (mission.isSelected())
-					type = "mission";
+					String type = "";
+					if (domination.isSelected())
+						type = "domination";
+					else if (capital.isSelected())
+						type = "capital";
+					else if (mission.isSelected())
+						type = "mission";
 
-				if (increasing.isSelected())
-					type += " increasing";
-				else if (fixed.isSelected())
-					type += " fixed";
-				else if (italianLike.isSelected())
-					type += " italianlike";
+					if (increasing.isSelected())
+						type += " increasing";
+					else if (fixed.isSelected())
+						type += " fixed";
+					else if (italianLike.isSelected())
+						type += " italianlike";
 
-				myrisk.parser("startgame "
-						+ type
-						+ ((AutoPlaceAll.isSelected()) ? (" autoplaceall")
-								: (""))
-						+ ((recycle.isSelected()) ? (" recycle") : ("")));
+			
+					myrisk.parser("startgame "
+							+ type
+							+ ((AutoPlaceAll.isSelected()) ? (" autoplaceall")
+									: (""))
+									+ ((recycle.isSelected()) ? (" recycle") : ("")));
 
+				}
 			}
 			else {
 

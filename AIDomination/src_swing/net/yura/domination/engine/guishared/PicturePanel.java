@@ -28,6 +28,7 @@ import net.yura.domination.engine.core.Country;
 import net.yura.domination.engine.core.Player;
 import net.yura.domination.engine.core.RiskGame;
 import net.yura.domination.engine.translation.TranslationBundle;
+import net.yura.domination.logger.RiskLogger;
 
 
 /**
@@ -351,6 +352,7 @@ public class PicturePanel extends JPanel implements MapPanel {
 
 
                 if (game.getState() == RiskGame.STATE_GAME_OVER) {
+           
                     if (ballWorld==null) {
                         ballWorld = new BallWorld(myrisk, this, r); // start the ball world!!
                     }

@@ -1019,12 +1019,13 @@ transient - A keyword in the Java programming language that indicates that a fie
 
 				result[4]=mustmove;
 				
-				StringBuilder log = new StringBuilder();
-				if((Risk.isLogAttacks() && attacker.getOwner().isLogged()) || (Risk.isLogReceivedAttacks() && lostPlayer.isLogged()))
+				
+				if((Risk.isLogAttacks() && attacker.getOwner().isLogged()) || (Risk.isLogReceivedAttacks() && lostPlayer.isLogged())){
+					StringBuilder log = new StringBuilder();
 					log.append("       Esito Battaglia: Attaccante: "+ attacker.getArmies() +", Difensore: 0\n");
-				log.append("    -- "+attacker.getOwner().getName()+"("+attacker.getOwner().getAI().getName()+") conquista "+ defender.getName()+"\n");
-				logger.info(log.toString());
-
+					log.append("    -- "+attacker.getOwner().getName()+"("+attacker.getOwner().getAI().getName()+") conquista "+ defender.getName()+"\n");
+					logger.info(log.toString());
+				}
 				// if the player has been eliminated
 				if ( lostPlayer.getNoTerritoriesOwned() == 0) {
 
@@ -1044,7 +1045,8 @@ transient - A keyword in the Java programming language that indicates that a fie
 						tradeCap=true;
 					}
 					
-					logger.info("!!! "+lostPlayer.getName()+"("+lostPlayer.getAI().getName()+") ELIMINATO!!!\n");
+					if(Risk.isLogLosersWinner())
+						logger.info("\n!!! "+lostPlayer.getName()+"("+lostPlayer.getAI().getName()+") ELIMINATO!!!\n\n");
 
 				}
 
@@ -1420,6 +1422,9 @@ transient - A keyword in the Java programming language that indicates that a fie
 
 		if (result==true) {
 			gameState=STATE_GAME_OVER;
+			if(Risk.isLogLosersWinner())
+				Logger.getLogger(RiskLogger.LOGGER).info("\n!!! "+currentPlayer.getName() + "("+currentPlayer.getAI().getName()+") HA VINTO!!!" );
+			RiskLogger.newVictory(currentPlayer.getName());			
 		}
 
 		return result;
