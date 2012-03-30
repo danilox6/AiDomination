@@ -45,8 +45,8 @@ import net.yura.domination.engine.translation.TranslationBundle;
  */
 public class GameFrame extends JFrame implements KeyListener {
 
-        public static final Color UI_COLOR = Color.RED;
-    
+	public static final Color UI_COLOR = Color.RED;
+
 	private BufferedImage game;
 	private Risk myrisk;
 	private PicturePanel pp;
@@ -87,7 +87,7 @@ public class GameFrame extends JFrame implements KeyListener {
 	private JButton helpbutton;
 	private JButton closebutton;
 
-        private MouseInputAdapter mapListener;
+	private MouseInputAdapter mapListener;
 
 	public GameFrame(Risk r, PicturePanel p) {
 
@@ -98,21 +98,21 @@ public class GameFrame extends JFrame implements KeyListener {
 		myrisk=r;
 		pp=p;
 
-                final MapMouseListener mml = new MapMouseListener(myrisk,pp);
-                mapListener = new MouseInputAdapter() {
-                    public void mouseExited(MouseEvent e) {
-                        mml.mouseExited();
-                    }
-                    public void mouseReleased(MouseEvent e) {
-                        int[] click = mml.mouseReleased(e.getX(),e.getY(),gameState);
-                        if (click!=null) {
-                            mapClick(click,e);
-                        }
-                    }
-                    public void mouseMoved(MouseEvent e) {
-                        mml.mouseMoved(e.getX(),e.getY(),gameState);
-                    }
-                };
+		final MapMouseListener mml = new MapMouseListener(myrisk,pp);
+		mapListener = new MouseInputAdapter() {
+			public void mouseExited(MouseEvent e) {
+				mml.mouseExited();
+			}
+			public void mouseReleased(MouseEvent e) {
+				int[] click = mml.mouseReleased(e.getX(),e.getY(),gameState);
+				if (click!=null) {
+					mapClick(click,e);
+				}
+			}
+			public void mouseMoved(MouseEvent e) {
+				mml.mouseMoved(e.getX(),e.getY(),gameState);
+			}
+		};
 
 		menuOn=false;
 		graphOn=false;
@@ -186,80 +186,80 @@ public class GameFrame extends JFrame implements KeyListener {
 		final BufferedImage topright=game.getSubimage(63+l+m,0,740-(l+m),54);
 
 		JPanel fp = new JPanel() {
-		    public void paintComponent(Graphics g) {
+			public void paintComponent(Graphics g) {
 
-			//		  destination		source
-			//g.drawImage(game,0,0,740,54,     63,0,803,54,this); // top
+				//		  destination		source
+				//g.drawImage(game,0,0,740,54,     63,0,803,54,this); // top
 
-			g.drawImage(topleft,0,0,this);
-			for (int c=topleft.getWidth();c<getWidth()-topright.getWidth();c=c+topmiddle.getWidth() ) {
-				g.drawImage(topmiddle,c,0,this);
+				g.drawImage(topleft,0,0,this);
+				for (int c=topleft.getWidth();c<getWidth()-topright.getWidth();c=c+topmiddle.getWidth() ) {
+					g.drawImage(topmiddle,c,0,this);
+				}
+				g.drawImage(topright,getWidth()-topright.getWidth(),0,this);
+
+				Graphics2D g2 = (Graphics2D)g;
+
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+				FontRenderContext frc = g2.getFontRenderContext();
+				Font font = g2.getFont();
+				g2.setColor( Color.BLACK );
+				TextLayout tl;
+
+				tl = new TextLayout( resb.getString("game.tabs.continents") , font, frc);
+				tl.draw( g2, (float) (81-tl.getBounds().getWidth()/2), (float)26 );
+
+				tl = new TextLayout( resb.getString("game.tabs.ownership") , font, frc);
+				tl.draw( g2, (float) (196-tl.getBounds().getWidth()/2), (float)26 );
+
+				tl = new TextLayout( resb.getString("game.tabs.borderthreat") , font, frc);
+				tl.draw( g2, (float) (311-tl.getBounds().getWidth()/2), (float)26 );
+
+				tl = new TextLayout( resb.getString("game.tabs.cardownership") , font, frc);
+				tl.draw( g2, (float) (426-tl.getBounds().getWidth()/2), (float)26 );
+
+				tl = new TextLayout( resb.getString("game.tabs.troopstrength") , font, frc);
+				tl.draw( g2, (float) (541-tl.getBounds().getWidth()/2), (float)26 );
+
+				tl = new TextLayout( resb.getString("game.tabs.connectedempire") , font, frc);
+				tl.draw( g2, (float) (656-tl.getBounds().getWidth()/2), (float)26 );
+
+
+
+				if (mapView==PicturePanel.VIEW_CONTINENTS) {
+					g.drawImage(game,24,32,139,39,   64,383,179,390,this);
+				}
+				else if (mapView==PicturePanel.VIEW_OWNERSHIP) {
+					g.drawImage(game,139,32,254,39,     64,390,179,397,this);
+				}
+				else if (mapView==PicturePanel.VIEW_BORDER_THREAT) {
+					g.drawImage(game,254,32,369,39,     64,397,179,404,this);
+				}
+				else if (mapView==PicturePanel.VIEW_CARD_OWNERSHIP) {
+					g.drawImage(game,369,32,484,39,     64,404,179,411,this);
+				}
+				else if (mapView==PicturePanel.VIEW_TROOP_STRENGTH) {
+					g.drawImage(game,484,32,599,39,     64,411,179,418,this);
+				}
+				else if (mapView==PicturePanel.VIEW_CONNECTED_EMPIRE) {
+					g.drawImage(game,599,32,714,39,     64,418,179,425,this);
+				}
+
+				g.drawLine(30,53,getWidth()-32,53);
+
 			}
-			g.drawImage(topright,getWidth()-topright.getWidth(),0,this);
-
-			Graphics2D g2 = (Graphics2D)g;
-
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-			FontRenderContext frc = g2.getFontRenderContext();
-			Font font = g2.getFont();
-			g2.setColor( Color.BLACK );
-			TextLayout tl;
-
-			tl = new TextLayout( resb.getString("game.tabs.continents") , font, frc);
-			tl.draw( g2, (float) (81-tl.getBounds().getWidth()/2), (float)26 );
-
-			tl = new TextLayout( resb.getString("game.tabs.ownership") , font, frc);
-			tl.draw( g2, (float) (196-tl.getBounds().getWidth()/2), (float)26 );
-
-			tl = new TextLayout( resb.getString("game.tabs.borderthreat") , font, frc);
-			tl.draw( g2, (float) (311-tl.getBounds().getWidth()/2), (float)26 );
-
-			tl = new TextLayout( resb.getString("game.tabs.cardownership") , font, frc);
-			tl.draw( g2, (float) (426-tl.getBounds().getWidth()/2), (float)26 );
-
-			tl = new TextLayout( resb.getString("game.tabs.troopstrength") , font, frc);
-			tl.draw( g2, (float) (541-tl.getBounds().getWidth()/2), (float)26 );
-
-			tl = new TextLayout( resb.getString("game.tabs.connectedempire") , font, frc);
-			tl.draw( g2, (float) (656-tl.getBounds().getWidth()/2), (float)26 );
-
-
-
-			if (mapView==PicturePanel.VIEW_CONTINENTS) {
-				g.drawImage(game,24,32,139,39,   64,383,179,390,this);
-			}
-			else if (mapView==PicturePanel.VIEW_OWNERSHIP) {
-				g.drawImage(game,139,32,254,39,     64,390,179,397,this);
-			}
-			else if (mapView==PicturePanel.VIEW_BORDER_THREAT) {
-				g.drawImage(game,254,32,369,39,     64,397,179,404,this);
-			}
-			else if (mapView==PicturePanel.VIEW_CARD_OWNERSHIP) {
-				g.drawImage(game,369,32,484,39,     64,404,179,411,this);
-			}
-			else if (mapView==PicturePanel.VIEW_TROOP_STRENGTH) {
-				g.drawImage(game,484,32,599,39,     64,411,179,418,this);
-			}
-			else if (mapView==PicturePanel.VIEW_CONNECTED_EMPIRE) {
-				g.drawImage(game,599,32,714,39,     64,418,179,425,this);
-			}
-
-			g.drawLine(30,53,getWidth()-32,53);
-
-		    }
 		};
 		//fp.setBounds(0,0, (int)d.getWidth() , (int)d.getHeight() );
 		fp.addMouseListener( new MouseInputAdapter() {
-                    public void mouseReleased(MouseEvent e) {
-                	int click=insideButton(e.getX(),e.getY());
-			if (click != -1) { // this means it was one of the view buttons
-				if (mapView !=click) {
-					setMapView(click);
+			public void mouseReleased(MouseEvent e) {
+				int click=insideButton(e.getX(),e.getY());
+				if (click != -1) { // this means it was one of the view buttons
+					if (mapView !=click) {
+						setMapView(click);
+					}
 				}
 			}
-                    }
-                } );
+		} );
 		//fp.addMouseMotionListener(this);
 
 
@@ -271,91 +271,91 @@ public class GameFrame extends JFrame implements KeyListener {
 		final BufferedImage bottomright=game.getSubimage(63+l+m,54,740-(l+m),121);
 
 		JPanel fpBottom = new JPanel() {
-		    public void paintComponent(Graphics g) {
+			public void paintComponent(Graphics g) {
 
-			//g.drawImage(game,0,0,740,121,  63,54,803,175,this); // bottom
+				//g.drawImage(game,0,0,740,121,  63,54,803,175,this); // bottom
 
-			g.drawImage(bottomleft,0,0,this);
-			for (int c=bottomleft.getWidth();c<getWidth()-bottomright.getWidth();c=c+bottommiddle.getWidth() ) {
-				g.drawImage(bottommiddle,c,0,this);
-			}
-			g.drawImage(bottomright,getWidth()-bottomright.getWidth(),0,this);
-
-			Graphics2D g2 = (Graphics2D)g;
-
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-
-			int[] colorss = colors;
-
-			for (int c=0; c<colorss.length; c++) {
-
-				Color col = new Color( colorss[c] );
-
-				g.setColor( new Color(col.getRed(),col.getGreen(),col.getBlue(), 100) );
-
-				if (c==0) {
-					g.fillArc(8, 89, 24 , 24, 90, 180);
-					g.fillRect( 20 , 89 , (getWidth()-173)-(24*(colorss.length-c)) , 24);
+				g.drawImage(bottomleft,0,0,this);
+				for (int c=bottomleft.getWidth();c<getWidth()-bottomright.getWidth();c=c+bottommiddle.getWidth() ) {
+					g.drawImage(bottommiddle,c,0,this);
 				}
-				else {
-					g.fillRect( (getWidth()-177)-(24*(colorss.length-c)) , 89 , 24 , 24);
+				g.drawImage(bottomright,getWidth()-bottomright.getWidth(),0,this);
+
+				Graphics2D g2 = (Graphics2D)g;
+
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+
+				int[] colorss = colors;
+
+				for (int c=0; c<colorss.length; c++) {
+
+					Color col = new Color( colorss[c] );
+
+					g.setColor( new Color(col.getRed(),col.getGreen(),col.getBlue(), 100) );
+
+					if (c==0) {
+						g.fillArc(8, 89, 24 , 24, 90, 180);
+						g.fillRect( 20 , 89 , (getWidth()-173)-(24*(colorss.length-c)) , 24);
+					}
+					else {
+						g.fillRect( (getWidth()-177)-(24*(colorss.length-c)) , 89 , 24 , 24);
+					}
+
 				}
 
+				if (gameStatus!=null) {
+
+					g.setColor( new Color( RiskUtil.getTextColorFor( colors[0] ) ) );
+					g.setFont( new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 11) );
+					g.drawString(gameStatus, 22, 105);
+				}
+
+				g2.setColor( Color.BLACK );
+
+				TextLayout tl=null;
+				FontRenderContext frc = g2.getFontRenderContext();
+				Font font = g2.getFont();
+
+				if ( gameState==RiskGame.STATE_NEW_GAME ) {
+					tl = new TextLayout( resb.getString("game.pleasewait") , font, frc);
+				}
+				else if ( (gameState==RiskGame.STATE_TRADE_CARDS || gameState==RiskGame.STATE_PLACE_ARMIES || gameState==RiskGame.STATE_ATTACKING || gameState==RiskGame.STATE_SELECT_CAPITAL || gameState==RiskGame.STATE_FORTIFYING ) && !(note.equals("")) ) {
+					tl = new TextLayout( note , font, frc);
+				}
+
+				if (tl!=null) {
+					tl.draw( g2, (float) (getWidth()-84-tl.getBounds().getWidth()/2), (float)57 );
+				}
+
+
+				g.drawLine(30,0,getWidth()-32,0);
+
 			}
 
-			if (gameStatus!=null) {
-
-				g.setColor( new Color( RiskUtil.getTextColorFor( colors[0] ) ) );
-				g.setFont( new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 11) );
-				g.drawString(gameStatus, 22, 105);
+			public void setBounds(int x,int y,int w,int h) {
+				super.setBounds(x,y,w,h);
+				gobutton.setBounds(getWidth()-140, 74, 115 , 31 );
 			}
-
-			g2.setColor( Color.BLACK );
-
-			TextLayout tl=null;
-			FontRenderContext frc = g2.getFontRenderContext();
-			Font font = g2.getFont();
-
-			if ( gameState==RiskGame.STATE_NEW_GAME ) {
-				tl = new TextLayout( resb.getString("game.pleasewait") , font, frc);
-			}
-			else if ( (gameState==RiskGame.STATE_TRADE_CARDS || gameState==RiskGame.STATE_PLACE_ARMIES || gameState==RiskGame.STATE_ATTACKING || gameState==RiskGame.STATE_SELECT_CAPITAL || gameState==RiskGame.STATE_FORTIFYING ) && !(note.equals("")) ) {
-				tl = new TextLayout( note , font, frc);
-			}
-
-			if (tl!=null) {
-				tl.draw( g2, (float) (getWidth()-84-tl.getBounds().getWidth()/2), (float)57 );
-			}
-
-
-			g.drawLine(30,0,getWidth()-32,0);
-
-		    }
-
-		    public void setBounds(int x,int y,int w,int h) {
-			super.setBounds(x,y,w,h);
-			gobutton.setBounds(getWidth()-140, 74, 115 , 31 );
-		    }
 		};
 		fpBottom.setLayout(null);
 
 		JPanel fpLeft = new JPanel() {
-		    public void paintComponent(Graphics g) {
-			// getHeight() = 425
-			g.drawImage(game,0,0,31,getHeight(),    0,0,31,425,this); // left
-			g.setColor(Color.BLACK);
-			g.drawLine(30,0,30,getHeight());
-		    }
+			public void paintComponent(Graphics g) {
+				// getHeight() = 425
+				g.drawImage(game,0,0,31,getHeight(),    0,0,31,425,this); // left
+				g.setColor(Color.BLACK);
+				g.drawLine(30,0,30,getHeight());
+			}
 		};
 
 		JPanel fpRight = new JPanel() {
-		    public void paintComponent(Graphics g) {
-			// getHeight() = 425
-			g.drawImage(game,0,0,32,getHeight(), 31,0,63,425,this); // right
-			g.setColor(Color.BLACK);
-			g.drawLine(0,0,0,getHeight());
-		    }
+			public void paintComponent(Graphics g) {
+				// getHeight() = 425
+				g.drawImage(game,0,0,32,getHeight(), 31,0,63,425,this); // right
+				g.setColor(Color.BLACK);
+				g.drawLine(0,0,0,getHeight());
+			}
 		};
 
 		int w=114;
@@ -433,12 +433,12 @@ public class GameFrame extends JFrame implements KeyListener {
 		setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		addWindowListener(
-			new java.awt.event.WindowAdapter() {
-				public void windowClosing(java.awt.event.WindowEvent evt) {
-					closeleave();
+				new java.awt.event.WindowAdapter() {
+					public void windowClosing(java.awt.event.WindowEvent evt) {
+						closeleave();
+					}
 				}
-			}
-		);
+				);
 
 		this			.addKeyListener( this);
 		cardsbutton		.addKeyListener( this);
@@ -525,10 +525,10 @@ public class GameFrame extends JFrame implements KeyListener {
 			else if (e.getSource()==savebutton) {
 
 				String name = RiskUIUtil.getSaveFileName(
-					GameFrame.this
-					//RiskUtil.SAVES_DIR,
-					//RiskFileFilter.RISK_SAVE_FILES
-				);
+						GameFrame.this
+						//RiskUtil.SAVES_DIR,
+						//RiskFileFilter.RISK_SAVE_FILES
+						);
 
 				if (name!=null) {
 
@@ -587,7 +587,7 @@ public class GameFrame extends JFrame implements KeyListener {
 		if (graphOn) { graphdialog.setVisible(false); graphOn=false; }
 
 		//if (localGame) {
-			go("closegame");
+		go("closegame");
 		//}
 		//else {
 		//	go("leave");
@@ -597,7 +597,7 @@ public class GameFrame extends JFrame implements KeyListener {
 	public void repaintCountries() {
 
 		pp.repaintCountries( mapView );
-/*
+		/*
 		if (mapView==1) {
 			pp.repaintCountries( PicturePanel.VIEW_CONTINENTS );
 		}
@@ -616,7 +616,7 @@ public class GameFrame extends JFrame implements KeyListener {
 		else if (mapView==6) {
 			pp.repaintCountries( PicturePanel.VIEW_CONNECTED_EMPIRE );
 		}
-*/
+		 */
 	}
 
 	public void setGameStatus(String state) {
@@ -647,82 +647,82 @@ public class GameFrame extends JFrame implements KeyListener {
 
 		switch (gameState) {
 
-			case RiskGame.STATE_TRADE_CARDS: {
+		case RiskGame.STATE_TRADE_CARDS: {
 
-				// after wiping out someone if you go into trade mode
-				pp.setC1(255);
-				pp.setC2(255);
+			// after wiping out someone if you go into trade mode
+			pp.setC1(255);
+			pp.setC2(255);
 
-				goButtonText = resb.getString("game.button.go.endtrade");
+			goButtonText = resb.getString("game.button.go.endtrade");
 
-				break;
-			}
-			case RiskGame.STATE_PLACE_ARMIES: {
+			break;
+		}
+		case RiskGame.STATE_PLACE_ARMIES: {
 
-				if (setupDone==false) {
+			if (setupDone==false) {
 
-					goButtonText = resb.getString("game.button.go.autoplace");
-
-				}
-
-				break;
+				goButtonText = resb.getString("game.button.go.autoplace");
 
 			}
-			case RiskGame.STATE_ATTACKING: {
 
-				pp.setC1(255);
-				pp.setC2(255);
+			break;
 
-				note = resb.getString("game.note.selectattacker");
+		}
+		case RiskGame.STATE_ATTACKING: {
 
-				goButtonText = resb.getString("game.button.go.endattack");
+			pp.setC1(255);
+			pp.setC2(255);
 
-				break;
+			note = resb.getString("game.note.selectattacker");
+
+			goButtonText = resb.getString("game.button.go.endattack");
+
+			break;
+		}
+		case RiskGame.STATE_FORTIFYING: {
+
+			note = resb.getString("game.note.selectsource");
+
+			goButtonText = resb.getString("game.button.go.nomove");
+
+			break;
+		}
+		case RiskGame.STATE_END_TURN: {
+
+			goButtonText = resb.getString("game.button.go.endgo");
+
+			break;
+
+		}
+		case RiskGame.STATE_GAME_OVER: {
+
+			if (localGame) {
+				goButtonText = resb.getString("game.button.go.closegame");
 			}
-			case RiskGame.STATE_FORTIFYING: {
-
-				note = resb.getString("game.note.selectsource");
-
-				goButtonText = resb.getString("game.button.go.nomove");
-
-				break;
+			else {
+				goButtonText = resb.getString("game.button.go.leavegame");
 			}
-			case RiskGame.STATE_END_TURN: {
 
-				goButtonText = resb.getString("game.button.go.endgo");
+			break;
 
-				break;
+		}
+		case RiskGame.STATE_SELECT_CAPITAL: {
 
-			}
-			case RiskGame.STATE_GAME_OVER: {
+			note = resb.getString("game.note.happyok");
 
-				if (localGame) {
-					goButtonText = resb.getString("game.button.go.closegame");
-				}
-				else {
-					goButtonText = resb.getString("game.button.go.leavegame");
-				}
+			goButtonText = resb.getString("game.button.go.ok");
 
-				break;
+			break;
+		}
+		case RiskGame.STATE_BATTLE_WON: {
 
-			}
-			case RiskGame.STATE_SELECT_CAPITAL: {
+			movedialog.setVisible(true);
 
-				note = resb.getString("game.note.happyok");
-
-				goButtonText = resb.getString("game.button.go.ok");
-
-				break;
-			}
-			case RiskGame.STATE_BATTLE_WON: {
-
-				movedialog.setVisible(true);
-
-				break;
-			}
-			// for gameState 4 look in FlashRiskAdapter.java
-			// for gameState 10 look in FlashRiskAdapter.java
-			default: break;
+			break;
+		}
+		// for gameState 4 look in FlashRiskAdapter.java
+		// for gameState 10 look in FlashRiskAdapter.java
+		default: break;
 
 		}
 
@@ -756,8 +756,8 @@ public class GameFrame extends JFrame implements KeyListener {
 
 			if (localGame) {
 
-			    undobutton.setEnabled(true);
-			    savebutton.setEnabled(true);
+				undobutton.setEnabled(true);
+				savebutton.setEnabled(true);
 
 			}
 
@@ -910,72 +910,72 @@ public class GameFrame extends JFrame implements KeyListener {
 
 	}
 
-        public void mapClick(final int[] countries,MouseEvent e) {
+	public void mapClick(final int[] countries,MouseEvent e) {
 
-            Object oldnote = note;
+		Object oldnote = note;
 
-            if (gameState == RiskGame.STATE_PLACE_ARMIES) {
-                if (countries.length==1) {
-                    if ( e.getModifiers() == java.awt.event.InputEvent.BUTTON1_MASK ) {
-                        go( "placearmies " + countries[0] + " 1" );
-                    }
-                    else {
-                        go( "placearmies " + countries[0] + " 10" );
-                    }
-                }
-            }
-            else if (gameState == RiskGame.STATE_ATTACKING) {
+		if (gameState == RiskGame.STATE_PLACE_ARMIES) {
+			if (countries.length==1) {
+				if ( e.getModifiers() == java.awt.event.InputEvent.BUTTON1_MASK ) {
+					go( "placearmies " + countries[0] + " 1" );
+				}
+				else {
+					go( "placearmies " + countries[0] + " 10" );
+				}
+			}
+		}
+		else if (gameState == RiskGame.STATE_ATTACKING) {
 
-                if (countries.length==0) {
-                    note=resb.getString("game.note.selectattacker");
-                }
-                else if (countries.length == 1) {
-                    note=resb.getString("game.note.selectdefender");
-                }
-                else {
-                    go("attack " + countries[0] + " " + countries[1]);
-                    note=resb.getString("game.note.selectattacker");
-                }
+			if (countries.length==0) {
+				note=resb.getString("game.note.selectattacker");
+			}
+			else if (countries.length == 1) {
+				note=resb.getString("game.note.selectdefender");
+			}
+			else {
+				go("attack " + countries[0] + " " + countries[1]);
+				note=resb.getString("game.note.selectattacker");
+			}
 
-            }
-            else if (gameState == RiskGame.STATE_FORTIFYING) {
-                if (countries.length==0) {
-                    note=resb.getString("game.note.selectsource");
-                }
-                else if (countries.length==1) {
-                    note=resb.getString("game.note.selectdestination");
-                }
-                else {
-                    note="";
-                    repaint();
+		}
+		else if (gameState == RiskGame.STATE_FORTIFYING) {
+			if (countries.length==0) {
+				note=resb.getString("game.note.selectsource");
+			}
+			else if (countries.length==1) {
+				note=resb.getString("game.note.selectdestination");
+			}
+			else {
+				note="";
+				repaint();
 
-                    openMove(1,countries[0] , countries[1], true);
+				openMove(1,countries[0] , countries[1], true);
 
-                    // this comes in on the mouse event thread
-                    // we need to make this dialog blocking so the user
-                    // can not click on the map while this dialog is up
-                    movedialog.setModal(true);
-                    movedialog.setVisible(true);
-                    movedialog.setModal(false);
-                    // now we set it back to a none-blocking dialog
-                    // for use with the move of armies after a attack
+				// this comes in on the mouse event thread
+				// we need to make this dialog blocking so the user
+				// can not click on the map while this dialog is up
+				movedialog.setModal(true);
+				movedialog.setVisible(true);
+				movedialog.setModal(false);
+				// now we set it back to a none-blocking dialog
+				// for use with the move of armies after a attack
 
-                    // clean up
-                    pp.setC1(255);
-                    pp.setC2(255);
-                    note=resb.getString("game.note.selectsource");
+				// clean up
+				pp.setC1(255);
+				pp.setC2(255);
+				note=resb.getString("game.note.selectsource");
 
-                }
-            }
-            else if (gameState == RiskGame.STATE_SELECT_CAPITAL) {
-                // do nothing ??
-            }
+			}
+		}
+		else if (gameState == RiskGame.STATE_SELECT_CAPITAL) {
+			// do nothing ??
+		}
 
-            if (oldnote!=note) {
-                repaint();
-            }
+		if (oldnote!=note) {
+			repaint();
+		}
 
-        }
+	}
 
 
 	/**
@@ -1029,10 +1029,10 @@ public class GameFrame extends JFrame implements KeyListener {
 	 */
 	private void doUndo()
 	{
-            
-                pp.setC1(PicturePanel.NO_COUNTRY);
-                pp.setC2(PicturePanel.NO_COUNTRY);
-            
+
+		pp.setC1(PicturePanel.NO_COUNTRY);
+		pp.setC2(PicturePanel.NO_COUNTRY);
+
 		go("undo");
 	}//private void doUndo()
 
@@ -1043,30 +1043,30 @@ public class GameFrame extends JFrame implements KeyListener {
 	 */
 	private void displayMenu() {
 
-	    if(menuOn) {
+		if(menuOn) {
 
-		gm.setVisible(false);
-		pp.addMouseListener(mapListener);
-		pp.addMouseMotionListener(mapListener);
+			gm.setVisible(false);
+			pp.addMouseListener(mapListener);
+			pp.addMouseMotionListener(mapListener);
 
-		menuOn=false;
-
-	    }
-	    else {
-
-		pp.removeMouseListener(mapListener);
-		pp.removeMouseMotionListener(mapListener);
-
-		if (myrisk.getGame().getCurrentPlayer()!=null) {
-
-			AutoEndGo.setSelected( myrisk.getAutoEndGo() );
-			AutoDefend.setSelected( myrisk.getAutoDefend() );
+			menuOn=false;
 
 		}
+		else {
 
-		gm.setVisible(true);
-		menuOn=true;
-	    }
+			pp.removeMouseListener(mapListener);
+			pp.removeMouseMotionListener(mapListener);
+
+			if (myrisk.getGame().getCurrentPlayer()!=null) {
+
+				AutoEndGo.setSelected( myrisk.getAutoEndGo() );
+				AutoDefend.setSelected( myrisk.getAutoDefend() );
+
+			}
+
+			gm.setVisible(true);
+			menuOn=true;
+		}
 
 	}
 
@@ -1124,7 +1124,7 @@ public class GameFrame extends JFrame implements KeyListener {
 			closeleave();
 		}
 		else if (gameState == RiskGame.STATE_SELECT_CAPITAL) {
-                        int c1Id = pp.getC1();
+			int c1Id = pp.getC1();
 			pp.setC1(255);
 			go("capital " + c1Id);
 		}
@@ -1132,10 +1132,10 @@ public class GameFrame extends JFrame implements KeyListener {
 
 
 
-        /**
-         * try not to use this method, the last boolean represents state and so should not be part of button creation
-         * @deprecated 
-         */
+	/**
+	 * try not to use this method, the last boolean represents state and so should not be part of button creation
+	 * @deprecated 
+	 */
 	public static JButton makeRiskButton(Image gobutton1, Image gobutton2, Image gobutton3, Image gobutton4, boolean startstate) {
 		JButton button = makeRiskButton(gobutton1, gobutton2, gobutton3, gobutton4);
 		button.setEnabled(startstate);
@@ -1156,50 +1156,50 @@ public class GameFrame extends JFrame implements KeyListener {
 
 		//if (event.isControlDown()) {
 
-			//with CTRL down
+		//with CTRL down
 
-			// when the ctrl+number bit was here is gave the "?" key when the number 6 was pressed
+		// when the ctrl+number bit was here is gave the "?" key when the number 6 was pressed
 
 		//} else {
 
-			switch (event.getKeyCode())
-			{
-				case KeyEvent.VK_1: this.setMapView(PicturePanel.VIEW_CONTINENTS); break;
-				case KeyEvent.VK_2: this.setMapView(PicturePanel.VIEW_OWNERSHIP); break;
-				case KeyEvent.VK_3: this.setMapView(PicturePanel.VIEW_BORDER_THREAT); break;
-				case KeyEvent.VK_4: this.setMapView(PicturePanel.VIEW_CARD_OWNERSHIP); break;
-				case KeyEvent.VK_5: this.setMapView(PicturePanel.VIEW_TROOP_STRENGTH); break;
-				case KeyEvent.VK_6: this.setMapView(PicturePanel.VIEW_CONNECTED_EMPIRE); break;
+		switch (event.getKeyCode())
+		{
+		case KeyEvent.VK_1: this.setMapView(PicturePanel.VIEW_CONTINENTS); break;
+		case KeyEvent.VK_2: this.setMapView(PicturePanel.VIEW_OWNERSHIP); break;
+		case KeyEvent.VK_3: this.setMapView(PicturePanel.VIEW_BORDER_THREAT); break;
+		case KeyEvent.VK_4: this.setMapView(PicturePanel.VIEW_CARD_OWNERSHIP); break;
+		case KeyEvent.VK_5: this.setMapView(PicturePanel.VIEW_TROOP_STRENGTH); break;
+		case KeyEvent.VK_6: this.setMapView(PicturePanel.VIEW_CONNECTED_EMPIRE); break;
 
-					// can not use this as it may be not a int
-					//Integer.parseInt( event.getKeyChar() + ""));
-					
-			}
+		// can not use this as it may be not a int
+		//Integer.parseInt( event.getKeyChar() + ""));
 
-			//no modifier button pressed
-			switch (event.getKeyCode())
-			{
-				case KeyEvent.VK_C:
-					//cards
-					if (gameState!=RiskGame.STATE_NEW_GAME) this.displayCards();
-					break;
-				case KeyEvent.VK_M:
-					//mission
-					if (gameState!=RiskGame.STATE_NEW_GAME) this.displayMission();
-					break;
-				case KeyEvent.VK_U:
-					//undo
-					if (gameState!=RiskGame.STATE_NEW_GAME && gameState!=RiskGame.STATE_DEFEND_YOURSELF) this.doUndo();
-					break;
-				case KeyEvent.VK_F10:
-					this.displayMenu();
-					//menu
-					break;
-				case KeyEvent.VK_G:
-					//go button
-					if (gameState!=RiskGame.STATE_NEW_GAME) this.goOn();
-					break;
-			}
+		}
+
+		//no modifier button pressed
+		switch (event.getKeyCode())
+		{
+		case KeyEvent.VK_C:
+			//cards
+			if (gameState!=RiskGame.STATE_NEW_GAME) this.displayCards();
+			break;
+		case KeyEvent.VK_M:
+			//mission
+			if (gameState!=RiskGame.STATE_NEW_GAME) this.displayMission();
+			break;
+		case KeyEvent.VK_U:
+			//undo
+			if (gameState!=RiskGame.STATE_NEW_GAME && gameState!=RiskGame.STATE_DEFEND_YOURSELF) this.doUndo();
+			break;
+		case KeyEvent.VK_F10:
+			this.displayMenu();
+			//menu
+			break;
+		case KeyEvent.VK_G:
+			//go button
+			if (gameState!=RiskGame.STATE_NEW_GAME) this.goOn();
+			break;
+		}
 		//}
 	}//public void keyReleased( KeyEvent event )
 
@@ -1298,7 +1298,7 @@ public class GameFrame extends JFrame implements KeyListener {
 			AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f);
 			g2.setComposite(ac);
 
-//					  destination		source
+			//					  destination		source
 			g2.drawImage(game,0,0,170,250,     633,175,803,425,this); // top
 
 			FontRenderContext frc = g2.getFontRenderContext();

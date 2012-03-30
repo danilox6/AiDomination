@@ -13,7 +13,7 @@ public class AIPlayer {
 	private static AIEasy aihardm = new AIHardMission();
 	private static AIVeryHard aiveryhard = new AIVeryHard();
 */
-	private static int wait=1;//=500;
+	private static int wait=500;
 
 	public static int getWait() {
 
@@ -84,6 +84,7 @@ public class AIPlayer {
 
 		String output = getOutput(game,usethisAI);
 
+		
 		try { Thread.sleep(wait); }
 		catch(InterruptedException e) {}
 

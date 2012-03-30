@@ -13,9 +13,13 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Logger;
+
+import net.yura.domination.engine.Risk;
 import net.yura.domination.engine.RiskUtil;
 import net.yura.domination.engine.ai.AI;
 import net.yura.domination.engine.translation.MapTranslator;
+import net.yura.domination.logger.RiskLogger;
 
 /**
  * <p> Risk Game Main Class </p>
@@ -963,6 +967,7 @@ transient - A keyword in the Java programming language that indicates that a fie
 	 * @return int[] Returns an array which will determine the results of the attack
 	 */
 	public int[] battle(int[] attackerResults, int[] defenderResults) {
+		Logger logger = Logger.getLogger(RiskLogger.LOGGER);
 
 		int[] result = new int[6];
 		result[0]=0; // worked or not
@@ -1013,7 +1018,12 @@ transient - A keyword in the Java programming language that indicates that a fie
 				mustmove=attackerResults.length;
 
 				result[4]=mustmove;
-
+				
+				StringBuilder log = new StringBuilder();
+				if((Risk.isLogAttacks() && attacker.getOwner().isLogged()) || (Risk.isLogReceivedAttacks() && lostPlayer.isLogged()))
+					log.append("       Esito Battaglia: Attaccante: "+ attacker.getArmies() +", Difensore: 0\n");
+				log.append("    -- "+attacker.getOwner().getName()+"("+attacker.getOwner().getAI().getName()+") conquista "+ defender.getName()+"\n");
+				logger.info(log.toString());
 
 				// if the player has been eliminated
 				if ( lostPlayer.getNoTerritoriesOwned() == 0) {
@@ -1033,6 +1043,8 @@ transient - A keyword in the Java programming language that indicates that a fie
 						// gameState=STATE_BATTLE_WON;
 						tradeCap=true;
 					}
+					
+					logger.info("!!! "+lostPlayer.getName()+"("+lostPlayer.getAI().getName()+") ELIMINATO!!!\n");
 
 				}
 
@@ -1041,6 +1053,9 @@ transient - A keyword in the Java programming language that indicates that a fie
 				gameState=STATE_ATTACKING;
 				//System.out.print("Retreating (FORCED)\n");
 				currentPlayer.currentStatistic.addRetreat();
+				
+				if((Risk.isLogAttacks() && attacker.getOwner().isLogged()) || (Risk.isLogReceivedAttacks() && defender.getOwner().isLogged()))
+					logger.info("       Esito Battaglia: Attaccante: 1, Difensore: "+defender.getArmies()+"\n");
 			}
 			else { gameState=STATE_ROLLING; }
 
@@ -2610,4 +2625,5 @@ System.out.print(str+"]\n");
 	}
 	return 0xff000000 | (r << 16) | (g << 8) | (b << 0);
     }
+   
 }
