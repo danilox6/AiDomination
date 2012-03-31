@@ -145,11 +145,11 @@ public class AISimple extends AI{
 		int armiesForDefense = (int) Math.floor(defendQuota * extraArmies);
 		if(armiesForDefense > 0) {			
 			Country mostNeedful = borders.get(0);
-			return "placearmies " + mostNeedful.getColor() + " " + Math.min(getDefenseNeeded(mostNeedful), armiesForDefense);
+			return "placearmies " + mostNeedful.getColor() + " 1";// + Math.min(getDefenseNeeded(mostNeedful), armiesForDefense);
 		}
 		
 		Country strongest = borders.get(borders.size() - 1);
-		return "placearmies " + strongest.getColor() + " " + extraArmies;
+		return "placearmies " + strongest.getColor() + " 1";// + extraArmies;
 	}
 	
 	private int getThreatLevel(Set<Country> countries) {
@@ -192,7 +192,7 @@ public class AISimple extends AI{
 			for(Country neighbour : neighbours) {
 				visited.add(neighbour);
 				if(neighbour.getOwner() != player)
-					confiningTerritories.add(neighbour);
+					confiningTerritories.add(country);
 				else if(!visited.contains(neighbour))
 					toVisit.addLast(neighbour);
 			}
@@ -249,7 +249,7 @@ public class AISimple extends AI{
 
 	@Override
 	public String getBattleWon() {
-		return "moveall";
+		return "move all";
 	}
 
 	@Override
