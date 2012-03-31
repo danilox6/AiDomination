@@ -430,12 +430,15 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		normal = new JRadioButton("Normale");
 		normal.addActionListener(this);
 		normal.setBounds(340, 450, 100 , 31 );
+		normal.setOpaque(false);
 		fast = new JRadioButton("Veloce");
 		fast.addActionListener(this);
 		fast.setSelected(true);
+		fast.setOpaque(false);
 		fast.setBounds(440, 450, 100 , 31 );
 		turbo = new JRadioButton("Turbo");
 		turbo.addActionListener(this);
+		turbo.setOpaque(false);
 		turbo.setBounds(540, 450, 100 , 31 );
 		speedRadioButtons.add(normal);
 		speedRadioButtons.add(fast);
@@ -458,6 +461,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		
 		multipleGames = new JCheckBox("Avvia più partite:");
 		multipleGames.setSelected(false);
+		multipleGames.setOpaque(false);
 		multipleGames.setBounds(348, 529, 150 , 31 );
 		numPartite = new JTextField("10");
 		numPartite.setBounds(495, 532, 40 , 25);
@@ -756,6 +760,8 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 			int h=25;
 			
 			final JCheckBox log = new JCheckBox("Log");
+			log.setForeground(RiskUIUtil.getTextColorFor(color));
+			log.setOpaque(false);
 
 			remove = new JButton(resb.getString("newgame.removeplayer"));
 
