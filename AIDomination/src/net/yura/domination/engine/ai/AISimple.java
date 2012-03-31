@@ -237,7 +237,7 @@ public class AISimple extends AI{
 				}
 			}	
 		}
-		if(attacker==null)
+		if(attacker==null || ((attacker.getArmies()-1) - defender.getArmies()) < 1 )
 			return "endattack";
 		return "attack "+attacker.getColor() + " " + defender.getColor();
 		

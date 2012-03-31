@@ -72,7 +72,7 @@ public class RiskLogger {
 			logTradeCards = true;
 			logAttacks = true;
 			logReceivedAttacks = true;
-			logBattleDetails = false;
+			logBattleDetails = true;
 			logBattleWon = true;
 			logTacMove = true;
 			logLosersWinner = true;
