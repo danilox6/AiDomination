@@ -23,6 +23,10 @@ import net.yura.domination.engine.translation.TranslationBundle;
 
 public class StatsDialog extends JDialog implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private BufferedImage Back;
 	private Risk myrisk;
 	private StatsPanel graph;
@@ -49,6 +53,7 @@ public class StatsDialog extends JDialog implements ActionListener {
 	/**
 	 * Initialises the GUI
 	 */
+	@SuppressWarnings("unused")
 	private void initGUI()
 	{
 		resb = TranslationBundle.getBundle();
@@ -176,6 +181,11 @@ public class StatsDialog extends JDialog implements ActionListener {
 	}
 
 	class graphPanel extends JPanel {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		/**
 		 * Paints the graphic

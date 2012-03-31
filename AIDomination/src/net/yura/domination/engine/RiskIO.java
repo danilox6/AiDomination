@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.net.URL;
 
+@SuppressWarnings("rawtypes")
 public interface RiskIO {
 
         /**

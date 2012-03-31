@@ -3,7 +3,6 @@ package net.yura.domination.engine.translation;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
-import java.io.IOException;
 import net.yura.domination.engine.RiskUtil;
 
 /**

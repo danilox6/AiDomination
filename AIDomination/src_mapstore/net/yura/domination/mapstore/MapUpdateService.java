@@ -18,6 +18,7 @@ import net.yura.mobile.util.Url;
 /**
  * @author Yura
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class MapUpdateService extends Observable {
 
     static MapUpdateService updateService;

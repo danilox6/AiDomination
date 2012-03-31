@@ -88,7 +88,8 @@ public class CommandText extends Thread {
 
     }
 
-    public static void Help() {
+    @SuppressWarnings("unused")
+	public static void Help() {
 
 	String commands="";
 

@@ -28,7 +28,11 @@ import net.yura.domination.engine.RiskUIUtil;
  */
 public class MissionDialog extends JDialog implements MouseListener {
 
-    private BufferedImage mission;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private BufferedImage mission;
     private String text;
 
     /**
@@ -99,6 +103,11 @@ public class MissionDialog extends JDialog implements MouseListener {
     class missionPanel extends JPanel {
 
     /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+	/**
      * Paints graphic
      * @param g Graphics
      */

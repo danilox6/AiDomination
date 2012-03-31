@@ -32,6 +32,10 @@ import net.yura.domination.engine.translation.TranslationBundle;
 public class JoinDialog extends JDialog implements MouseInputListener
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Risk myrisk;
 	private BufferedImage joingame;
 	private JTextField serverField;
@@ -131,6 +135,11 @@ public class JoinDialog extends JDialog implements MouseInputListener
 	}
 
 	class joinPanel extends JPanel {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		/**
 		 * paints the panel

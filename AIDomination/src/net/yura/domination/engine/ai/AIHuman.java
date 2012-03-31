@@ -7,6 +7,11 @@ package net.yura.domination.engine.ai;
  */
 public class AIHuman extends AI{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public AIHuman(){
 		id = "human";
 		name = "Umano";

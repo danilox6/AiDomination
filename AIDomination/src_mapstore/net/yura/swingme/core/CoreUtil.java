@@ -10,7 +10,11 @@ public class CoreUtil {
 
     public static Properties wrap(final ResourceBundle res) {
         return new Properties() {
-            public String getProperty(String key) {
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			public String getProperty(String key) {
                 return res.getString(key);
             }
             public String getProperty(String key, String defaultValue) {

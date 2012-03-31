@@ -5,7 +5,6 @@ package net.yura.domination.engine.core;
 //import java.awt.Color; // not on android
 import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -25,7 +24,7 @@ import net.yura.domination.logger.RiskLogger;
  * <p> Risk Game Main Class </p>
  * @author Yura Mamyrin
  */
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class RiskGame implements Serializable { // transient
 
 	private static final long serialVersionUID = 7L;
@@ -1956,6 +1955,7 @@ transient - A keyword in the Java programming language that indicates that a fie
 	 * @return boolean Return trues if missions are supported
 	 * @throws Exception The file cannot be found
 	 */
+	@SuppressWarnings("unused")
 	public boolean setCardsfile(String f) throws Exception {
 
 

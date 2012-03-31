@@ -9,7 +9,13 @@ import net.yura.domination.engine.core.Card;
 import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 
+@SuppressWarnings({ "unchecked" })
 public class AIRandom extends AI{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public String getTrade() {

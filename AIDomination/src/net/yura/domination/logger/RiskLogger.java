@@ -4,12 +4,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
@@ -27,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.text.DefaultCaret;
 
 import net.yura.domination.engine.Risk;
 import net.yura.domination.engine.ai.AI;
@@ -139,6 +137,7 @@ public class RiskLogger {
 	}
 	
 	private static class StatPlayer extends Player implements Comparable<StatPlayer>{
+		private static final long serialVersionUID = 1L;
 		
 		private int victories;
 
@@ -192,6 +191,7 @@ public class RiskLogger {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public static void setRisk(Risk risk) {
 		RiskLogger.risk = risk;
 		Vector<Player> pls = risk.getGame().getPlayers();
@@ -240,6 +240,7 @@ public class RiskLogger {
 		progressBar.setStringPainted(true);
 		txtLog = new JTextArea(10, 3);
 		txtLog.setEditable(false);
+		((DefaultCaret) txtLog.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		stop = new JButton("Stop");
 		stop.setActionCommand("Stop");
 		stop.setAlignmentX(Component.CENTER_ALIGNMENT);

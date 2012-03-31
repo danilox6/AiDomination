@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
  * <p> Chat Area </p>
  * @author Yura Mamyrin
  */
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ChatArea extends Thread {
 
 

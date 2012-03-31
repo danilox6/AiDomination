@@ -33,6 +33,10 @@ import net.yura.domination.engine.translation.TranslationBundle;
 
 public class MoveDialog extends JDialog {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private GameFrame gui;
 	private boolean tacmove;
 
@@ -326,6 +330,11 @@ public class MoveDialog extends JDialog {
 
 	class movePanel extends JPanel
 	{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		/**
 		 * Paints the graphic

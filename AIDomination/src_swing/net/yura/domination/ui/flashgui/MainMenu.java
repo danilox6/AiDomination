@@ -26,9 +26,7 @@ import javax.swing.event.MouseInputListener;
 import net.yura.domination.engine.Risk;
 import net.yura.domination.engine.RiskUIUtil;
 import net.yura.domination.engine.RiskUtil;
-import net.yura.domination.engine.ai.AIManager;
 import net.yura.domination.engine.guishared.AboutDialog;
-import net.yura.domination.engine.guishared.RiskFileFilter;
 import net.yura.domination.engine.translation.TranslationBundle;
 
 /**
@@ -39,6 +37,10 @@ import net.yura.domination.engine.translation.TranslationBundle;
 
 public class MainMenu extends JPanel implements MouseInputListener, KeyListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final static String version = "1.0.3.5";
 	private final static String product;
 

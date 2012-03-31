@@ -4,12 +4,9 @@ package net.yura.domination.ui.flashgui;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JTextField;
 
 import java.awt.Cursor;
 import java.io.IOException;
@@ -17,12 +14,10 @@ import javax.swing.JOptionPane;
 import net.yura.domination.engine.Risk;
 import net.yura.domination.engine.RiskListener;
 import net.yura.domination.engine.RiskUIUtil;
-import net.yura.domination.engine.RiskUtil;
 import net.yura.domination.engine.ai.AI;
 import net.yura.domination.engine.core.Country;
 import net.yura.domination.engine.core.RiskGame;
 import net.yura.domination.engine.guishared.PicturePanel;
-import net.yura.domination.engine.translation.TranslationBundle;
 import net.yura.domination.logger.RiskLogger;
 
 /**

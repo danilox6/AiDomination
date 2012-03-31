@@ -7,18 +7,15 @@ import java.util.Vector;
 import net.yura.domination.engine.core.Card;
 import net.yura.domination.engine.core.Country;
 import net.yura.domination.engine.core.Player;
-import net.yura.domination.engine.core.RiskGame;
 
 /**
  * <p> Class for AIEasyPlayer </p>
  * @author Yura Mamyrin
  */
 
+@SuppressWarnings("rawtypes" )
 public class AICrap extends AI{
-
-   
-    
-
+	private static final long serialVersionUID = 1L;
 	protected Random r = new Random(); // this was always static
 
 
@@ -97,8 +94,8 @@ public class AICrap extends AI{
 		}
 		else {
 		    Vector t = player.getTerritoriesOwned();
-		    Vector n;
-		    String name=null;
+//		    Vector n;
+//		    String name=null;
 		    Random rand = new Random();
 //			if (game.getSetup())
 //				return "placearmies " + ((Country)t.elementAt(rand.nextInt(t.size()))).getColor() +" "+player.getExtraArmies();

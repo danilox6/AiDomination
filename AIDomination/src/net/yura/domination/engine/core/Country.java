@@ -10,7 +10,7 @@ import java.util.Vector;
  * <p> Country </p>
  * @author Yura Mamyrin
  */
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class Country implements Serializable {
 
 	private static final long serialVersionUID = 1L;

@@ -12,6 +12,7 @@ import net.yura.domination.engine.core.RiskGame;
  * @author Yura Mamyrin
  */
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class RiskController {
 
 	private Vector obs;

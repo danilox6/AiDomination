@@ -35,6 +35,10 @@ import net.yura.domination.engine.translation.TranslationBundle;
 
 public class BattleDialog extends JDialog implements MouseListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private GameFrame gui;
 	private Risk myrisk;
 
@@ -293,6 +297,11 @@ public class BattleDialog extends JDialog implements MouseListener {
 	 */
 	public Action spinDiceAction() {
 		return new AbstractAction("spin dice action") {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed (ActionEvent e) {
 
 				// repaint here slows the game down a lot!
@@ -368,6 +377,11 @@ public class BattleDialog extends JDialog implements MouseListener {
 	private static Random r = new Random();
 
 	class BattlePanel extends JPanel {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		/**
 		 * Paints the frame

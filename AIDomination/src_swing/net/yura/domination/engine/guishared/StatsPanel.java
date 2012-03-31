@@ -21,7 +21,11 @@ import net.yura.domination.engine.core.RiskGame;
  */
 public class StatsPanel extends JPanel {
 
-    //private int spX;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	//private int spX;
     //private int spY;
     private Risk risk;
     private BufferedImage graph;
@@ -55,7 +59,8 @@ public class StatsPanel extends JPanel {
 
     }
 
-    public void repaintStats(int a) {
+    @SuppressWarnings("rawtypes")
+	public void repaintStats(int a) {
 
 	BufferedImage tempgraph = new BufferedImage(getWidth(),getHeight(), java.awt.image.BufferedImage.TYPE_INT_RGB ); // spX, spY
 

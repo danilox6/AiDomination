@@ -1,7 +1,6 @@
 package net.yura.domination.engine.guishared;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -52,6 +51,7 @@ import java.lang.reflect.Method;
  * @author Eric Albert (<a href="mailto:ejalbert@cs.stanford.edu">ejalbert@cs.stanford.edu</a>)
  * @version 1.4b1 (Released June 20, 2001)
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class BrowserLauncher {
 
 	/**

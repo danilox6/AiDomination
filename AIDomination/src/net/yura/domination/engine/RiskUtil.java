@@ -21,6 +21,7 @@ import net.yura.domination.engine.core.Player;
 import net.yura.domination.engine.core.RiskGame;
 import net.yura.domination.engine.translation.MapTranslator;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class RiskUtil {
 
 	public static final String RISK_VERSION_URL;

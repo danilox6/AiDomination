@@ -12,9 +12,14 @@ import net.yura.domination.engine.core.Player;
  * @author SE Group D
  */
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class AIHard extends AIEasy {
 
-	@SuppressWarnings("rawtypes")
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public String getPlaceArmies() {
 
 		String output;
@@ -140,7 +145,7 @@ public class AIHard extends AIEasy {
 
 
 			Vector t = player.getTerritoriesOwned();
-			Vector n;
+//			Vector n;
 			String name = null;
 
 			for (int a=0; a< t.size() ; a++) {
@@ -209,7 +214,6 @@ public class AIHard extends AIEasy {
 
 	}
 
-	@SuppressWarnings("rawtypes")
 	public String getTacMove() {
 
 		String output=null;
@@ -269,8 +273,8 @@ public class AIHard extends AIEasy {
 	public String getAttack() {
 		String output=null;
 		Vector t = player.getTerritoriesOwned();
-		Vector n;
-		boolean chosen = false;
+//		Vector n;
+//		boolean chosen = false;
 		Continent[] cont = game.getContinents();
 		Vector options = new Vector();
 		Attack temp=null;
@@ -317,8 +321,8 @@ public class AIHard extends AIEasy {
 		// Refactoring: remove need for 'complex' boolean by sorting continents by how much you control them
 		// 	either by absolute count or percentage
 		//
-		int count = 0;
-		Country attackfrom = null;
+//		int count = 0;
+//		Country attackfrom = null;
 		boolean complex = false;
 		for (int i=0; i<cont.length; i++) {
 			if ( mostlyOwned( cont[i] ) == true) {
@@ -541,7 +545,6 @@ public class AIHard extends AIEasy {
 	 * @return boolean True if the player owns most of the territories within a continent,
 	 * otherwise false if the player does not own most of the territories
 	 */
-	@SuppressWarnings("rawtypes")
 	public boolean mostlyOwned(Continent w) {
 		int ownedByPlayer=0;
 		Vector territoriesContained = w.getTerritoriesContained();
@@ -570,7 +573,6 @@ public class AIHard extends AIEasy {
 	 * @param p player object
 	 * @return count of territories in vector t owned by player p
 	 */
-	@SuppressWarnings("rawtypes")
 	public int countTerritoriesOwned(Vector t, Player p){
 		int count=0;
 		for (int i=0; i<t.size(); i++){
@@ -631,7 +633,7 @@ public class AIHard extends AIEasy {
 	public boolean check2(Country b) {
 
 		Vector neighbours = b.getNeighbours();
-		Country c = null;
+//		Country c = null;
 
 		for (int i=0; i<neighbours.size(); i++) {
 			if ( ownsNeighbours( (Country)neighbours.elementAt(i)) == false && ((Country)neighbours.elementAt(i)).getOwner() == player)
@@ -832,7 +834,7 @@ public class AIHard extends AIEasy {
 			}
 		}
 
-		Vector players = game.getPlayers();
+//		Vector players = game.getPlayers();
 		Vector continentsToBreak = new Vector();
 		Player owner;
 		for (int i=0; i<continents.length; i++) {

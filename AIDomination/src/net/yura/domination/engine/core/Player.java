@@ -12,7 +12,7 @@ import net.yura.domination.engine.ai.AI;
  * <p> Risk Player </p>
  * @author Yura Mamyrin
  */
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class Player implements Serializable {
 
 	private static final long serialVersionUID = 1L;

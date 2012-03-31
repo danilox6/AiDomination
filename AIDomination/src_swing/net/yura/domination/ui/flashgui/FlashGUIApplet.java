@@ -15,6 +15,11 @@ import net.yura.domination.engine.translation.TranslationBundle;
 
 public class FlashGUIApplet extends JApplet {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public void init() {
 
 		//Risk.applet=this;

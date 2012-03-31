@@ -12,6 +12,7 @@ import net.yura.domination.engine.core.RiskGame;
  *
  */
 public abstract class AI implements Serializable{
+	private static final long serialVersionUID = 1L;
 	
 	protected String name;
 	protected String id;

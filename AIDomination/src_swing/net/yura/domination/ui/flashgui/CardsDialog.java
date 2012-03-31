@@ -46,8 +46,13 @@ import net.yura.domination.engine.translation.TranslationBundle;
  * Cards Dialog for FlashGUI
  * @author Yura Mamyrin
  */
+@SuppressWarnings({ "rawtypes" })
 public class CardsDialog extends JDialog {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Risk myrisk;
 	private Vector cards;
 	private JPanel myCardsPanel;
@@ -121,6 +126,7 @@ public class CardsDialog extends JDialog {
 	}
 
 	/** This method is called from within the constructor to initialize the dialog. */
+	@SuppressWarnings("deprecation")
 	private void initGUI() {
 		resb = TranslationBundle.getBundle();
 
@@ -291,6 +297,11 @@ public class CardsDialog extends JDialog {
 	class CardsPanel extends JPanel {
 
 		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		/**
 		 * Paints the panel
 		 * @param g The graphics
 		 */
@@ -313,6 +324,10 @@ public class CardsDialog extends JDialog {
 
 	class CardPanel extends JPanel implements MouseListener {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private Card card;
 		private BufferedImage grayImage;
 		private BufferedImage highlightImage;

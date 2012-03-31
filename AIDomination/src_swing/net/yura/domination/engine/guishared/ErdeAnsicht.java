@@ -2,7 +2,6 @@
 
 package net.yura.domination.engine.guishared;
 
-import java.awt.event.*;
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.JPanel;
@@ -16,6 +15,10 @@ import net.yura.domination.engine.RiskUtil;
 
 public class ErdeAnsicht extends JPanel implements ImageProducer {
 
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 double xs=5.0;
 double xp=0.0;
 double q=1.0; // zoom
@@ -361,6 +364,7 @@ public void deform(int l1,int b1,int l2,int b2,int l3,int b3){
 	}	
 }
 
+@SuppressWarnings("unused")
 public void scanline(int y,int xa,int xb,int[] mapx, int[] mapy,int[] scrx, int[] scry){
 	int px=0; int py=y-scry[0];	
 	int xstart=0; int xend=0;	

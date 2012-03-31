@@ -13,7 +13,11 @@ import net.yura.domination.mapstore.MapUpdateService;
  */
 public class BadgeButton extends JButton implements Observer {
 
-    Object border;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	Object border;
     String badge="0"; // default is 0, and it will not draw anything when set to 0
     
     public BadgeButton(String string) {

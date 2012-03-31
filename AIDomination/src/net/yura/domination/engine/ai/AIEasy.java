@@ -10,8 +10,9 @@ import net.yura.domination.engine.core.Country;
  * @author Yura Mamyrin
  */
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class AIEasy extends AICrap {
-
+	private static final long serialVersionUID = 1L;
 
 	protected class Attack {
 	Country source;
@@ -34,7 +35,6 @@ public class AIEasy extends AICrap {
 		}
 		else {
 		    Vector t = player.getTerritoriesOwned();
-		    Vector n;
 		    String name=null;
 			name = findAttackableTerritory(player);
 			if ( name == null ) {

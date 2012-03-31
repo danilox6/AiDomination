@@ -19,6 +19,7 @@ import net.yura.mobile.util.SystemUtil;
 /**
  * @author Yura Mamyrin
  */
+@SuppressWarnings({ "unchecked", "rawtypes" }) 
 public class MapServerClient extends HTTPClient {
 
     public static final Object XML_REQUEST_ID = new Object();

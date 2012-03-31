@@ -45,6 +45,11 @@ import net.yura.domination.engine.translation.TranslationBundle;
  */
 public class GameFrame extends JFrame implements KeyListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static final Color UI_COLOR = Color.RED;
 
 	private BufferedImage game;
@@ -186,6 +191,11 @@ public class GameFrame extends JFrame implements KeyListener {
 		final BufferedImage topright=game.getSubimage(63+l+m,0,740-(l+m),54);
 
 		JPanel fp = new JPanel() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public void paintComponent(Graphics g) {
 
 				//		  destination		source
@@ -271,6 +281,11 @@ public class GameFrame extends JFrame implements KeyListener {
 		final BufferedImage bottomright=game.getSubimage(63+l+m,54,740-(l+m),121);
 
 		JPanel fpBottom = new JPanel() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public void paintComponent(Graphics g) {
 
 				//g.drawImage(game,0,0,740,121,  63,54,803,175,this); // bottom
@@ -341,6 +356,11 @@ public class GameFrame extends JFrame implements KeyListener {
 		fpBottom.setLayout(null);
 
 		JPanel fpLeft = new JPanel() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public void paintComponent(Graphics g) {
 				// getHeight() = 425
 				g.drawImage(game,0,0,31,getHeight(),    0,0,31,425,this); // left
@@ -350,6 +370,11 @@ public class GameFrame extends JFrame implements KeyListener {
 		};
 
 		JPanel fpRight = new JPanel() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public void paintComponent(Graphics g) {
 				// getHeight() = 425
 				g.drawImage(game,0,0,32,getHeight(), 31,0,63,425,this); // right
@@ -1212,6 +1237,11 @@ public class GameFrame extends JFrame implements KeyListener {
 	 */
 	class GameMenuPanel extends JPanel
 	{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		public GameMenuPanel()
 		{

@@ -12,9 +12,15 @@ import net.yura.domination.engine.core.Player;
  * @author SE Group D
  */
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class AIHardCapital extends AIHard {
 
 	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public AIHardCapital() {
 		super();
@@ -160,7 +166,7 @@ public class AIHardCapital extends AIHard {
 
 		String output=null;
 		boolean attackFromCap = player.getCapital().getArmies() > addEnemies(player.getCapital())*2+5; 
-		    boolean chosen = false;
+//		    boolean chosen = false;
 		    Continent[] cont = game.getContinents();
 		Vector t = player.getTerritoriesOwned();
 		Vector n;

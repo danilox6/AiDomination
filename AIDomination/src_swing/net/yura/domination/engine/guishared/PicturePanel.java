@@ -2,7 +2,6 @@
 
 package net.yura.domination.engine.guishared;
 
-import collisionphysics.Ball;
 import collisionphysics.BallWorld;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -28,7 +27,6 @@ import net.yura.domination.engine.core.Country;
 import net.yura.domination.engine.core.Player;
 import net.yura.domination.engine.core.RiskGame;
 import net.yura.domination.engine.translation.TranslationBundle;
-import net.yura.domination.logger.RiskLogger;
 
 
 /**
@@ -36,7 +34,13 @@ import net.yura.domination.logger.RiskLogger;
  * @author Yura Mamyrin
  */
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class PicturePanel extends JPanel implements MapPanel {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public final static int NO_COUNTRY = 255;
 

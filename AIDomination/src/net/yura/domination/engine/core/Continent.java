@@ -10,7 +10,7 @@ import java.util.Vector;
  * <p> Continent </p>
  * @author Yura Mamyrin
  */
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class Continent implements Serializable {
 
 	private static final long serialVersionUID = 1L;

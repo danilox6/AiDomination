@@ -14,6 +14,7 @@ import net.yura.me4se.ME4SEPanel;
 /**
  * @author Yura Mamyrin
  */
+@SuppressWarnings({ "rawtypes" })
 public class MapChooserSwingWrapper implements ActionListener {
 
     JDialog dialog;

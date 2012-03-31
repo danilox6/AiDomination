@@ -17,7 +17,7 @@ import net.yura.domination.engine.core.RiskGame;
 
 // The main child thread waits for new information in the ChatArea, and 
 // sends it out to the eagerly waiting clients
-
+@SuppressWarnings({ "rawtypes" })
 public class ChatServerThread extends Thread {
 
     LinkedList m_lList = new LinkedList();

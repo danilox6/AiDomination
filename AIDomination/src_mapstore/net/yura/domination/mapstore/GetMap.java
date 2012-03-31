@@ -9,6 +9,7 @@ import net.yura.mobile.io.ServiceLink.Task;
 /**
  * @author Yura Mamyrin
  */
+@SuppressWarnings({ "rawtypes" })
 public class GetMap implements MapServerListener {
 
     MapServerClient client;

@@ -49,7 +49,6 @@ import net.yura.domination.engine.RiskUtil;
 import net.yura.domination.engine.ai.AI;
 import net.yura.domination.engine.ai.AIManager;
 import net.yura.domination.engine.ai.AIPlayer;
-import net.yura.domination.engine.core.Player;
 import net.yura.domination.engine.core.RiskGame;
 import net.yura.domination.engine.guishared.AboutDialog;
 import net.yura.domination.engine.guishared.BadgeButton;
@@ -66,6 +65,10 @@ import net.yura.domination.logger.RiskLogger;
 public class NewGameFrame extends JFrame implements ActionListener,MouseListener,KeyListener
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private BufferedImage newgame;
 	private Risk myrisk;
 	private boolean localgame;
@@ -192,6 +195,11 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 	}
 
 	static class LimitedDocument extends PlainDocument {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		public void insertString(int offs, String str, AttributeSet a) throws javax.swing.text.BadLocationException {
 
@@ -353,6 +361,11 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		resetplayers.addActionListener( this );
 
 		playerName = new JTextField(resb.getString("newgame.newplayername")) {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
 			protected Document createDefaultModel() {
 				return new LimitedDocument();
@@ -704,9 +717,14 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 
 	class playerPanel extends JPanel {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private AI type;
 		private String name;
 		private Color color;
+		@SuppressWarnings("unused")
 		private String ip;
 		private JButton remove;
 
@@ -860,6 +878,11 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 	class NewGamePanel extends JPanel {
 
 		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		/**
 		 * Paints a graphic
 		 * @param g Graphics Component
 		 */
@@ -899,6 +922,11 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 
 	class colorChooserPanel extends JPanel
 	{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		/**
 		 * Paints a graphic

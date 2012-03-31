@@ -16,6 +16,7 @@ import net.yura.mobile.gui.plaf.Style;
 /**
  * @author Yura Mamyrin
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class MapRenderer extends DefaultListCellRenderer {
 
     String line2;

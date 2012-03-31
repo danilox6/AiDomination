@@ -37,6 +37,7 @@ import net.yura.swingme.core.CoreUtil;
 /**
  * @author Yura Mamyrin
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class MapChooser implements ActionListener,MapServerListener {
 
     public Properties resBundle = CoreUtil.wrap(TranslationBundle.getBundle());

@@ -2,8 +2,6 @@ package net.yura.domination.mapstore.gen;
 import net.yura.domination.mapstore.Category;
 import net.yura.domination.mapstore.Map;
 import net.yura.mobile.io.ServiceLink.Task;
-import java.util.Hashtable;
-import java.util.Vector;
 import net.yura.mobile.io.kxml2.KXmlParser;
 import org.xmlpull.v1.XmlSerializer;
 import java.io.IOException;

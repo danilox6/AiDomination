@@ -1,9 +1,5 @@
 package net.yura.domination.mapstore;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import net.yura.domination.mapstore.gen.XMLMapAccess;
-
 /**
  * @author Yura
  */

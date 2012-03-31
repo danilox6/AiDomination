@@ -52,6 +52,7 @@ import net.yura.domination.mapstore.MapUpdateService;
  *
  * @author Yura Mamyrin
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class RiskUIUtil {
     // TODO missing:
     //PicturePanel.getImage(
@@ -640,6 +641,7 @@ public class RiskUIUtil {
 
 			javax.jnlp.FileSaveService fss = (javax.jnlp.FileSaveService)javax.jnlp.ServiceManager.lookup("javax.jnlp.FileSaveService");
 
+			@SuppressWarnings("unused")
 			javax.jnlp.FileContents fc = fss.saveFileDialog(name.substring(0,name.indexOf('/')+1), new String[]{ name.substring(name.indexOf('.')+1) }, stream, name.substring(name.indexOf('/')+1,name.indexOf('.')) );
 
 		}

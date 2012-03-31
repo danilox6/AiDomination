@@ -23,8 +23,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+
 import java.util.Properties;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -53,6 +52,7 @@ import net.yura.domination.logger.RiskLogger;
  * @author Yura Mamyrin
  */
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class Risk extends Thread {
 
 	public static String RISK_VERSION;
@@ -93,7 +93,6 @@ public class Risk extends Thread {
 
 	private int armies = 0;
 
-	private boolean tradedCards = false;
 	private static Player currentPlayer;
 
 	protected boolean unlimitedLocalMode;
@@ -119,6 +118,7 @@ public class Risk extends Thread {
 	public static final String[] colors = new String[] { "green", "blue",
 			"red", "cyan", "magenta", "yellow" };
 
+	
 	public Risk() {
 		super(RiskUtil.GAME_NAME + "-GAME-THREAD");
 
@@ -712,6 +712,7 @@ public class Risk extends Thread {
 	 * @param mem
 	 *            The string needed for parsing
 	 */
+	@SuppressWarnings("unused")
 	public void GameParser(String message) {
 
 		controller.sendDebug(message);
@@ -918,6 +919,7 @@ public class Risk extends Thread {
 			if (StringT.hasMoreTokens()) {
 
 				// get the cards
+			
 				Vector cards = game.getCards();
 				String name = GetNext();
 				Card card = game.findCard(name);
@@ -2133,8 +2135,6 @@ public class Risk extends Thread {
 									resb.getString("core.trade.traded"), "{0}",
 									"" + noa);
 
-							tradedCards = true;
-
 							if (logTradeCards
 									&& game.getCurrentPlayer().isLogged()) {
 								StringBuilder log = new StringBuilder();
@@ -2358,7 +2358,6 @@ public class Risk extends Thread {
 							}
 
 							writtenReceivedAttack = false;
-							tradedCards = false;
 							if (logAttacks
 									&& game.getCurrentPlayer().isLogged()) {
 								StringBuilder log = new StringBuilder();
@@ -2388,7 +2387,6 @@ public class Risk extends Thread {
 				} else if (input.equals("endattack")) {
 					if (StringT.hasMoreTokens() == false) {
 						if (game.endAttack()) {
-							tradedCards = false;
 							output = resb.getString("core.attack.end.ended");
 						} else {
 							output = resb
@@ -2567,7 +2565,6 @@ public class Risk extends Thread {
 												.getName() + ") sposta " + noa
 										+ " armate da " + country1.getName()
 										+ " a " + country2.getName() + "\n\n");
-							tradedCards = false;
 
 						} else {
 							output = resb
@@ -3139,8 +3136,8 @@ public class Risk extends Thread {
 
 		if (game != null && game.getCurrentPlayer() != null) {
 
-			String strId = null;
-			String s = null;
+//			String strId = null;
+//			String s = null;
 			/*
 			 * switch ( ((Player)game.getCurrentPlayer()).getType() ) {
 			 * 
@@ -3819,6 +3816,7 @@ public class Risk extends Thread {
 		return null;
 	}
 
+	
 	private String getPlayerHeader(Player player) {
 
 		if (game.getState() == RiskGame.STATE_PLACE_ARMIES)
@@ -3830,7 +3828,7 @@ public class Risk extends Thread {
 
 			StringBuilder playerInfo = new StringBuilder();
 			// if(!cPlayer.isLogged() && )
-
+			
 			playerInfo.append("\n\n" + player.getName() + " "
 					+ player.getAI().getName());
 			if (game.NoEmptyCountries()) {
@@ -3866,7 +3864,6 @@ public class Risk extends Thread {
 					}
 
 					if (game.getSetup()) {
-						tradedCards = true;
 						if (logOwnedCards) {
 							playerInfo.append(" Carte Possedute:\n");
 							Vector<Card> cards = player.getCards();

@@ -31,6 +31,10 @@ import net.yura.domination.engine.translation.TranslationBundle;
  */
 public class AboutDialog extends JDialog {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane = new JPanel();
 	private JLabel prodLabel = new JLabel();
 	private JLabel verLabel = new JLabel();

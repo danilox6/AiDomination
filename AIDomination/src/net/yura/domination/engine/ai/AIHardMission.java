@@ -13,9 +13,14 @@ import net.yura.domination.engine.core.Player;
  * <p> Class for AIHardPlayer </p>
  * @author SE Group D
  */
-
+@SuppressWarnings({ "rawtypes" })
 public class AIHardMission extends AIHard {
 
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public AIHardMission() {
 		super();
