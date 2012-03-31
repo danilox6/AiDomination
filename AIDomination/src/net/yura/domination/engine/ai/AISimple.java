@@ -223,16 +223,16 @@ public class AISimple extends AI{
 		Country attacker = null;
 		Country defender = null;
 		for(Country c : countries){
-			Vector<Country> nCountries = c.getNeighbours();
-			for(Country nc: nCountries){
-				if(nc.getOwner()!=player){
+			Vector<Country> neighbours = c.getNeighbours();
+			for(Country n: neighbours){
+				if(n.getOwner()!=player){
 					if(attacker == null && defender == null){
 						attacker = c;
-						defender = nc;
+						defender = n;
 					}
-					if ((c.getArmies() - nc.getArmies()) > (attacker.getArmies() - defender.getArmies())){
+					if (((c.getArmies()-1) - n.getArmies()) > ((attacker.getArmies()-1) - defender.getArmies())){
 						attacker = c;
-						defender = nc;
+						defender = n;
 					}
 				}
 			}	
@@ -240,11 +240,12 @@ public class AISimple extends AI{
 		if(attacker==null)
 			return "endattack";
 		return "attack "+attacker.getColor() + " " + defender.getColor();
+		
 	}
 
 	@Override
 	public String getRoll() {
-		return "roll "+ Math.min(game.getAttacker().getArmies(), 3);
+		return "roll "+ Math.min(game.getAttacker().getArmies()-1, 3);
 	}
 
 	@Override

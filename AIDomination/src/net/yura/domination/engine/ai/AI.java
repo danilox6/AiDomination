@@ -179,7 +179,7 @@ public abstract class AI implements Serializable{
 	 * 
 	 * @return String che descrive l'operazione da compiere:
 	 *         <ul>
-	 *         <li>"<i>moveall</i>" per spostare tutte le armate (tranne una)
+	 *         <li>"<i>move all</i>" per spostare tutte le armate (tranne una)
 	 *         sulla nazione appena conquistata;</li>
 	 *         <li>"<i>move [numeroArmate]” per spostare un certo numero di
 	 *         armate.<br>
