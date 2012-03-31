@@ -1424,7 +1424,8 @@ transient - A keyword in the Java programming language that indicates that a fie
 			gameState=STATE_GAME_OVER;
 			if(Risk.isLogLosersWinner())
 				Logger.getLogger(RiskLogger.LOGGER).info("\n!!! "+currentPlayer.getName() + "("+currentPlayer.getAI().getName()+") HA VINTO!!!" );
-			RiskLogger.newVictory(currentPlayer.getName());			
+			if(RiskLogger.isMultipleGameLogger())
+				RiskLogger.newVictory(currentPlayer.getName());			
 		}
 
 		return result;
