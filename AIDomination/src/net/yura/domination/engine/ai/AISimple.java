@@ -88,7 +88,7 @@ public class AISimple extends AI{
 
 	}
 
-	private String getArmyPlacement() {
+	public String getArmyPlacement() {
 		Continent[] continents = game.getContinents();
 		final Map<Continent, Set<Country>> accessPoints = new HashMap<Continent, Set<Country>>();
 		

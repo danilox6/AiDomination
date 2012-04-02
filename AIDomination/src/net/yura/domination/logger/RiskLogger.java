@@ -196,7 +196,10 @@ public class RiskLogger {
 		RiskLogger.risk = risk;
 		Vector<Player> pls = risk.getGame().getPlayers();
 		for(Player p: pls){
-			players.put(p.getName(), new StatPlayer(p.getAI(), p.getName(), p.getColor(), p.getAddress()));
+			if(p.getAI().getId().equals("human"))
+				risk.parser("delplayer " + p.getName());
+			else
+				players.put(p.getName(), new StatPlayer(p.getAI(), p.getName(), p.getColor(), p.getAddress()));
 		}
 		RiskLogger.showProgressFrame();
 		startGame();
