@@ -1,7 +1,12 @@
 package net.yura.domination.engine.ai;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Utilizzato per integrare facilmente nuove AI nel gioco
@@ -20,15 +25,62 @@ public class AIManager {
 	 * 
 	 */
 	public static void setup(){
-		addAIs(
-			new AIHuman(),
-			new AICrap().setID("ai crap").setName("AI Crap"),
-			new AIEasy().setID("ai easy").setName("AI Easy"),
-			new AIHard().setID("ai hard").setName("AI Hard").setCapitalAI(new AIHardCapital()).setMissionAI(new AIHardMission()),
-			new AIRandom().setID("ai random").setName("AI Random"),
-			new AISimple().setID("ai simple").setName("AI Simple"),
-			new AISimpleRevenge().setID("ai srevenge").setName("AI Simple Revenge")
-		);
+		autodiscovery();
+	}
+	
+	/**
+	 * Esamina l'intero classpath alla ricerca di classi che implementano un'AI e le carica.
+	 * 
+	 * @author Michele Piccirillo <michele.piccirillo@gmail.com>
+	 */
+	// TODO Implementa ricerca anche all'interno dei JAR
+	private static void autodiscovery() {
+		String classpath = System.getProperty("java.class.path");
+		String[] paths = classpath.split(File.pathSeparator);
+		for(String path : paths) {
+			File dir = new File(path);
+			if(dir.isDirectory()) {
+				List<String> classes = autodiscoveryClasses(dir);
+				String absDir = dir.getAbsolutePath();
+				for(String classFile : classes) {
+					String className = classFile.substring(absDir.length() + 1, classFile.lastIndexOf('.')).replace(File.separatorChar, '.');
+					try {
+						Class<?> cl = Class.forName(className);
+						
+						if(AI.class.isAssignableFrom(cl) && cl.isAnnotationPresent(Discoverable.class)) {
+							System.out.println("Discovered ai " + cl);
+							AI ai = (AI) cl.newInstance();
+							addAI(ai);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	
+	private static List<String> autodiscoveryClasses(File path) {
+		List<String> classes = new LinkedList<String>();
+		FileFilter classFilter = new FileFilter() {
+			
+			@Override
+			public boolean accept(File arg0) {
+				return arg0.isDirectory() || (arg0.getName().toLowerCase().endsWith(".class") && arg0.getName().startsWith("AI"));
+			}
+		};
+		
+		if(!path.isDirectory())
+			return Collections.<String>emptyList();
+		
+		for(File file : path.listFiles(classFilter)) {
+			if(file.isDirectory())
+				classes.addAll(autodiscoveryClasses(file));
+			else
+				classes.add(file.getAbsolutePath());
+		}
+		
+		return classes;
 	}
 	
 	/**
@@ -52,6 +104,7 @@ public class AIManager {
 			if (AIs.containsKey(id))
 				throw new IllegalArgumentException("Esiste già una AI con id: "+id);
 			AIs.put(id, ai);
+			ai.onInit();
 		}catch (NullPointerException e) {
 			throw new IllegalArgumentException("L'AI deve avere nome e id non null");
 		}

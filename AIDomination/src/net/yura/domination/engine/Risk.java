@@ -32,9 +32,9 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import net.yura.domination.engine.ai.AI;
-import net.yura.domination.engine.ai.AICrap;
 import net.yura.domination.engine.ai.AIManager;
 import net.yura.domination.engine.ai.AIPlayer;
+import net.yura.domination.engine.ai.core.AICrap;
 import net.yura.domination.engine.core.Card;
 import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
@@ -673,10 +673,8 @@ public class Risk extends Thread {
 
 			}
 		} catch (RuntimeException ex) {
-
-			System.err.println("FAITAL ERROR IN RISK");
-
-			RiskUtil.printStackTrace(ex);
+			ex.printStackTrace(System.out);
+			RiskUtil.printStackTrace(ex); // FIXME Y U NO log anything??
 			run();
 		}
 
@@ -698,9 +696,7 @@ public class Risk extends Thread {
 				out.close();
 
 			} catch (Throwable e) {
-				System.out.print(resb.getString("core.loadgame.error.undo")
-						+ "\n");
-				RiskUtil.printStackTrace(e);
+				e.printStackTrace();
 			}
 		}
 	}
@@ -1764,10 +1760,7 @@ public class Risk extends Thread {
 										.getString("core.undo.error.unable");
 							}
 						} catch (Exception e) {
-							System.out.print(resb
-									.getString("core.loadgame.error.undo")
-									+ "\n");
-							RiskUtil.printStackTrace(e);
+							e.printStackTrace();
 						}
 					} else {
 						output = resb.getString("core.undo.error.network");
@@ -1813,10 +1806,7 @@ public class Risk extends Thread {
 							output = "replay of game finished";
 
 						} catch (Exception e) {
-							System.out.print(resb
-									.getString("core.loadgame.error.undo")
-									+ "\n");
-							RiskUtil.printStackTrace(e);
+							e.printStackTrace();
 						}
 					} else {
 						output = resb.getString("core.undo.error.network");
@@ -2985,7 +2975,7 @@ public class Risk extends Thread {
 			// give them a card if they deserve one
 
 			if (chatSocket == null) {
-				GameParser("CARD " + game.getDesrvedCard());
+				GameParser("CARD " + game.getDeservedCard());
 			} else if ((((Player) game.getCurrentPlayer()).getAddress()
 					.equals(myAddress))) {
 
@@ -3001,7 +2991,7 @@ public class Risk extends Thread {
 				// that was here V
 				// }
 
-				outChat.println("CARD " + game.getDesrvedCard());
+				outChat.println("CARD " + game.getDeservedCard());
 
 			}
 
@@ -3379,7 +3369,7 @@ public class Risk extends Thread {
 
 		for (int c = 0; c < Players.size(); c++) {
 
-			if (((Player) Players.elementAt(c)).getNoTerritoriesOwned() > 0
+			if (((Player) Players.elementAt(c)).getTerritoriesOwnedSize() > 0
 					|| setup == false) {
 				num++;
 			}
@@ -3395,7 +3385,7 @@ public class Risk extends Thread {
 
 		for (int c = start; c < Players.size(); c++) {
 
-			if (((Player) Players.elementAt(c)).getNoTerritoriesOwned() > 0
+			if (((Player) Players.elementAt(c)).getTerritoriesOwnedSize() > 0
 					|| setup == false) {
 				playerColors[current] = ((Player) Players.elementAt(c))
 						.getColor();
@@ -3839,7 +3829,7 @@ public class Risk extends Thread {
 					if (logOwnedCountries) {
 						ArrayList<Continent> owned = getOwnedCountriesOrdered(player);
 						playerInfo.append(" Territori Posseduti ("
-								+ player.getNoTerritoriesOwned() + "/"
+								+ player.getTerritoriesOwnedSize() + "/"
 								+ game.getNoCountries() + "):\n");
 						for (Continent c : owned) {
 							Vector<Country> countries = c

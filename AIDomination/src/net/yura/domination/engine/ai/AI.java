@@ -1,7 +1,5 @@
 package net.yura.domination.engine.ai;
 
-import java.io.Serializable;
-
 import net.yura.domination.engine.core.Player;
 import net.yura.domination.engine.core.RiskGame;
 
@@ -9,16 +7,25 @@ import net.yura.domination.engine.core.RiskGame;
  * Classe astratta che fa da superclasse a tutte le AI
  * 
  * @author Danilo Iannelli <daniloiannelli6@gmail.com>
- *
  */
-public abstract class AI implements Serializable{
-	private static final long serialVersionUID = 1L;
+public abstract class AI {
 	
 	protected String name;
 	protected String id;
 	protected AI aiCapital, aiMission;
 	protected RiskGame game;
 	protected Player player;
+	
+	public AI() {
+		String className = getClass().getSimpleName();
+		if(className.startsWith("AI"))
+			className = className.substring(2);
+		
+		name = className + " (AI)";
+		id = "ai " + getClass().getName();	
+	}
+	
+	public void onInit() {}
 	
 	public RiskGame getGame() {
 		return game;
@@ -43,7 +50,7 @@ public abstract class AI implements Serializable{
 	 */
 	public AI setID(String id){
 		if(!id.startsWith("ai ") || id.substring(3).contains(" "))
-			throw new IllegalArgumentException("L'id deve inizare con \"id \" e non deve contenere ulteriori spazi vuoti " );
+			throw new IllegalArgumentException("L'id deve inizare con \"ai \" e non deve contenere ulteriori spazi vuoti " );
 		this.id = id;
 		return this;
 	}
@@ -63,7 +70,7 @@ public abstract class AI implements Serializable{
 		return name;
 	}
 
-	public String getId() {
+	public String getId() {		
 		return id;
 	}
 	

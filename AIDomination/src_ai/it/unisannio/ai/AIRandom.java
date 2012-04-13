@@ -1,21 +1,19 @@
-package net.yura.domination.engine.ai;
+package it.unisannio.ai;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
+import net.yura.domination.engine.ai.AI;
+import net.yura.domination.engine.ai.Discoverable;
 import net.yura.domination.engine.core.Card;
 import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 
-@SuppressWarnings({ "unchecked" })
-public class AIRandom extends AI{
+@Discoverable
+public class AIRandom extends AI {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	@Override
 	public String getTrade() {

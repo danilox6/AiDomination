@@ -1,15 +1,16 @@
-package net.yura.domination.engine.ai;
+package it.unisannio.ai;
 
 import java.util.*;
 
+import net.yura.domination.engine.ai.AI;
+import net.yura.domination.engine.ai.Discoverable;
 import net.yura.domination.engine.core.Card;
 import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 
+@Discoverable
 public class AISimple extends AI{
-	private static final long serialVersionUID = -5026514597239780686L;
-
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public String getTrade() {
 		Vector<Card> cards = player.getCards();
@@ -43,7 +44,6 @@ public class AISimple extends AI{
 		return "endtrade";
 	}
 	
-	@SuppressWarnings("unchecked")
 	public String getInitialArmyPlacement() {
 		Continent[] continents = game.getContinents();
 		
@@ -162,7 +162,6 @@ public class AISimple extends AI{
 		return threatLevel;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private int getDefenseNeeded(Country country) {
 		if(country.getOwner() != player) 
 			return 0;
@@ -176,7 +175,6 @@ public class AISimple extends AI{
 		return neededArmies;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Set<Country> getConfiningTerritories(Continent continent) {
 		LinkedList<Country> toVisit = new LinkedList<Country>();
 		Set<Country> visited = new HashSet<Country>();
@@ -201,7 +199,6 @@ public class AISimple extends AI{
 		return confiningTerritories;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private float getForceRatio(Continent arg0) {
 		float myForces = 0.0f;
 		float otherForces = 0.0f;
@@ -216,7 +213,6 @@ public class AISimple extends AI{
 		return myForces / (myForces + otherForces);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public String getAttack() {
 		Vector<Country> countries = player.getTerritoriesOwned();
@@ -225,19 +221,19 @@ public class AISimple extends AI{
 		for(Country c : countries){
 			Vector<Country> neighbours = c.getNeighbours();
 			for(Country n: neighbours){
-				if(n.getOwner()!=player){
-					if(attacker == null && defender == null){
-						attacker = c;
-						defender = n;
-					}
-					if (((c.getArmies()-1) - n.getArmies()) > ((attacker.getArmies()-1) - defender.getArmies())){
+				if(n.getOwner() != player) {
+					if (
+							(attacker == null && defender == null)
+							|| ((c.getArmies()-1) - n.getArmies()) > ((attacker.getArmies()-1) - defender.getArmies())
+							){
 						attacker = c;
 						defender = n;
 					}
 				}
 			}	
 		}
-		if(attacker==null || ((attacker.getArmies()-1) - defender.getArmies()) < 1 )
+		
+		if(attacker==null || ((float) attacker.getArmies() / (float) defender.getArmies()) < 1.5)//((attacker.getArmies()-1) - defender.getArmies()) < 1 )
 			return "endattack";
 		return "attack "+attacker.getColor() + " " + defender.getColor();
 		

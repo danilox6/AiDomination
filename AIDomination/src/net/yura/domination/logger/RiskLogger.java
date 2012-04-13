@@ -191,7 +191,6 @@ public class RiskLogger {
 	}
 
 
-	@SuppressWarnings("unchecked")
 	public static void setRisk(Risk risk) {
 		RiskLogger.risk = risk;
 		Vector<Player> pls = risk.getGame().getPlayers();
