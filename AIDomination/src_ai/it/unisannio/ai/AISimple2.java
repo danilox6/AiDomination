@@ -13,7 +13,6 @@ import java.util.Vector;
 
 import net.yura.domination.engine.ai.BaseAI;
 import net.yura.domination.engine.ai.Discoverable;
-import net.yura.domination.engine.ai.BaseAI.Attack;
 import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 
