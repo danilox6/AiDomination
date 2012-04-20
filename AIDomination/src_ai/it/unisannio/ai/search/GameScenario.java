@@ -8,7 +8,6 @@ import java.util.Vector;
 
 import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
-import net.yura.domination.engine.core.Player;
 import net.yura.domination.engine.core.RiskGame;
 
 public class GameScenario implements Comparable<GameScenario>, Cloneable {
@@ -24,39 +23,40 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 	private int attackerId = 0, defenderId = 0;
 
 
-	public void setup(RiskGame game, Player player){
+	public GameScenario(RiskGame game){
 		GameScenario.game = game;
-		//		int gamestate = game.getState();
-		//		switch (gamestate) {
-		//		case RiskGame.STATE_PLACE_ARMIES:
-		//			if(!game.NoEmptyCountries())
-		//				state = State.INITIAL_PLACEMENT;
-		//			else if(!game.getSetup())
-		//				state = State.INITIAL_FORTIFY;
-		//			else state = State.FORTIFY;
-		//			break;
-		//		case RiskGame.STATE_TRADE_CARDS:
-		//			break;
-		//		case RiskGame.STATE_ATTACKING:
-		//			state = State.ATTACK;
-		//			break;
-		//		case RiskGame.STATE_ROLLING:
-		//			state = State.ROLL;
-		//			break;
-		//		case RiskGame.STATE_FORTIFYING:
-		//			state = State.BATTLEWON;
-		//			break;
-		//		}
-		state = State.INITIAL_PLACEMENT;
+		int gamestate = game.getState();
+		switch (gamestate) {
+		case RiskGame.STATE_PLACE_ARMIES:
+			if(!game.NoEmptyCountries())
+				state = State.INITIAL_PLACEMENT;
+			else if(!game.getSetup())
+				state = State.INITIAL_FORTIFY;
+			else state = State.FORTIFY;
+			break;
+		case RiskGame.STATE_TRADE_CARDS:
+			break;
+		case RiskGame.STATE_ATTACKING:
+			state = State.ATTACK;
+			break;
+		case RiskGame.STATE_ROLLING:
+			state = State.ROLL;
+			break;
+		case RiskGame.STATE_FORTIFYING:
+			state = State.BATTLEWON;
+			break;
+		}
+//		state = State.INITIAL_PLACEMENT;
 		Continent[] continents = game.getContinents();
 		for(Continent continent: continents){
 			Vector<Country> nations = continent.getTerritoriesContained();
 			for(Country nation: nations){
 				countries.put(nation.getColor(), nation.getArmies());
-				if(nation.getOwner()==player)
+				if(nation.getOwner()==game.getCurrentPlayer())
 					possessions.add(nation.getColor());
 			}
 		}
+		extraArmies = game.getCurrentPlayer().getExtraArmies();
 	}
 
 
@@ -88,11 +88,19 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 
 	public List<GameMutation> getMutations() {
 		List<GameMutation> mutations = new LinkedList<GameMutation>();
+		System.out.println(state);
 		switch(state) {
 		
-		case INITIAL_PLACEMENT: //È brutto da vedere
-		case INITIAL_FORTIFY:	// ma funziona
-		case FORTIFY:
+		case INITIAL_PLACEMENT: 
+			
+			for(Integer key: countries.keySet()){
+				if(!possessions.contains(key)){
+					mutations.add(new GameMutation(this, String.format("placearmies %d 1", key )));
+				}
+			}
+			break;
+		case INITIAL_FORTIFY:	//È brutto da vedere
+		case FORTIFY:			// ma funziona
 			for(Integer key: countries.keySet()){
 				if(possessions.contains(key)){
 					mutations.add(new GameMutation(this, String.format("placearmies %d 1", key )));
@@ -127,12 +135,13 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 
 		case MOVE:
 			for(Integer key: countries.keySet()){
-				Country country = game.getCountryInt(key);
-				if(possessions.contains(key)){
+				int armies = countries.get(key);
+				if(possessions.contains(key) && armies > 1){
+					Country country = game.getCountryInt(key);
 					Vector<Country> neighbours = country.getNeighbours();
 					for(Country n: neighbours){
 						if(possessions.contains(n.getColor()))
-							mutations.add(new GameMutation(this, String.format("movearmies %d %d %d", country.getColor(), n.getColor(), countries.get(country.getColor())-1)));
+							mutations.add(new GameMutation(this, String.format("movearmies %d %d %d", country.getColor(), n.getColor(), armies-1)));
 					}
 				}
 			}
@@ -145,7 +154,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 				if(possessions.contains(key)){
 					Vector<Country> neighbours = country.getNeighbours();
 					for(Country n: neighbours){
-						if(possessions.contains(n.getColor()))
+						if(!possessions.contains(n.getColor()) && countries.get(n.getColor())>1)
 							mutations.add(new GameMutation(this, String.format("defendattack %d %d", n.getColor(), country.getColor())));
 					}
 				}
