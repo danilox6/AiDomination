@@ -21,7 +21,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 	private float likelihood;
 	private State state;
 
-	private int attackerId, defenderId;
+	private int attackerId = 0, defenderId = 0;
 
 
 	public void setup(RiskGame game, Player player){
@@ -194,10 +194,23 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		this.attackerId = attackerId;
 		this.defenderId = defenderId;
 	}
+	
+	
 
 	public RiskGame getGame(){
 		return game;
 	}
+
+
+	public int getAttackerId() {
+		return attackerId;
+	}
+
+
+	public int getDefenderId() {
+		return defenderId;
+	}
+	
 
 
 }

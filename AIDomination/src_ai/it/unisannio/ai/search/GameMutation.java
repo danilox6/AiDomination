@@ -14,6 +14,8 @@ public class GameMutation implements Comparable<GameMutation> {
 	public GameMutation(GameScenario origin, String command){
 		this.origin = origin;
 		this.command = command;
+		attackerId = origin.getAttackerId();
+		defenderId = origin.getDefenderId();
 		calcDestination();
 	}
 	
@@ -88,15 +90,29 @@ public class GameMutation implements Comparable<GameMutation> {
 			
 			if(origin.getState().equals(GameScenario.State.ROLL)){
 				int lostArmies = 0;
+				int attackerArmies =  destination.countries.get(attackerId);
+				int defenderArmies = destination.countries.get(defenderId);
 				if(command.equals("won")){
-					lostArmies = SearchUtility.getAttackerLostArmies(destination.countries.get(attackerId), destination.countries.get(defenderId));
-					destination.countries.put(attackerId, destination.countries.get(attackerId)-lostArmies);
+					lostArmies = SearchUtility.getAttackerLostArmies(attackerArmies, defenderArmies);
+					int survivedArmies = 0;
+					if(lostArmies>=attackerArmies-1)
+						survivedArmies = 2;
+					else
+						survivedArmies = attackerArmies-lostArmies;
+					destination.countries.put(attackerId,survivedArmies );
 					destination.possessions.add(defenderId);
 					destination.setState(GameScenario.State.BATTLEWON);
 				}if(command.equals("lost")){
-					lostArmies = SearchUtility.getDefenderLostArmies(destination.countries.get(attackerId), destination.countries.get(defenderId));
+					lostArmies = SearchUtility.getDefenderLostArmies(attackerArmies, defenderArmies);
+					
+					int survivedArmies = 0;
+					if(lostArmies>=attackerArmies)
+						survivedArmies = 1;
+					else
+						survivedArmies = defenderArmies-lostArmies;
+					
 					destination.countries.put(attackerId, 1);
-					destination.countries.put(defenderId, destination.countries.get(defenderId)-lostArmies);
+					destination.countries.put(defenderId, survivedArmies);
 					
 					if(canAttack(destination))
 						destination.setState(GameScenario.State.ATTACK);
@@ -150,23 +166,41 @@ public class GameMutation implements Comparable<GameMutation> {
 			if(origin.getState().equals(GameScenario.State.DEFENDROLL)){
 				//Si assume che il nemico sposta tutte le truppe rimaste (-1) se vince
 				int lostArmies = 0;
+				int attackerArmies =  destination.countries.get(attackerId);
+				int defenderArmies = destination.countries.get(defenderId);
 				if(command.equals("won")){ //Il nemico vince
-					lostArmies = SearchUtility.getAttackerLostArmies(destination.countries.get(attackerId), destination.countries.get(defenderId));
-					destination.countries.put(attackerId, destination.countries.get(attackerId)-lostArmies);
-					destination.possessions.add(defenderId);
-					destination.setState(GameScenario.State.BATTLEWON);
-				}if(command.equals("lost")){ //Il nemico perde
-					lostArmies = SearchUtility.getDefenderLostArmies(destination.countries.get(attackerId), destination.countries.get(defenderId));
-					destination.countries.put(attackerId, 1);
-					destination.countries.put(defenderId, destination.countries.get(defenderId)-lostArmies);
-					
-					if(enemyCanAttack(destination))
-						destination.setState(GameScenario.State.DEFEND);
+					lostArmies = SearchUtility.getAttackerLostArmies(attackerArmies, defenderArmies);
+					int survivedArmies = 0;
+					if(lostArmies>=attackerArmies - 1)
+						survivedArmies = 2;
 					else
-						destination.setState(GameScenario.State.END);
+						survivedArmies = attackerArmies-lostArmies;
+					
+					destination.countries.put(attackerId, 1);
+					destination.countries.put(defenderId, survivedArmies - 1);
+					destination.possessions.remove(defenderId);
+				}else if(command.equals("lost")){ //Il nemico perde
+					lostArmies = SearchUtility.getDefenderLostArmies(attackerArmies, defenderArmies);
+					
+					int survivedArmies = 0;
+					if(lostArmies>=attackerArmies)
+						survivedArmies = 1;
+					else
+						survivedArmies = defenderArmies-lostArmies;
+					
+					
+					destination.countries.put(attackerId, 1);
+					destination.countries.put(defenderId, survivedArmies );
+
 				}else					
 					throw new IllegalArgumentException("Wrong command: "+ command);
+
+				if(enemyCanAttack(destination))
+					destination.setState(GameScenario.State.DEFEND);
+				else
+					destination.setState(GameScenario.State.END);
 			}
+			
 			
 			setDestination(destination);
 			return this;

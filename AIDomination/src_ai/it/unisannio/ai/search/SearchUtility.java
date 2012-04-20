@@ -1,5 +1,7 @@
 package it.unisannio.ai.search;
 
+import java.util.HashMap;
+
 import net.yura.domination.engine.core.Continent;
 
 public class SearchUtility {
@@ -21,25 +23,41 @@ public class SearchUtility {
 	}	
 	
 	/**
-	 * Restituisce il numero di armate che perse dall'attaccante
+	 * Restituisce il numero di armate che perse mediamente dall'attaccante per una data situazione iniziale 
+	 * di armate 
 	 * @param attackerArmies
 	 * @param defenderArmies
 	 * @return
 	 */
 	public static int getAttackerLostArmies(int attackerArmies, int defenderArmies){
-		//TODO
-		return 0;
+		double probab  = 0, temp = 0;	
+		double lostArmies = 0;
+		for(int i = 1; i<=attackerArmies; i++){
+			temp = freeSpaceProb(attackerArmies, defenderArmies, i, 0);
+			probab += temp;
+			lostArmies += (attackerArmies - i) * temp;
+		}
+		lostArmies += (1 - probab) * attackerArmies; 
+		return (int) Math.round(lostArmies);
 	}
 	
 	/**
-	 * Restituisce il numero di armate che perse dal difensore
+	 * Restituisce il numero di armate che perse mediamente dal difensore per una data situazione iniziale 
+	 * di armate
 	 * @param attackerArmies
 	 * @param defenderArmies
 	 * @return
 	 */
 	public static int getDefenderLostArmies(int attackerArmies, int defenderArmies){
-		//TODO
-		return 0;
+		double probab  = 0, temp = 0;	
+		double lostArmies = 0;
+		for(int i = 1; i<=defenderArmies; i++){
+			temp = freeSpaceProb(attackerArmies, defenderArmies, 0, i);
+			probab += temp;
+			lostArmies += (defenderArmies - i) * temp;
+		}
+		lostArmies += (1 - probab) * defenderArmies; 
+		return (int) Math.round(lostArmies);
 	}
 	
 	
@@ -54,9 +72,9 @@ public class SearchUtility {
 		if ((attackerArmies <= 5) || (defenderArmies <= 3)) return (float) boundaryProb(attackerArmies, defenderArmies);
 		
 		// calculate probability:
-		float f0 = 2890/7776;
-		float f1 = 2611/7776;
-		float f2 = 2275/7776;
+		double f0 = 2890.0/7776;
+		double f1 = 2611.0/7776;
+		double f2 = 2275.0/7776;
 		float pOut = 0;
 		for (int i = attackerArmies; i > 4; i--)
 		{
@@ -75,22 +93,22 @@ public class SearchUtility {
 	
 	private static float freeSpaceProb(int attackerArmies, int defenderArmies, int m, int n) {
 		//errors:
-		if ((attackerArmies < 4) || (m < 2) || (defenderArmies < 2) || (n < 0)) return -1;
-		if ((Math.floor(attackerArmies) != attackerArmies) || (Math.floor(defenderArmies) != defenderArmies) || (Math.floor(m) != m) || (Math.floor(n) != n)) return -1;
-		double s = Math.floor((attackerArmies + defenderArmies - m - n)/2);
-		if (s < 0) return -1;
+//		if ((attackerArmies < 4) || (m < 2) || (defenderArmies < 2) || (n < 0)) return -1;
+//		if ((Math.floor(attackerArmies) != attackerArmies) || (Math.floor(defenderArmies) != defenderArmies) || (Math.floor(m) != m) || (Math.floor(n) != n)) return -1;
+		double s = Math.floor((attackerArmies + defenderArmies - m - n)/2.0);
+//		if (s < 0) return -1;
 
 		//zero probability:
 		if ((attackerArmies + defenderArmies - m - n) != 2 * s) return 0;	// Can't be reached by shaking 3 vs. 2 dice exclusively.
 		if (m + n < 4) return 0;				// Can't be reached by shaking 3 vs. 2 dice exclusively.
 		
-		float f0 = 2890/7776;
-		float f1 = 2611/7776;
-		float f2 = 2275/7776;
-		float L = ((m - n) - (attackerArmies - defenderArmies))/2;
+		double f0 = 2890.0/7776;
+		double f1 = 2611.0/7776;
+		double f2 = 2275.0/7776;
+		double L = ((m - n) - (attackerArmies - defenderArmies))/2.0;
 		float pOut = 0;
 		
-		for (int smallL = 0; smallL <= (s - Math.abs(L))/2; smallL++)
+		for (int smallL = 0; smallL <= (s - Math.abs(L))/2.0; smallL++)
 		{
 			double coeff = numComb(s, Math.abs(L) + smallL, smallL);
 			if (L >= 0)
@@ -131,7 +149,7 @@ public class SearchUtility {
 			nOut *= (s - i);
 		
 		// divide by (D!) and (E!):
-		nOut /= (factorial((int) D) * factorial((int) E));
+		nOut /= (float)(factorial((int) D) * factorial((int) E));
 		
 		return nOut;
 	}
@@ -147,16 +165,16 @@ public class SearchUtility {
 		return cumProduct;
 	}
 
-	//TODO Cache
-//	private static HashMap<Integer, Integer> boundaryProb = new HashMap<Integer, Integer>();
+	
+	private static HashMap<Integer, HashMap<Integer,Double>> cache;
 	
 	private static double boundaryProb(int m, int n) {
-//		// Look for an array element that stores the solution for this particular (m, n):
-//		if ( boundaryProb == null)
-//			boundaryProb = new HashMap<Integer, Integer>();
-//		else
-//			if (boundaryProb.get(m) != null)
-//				return g_arrBoundaryProb[m][n];
+		// Look for an array element that stores the solution for this particular (m, n):
+		if ( cache == null)
+			cache = new  HashMap<Integer, HashMap<Integer,Double>>();
+		else
+			if (cache.get(m) != null && cache.get(m).get(n) != null)
+				return cache.get(m).get(n);
 		
 		if ((Math.floor(m) != m) || (Math.floor(n) != n)) return -1;
 		if ((m < 1) || (n < 0)) return -1;
@@ -226,13 +244,11 @@ public class SearchUtility {
 				pOut += Math.pow(p32[2], (m-3)/2) * (p22[0] + p22[1] * p11[0]);
 			}
 		}
-
-//		g_arrBoundaryProb[m][n] = pOut;
+		
+		if(cache.get(m) == null)
+			cache.put(m, new HashMap<Integer, Double>());
+		cache.get(m).put(n, pOut);
 		return pOut;
 	}
 	
-	
-	public static void main(String[] args) {
-		System.out.println(victoryProbability(5, 2)); 
-	}
 }
