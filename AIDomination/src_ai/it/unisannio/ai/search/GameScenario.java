@@ -1,5 +1,6 @@
 package it.unisannio.ai.search;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -230,6 +231,23 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		return defenderId;
 	}
 	
-
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof GameScenario)) return false;
+		GameScenario other = (GameScenario) obj;
+		return (countries.equals(other.countries) && possessions.equals(other.possessions)
+				&& extraArmies == other.extraArmies && likelihood == other.likelihood &&
+				state == other.getState() && attackerId == other.getAttackerId() &&
+				defenderId == other.getDefenderId() && enemyTurn == other.enemyTurn && enemyExtraArmies == other.enemyExtraArmies);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(new Object[] {
+			countries, possessions, extraArmies,
+			likelihood, state, attackerId, defenderId,
+			enemyTurn, enemyExtraArmies
+		});
+	}
 
 }

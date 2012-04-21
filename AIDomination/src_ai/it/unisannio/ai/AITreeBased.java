@@ -8,8 +8,8 @@ public class AITreeBased extends AISimple{
 	TreeSearcher search = new TreeSearcher();
 	
 	@Override
-	public String getAttack() {
+	public String getPlaceArmies() {
 		search.srotolaAlbero(game);
-		return super.getAttack();
+		return super.getPlaceArmies();
 	}
 }

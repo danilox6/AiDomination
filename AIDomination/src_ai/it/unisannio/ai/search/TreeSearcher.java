@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import net.yura.domination.engine.core.RiskGame;
@@ -27,6 +28,33 @@ public class TreeSearcher {
 		turno++;
 		p.append("Turno "+turno+":\n");
 		long inizioTurno = System.currentTimeMillis();
+		attraversamentoLeggero(game);
+		p.append("Tempo per attraversamento completo turno "+ turno +": " + (System.currentTimeMillis()-inizioTurno)+"ms\n\n");
+	}
+	
+	
+	//Usa un HashSet per impedire il calcolo ripetuto su Scenari uguali
+	private void attraversamentoLeggero(RiskGame game){
+
+		GameScenario s = new GameScenario(game);
+		HashSet<GameScenario> scenari = new HashSet<GameScenario>();
+		scenari.add(s);
+		while (scenari.iterator().next().getState() != GameScenario.State.END){
+			HashSet<GameScenario> temp = new HashSet<GameScenario>();
+			for(GameScenario sc: scenari){
+				List<GameMutation> mutations = sc.getMutations();
+				for(GameMutation m: mutations){
+					temp.add(m.getDestination());
+				}
+			}
+			scenari = temp;
+			p.append("	Ampiezza livello "+ scenari.iterator().next().getState()+"->"+scenari.iterator().next().getState() +": " + scenari.size()+"\n");
+		}
+	}
+	
+	
+	@SuppressWarnings("unused")
+	private void attraversamentoPesante(RiskGame game){
 		GameScenario scenario = new GameScenario(game);
 		List<GameMutation> mutations = null;
 		while(mutations == null ||mutations.get(0).getDestination().getState() != GameScenario.State.END){
@@ -34,17 +62,12 @@ public class TreeSearcher {
 				mutations = scenario.getMutations();
 			else{
 				List<GameMutation> temp = new ArrayList<GameMutation>();
-//				GameMutation m = mutations.get(0);
 				for(GameMutation m: mutations){
-					System.out.println("------------------------");
 					temp.addAll(m.getDestination().getMutations());
 				}
 				mutations = temp;
 			}
-			System.out.println("************************************");
 			p.append("	Ampiezza livello "+ mutations.get(0).getOrigin().getState()+"->"+mutations.get(0).getDestination().getState() +": " + mutations.size()+"\n");
-			
 		}
-		p.append("Tempo per attraversamento completo turno "+ turno +": " + (System.currentTimeMillis()-inizioTurno)+"ms\n\n");
 	}
 }
