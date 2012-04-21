@@ -1,6 +1,7 @@
 package it.unisannio.ai.search;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import net.yura.domination.engine.core.Continent;
 
@@ -9,14 +10,29 @@ public class SearchUtility {
 	/**
 	 * Restituisce il numero di armate che saranno disponibili nel turno successivo
 	 * @param scenario
+	 * @param enemy vero se vogliamo calcolare le armate del nemico
 	 * @return
 	 */
-	public static int getNextTurnArmies(GameScenario scenario){
+	public static int getNextTurnArmies(GameScenario scenario, boolean enemy){
+		int countries = (enemy)?	scenario.countries.size() - scenario.possessions.size()	:scenario.possessions.size();
 		int armies = 0;
-		armies += scenario.possessions.size()/3;
+		if(countries < 9)
+			armies = 3;
+		else
+			armies = countries/3;
+		
+		
+		HashSet<Integer> possessions = new HashSet<Integer>();
+		if(enemy){
+			for(Integer c: scenario.countries.keySet())
+				if(!scenario.possessions.contains(c))
+					possessions.add(c);
+		}
+		else
+		 	possessions =  scenario.possessions;
 		Continent[] continents = scenario.getGame().getContinents();
 		for(Continent continent: continents){
-			if(scenario.possessions.containsAll(continent.getTerritoriesContained()))
+			if(possessions.containsAll(continent.getTerritoriesContained()))
 				armies += continent.getArmyValue();
 		}
 		return armies;
@@ -40,6 +56,14 @@ public class SearchUtility {
 		lostArmies += (1 - probab) * attackerArmies; 
 		return (int) Math.round(lostArmies);
 	}
+	
+	public static boolean thereAreEmptyCountries(GameScenario scenario){
+		for(Integer c: scenario.countries.values())
+			if(c == 0)
+				return true;
+		return false;
+	}
+	
 	
 	/**
 	 * Restituisce il numero di armate che perse mediamente dal difensore per una data situazione iniziale 

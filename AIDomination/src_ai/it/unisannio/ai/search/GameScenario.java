@@ -17,8 +17,11 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 	protected HashMap<Integer, Integer> countries = new HashMap<Integer, Integer>();
 	protected HashSet<Integer> possessions = new HashSet<Integer>();
 	protected int extraArmies = 0;
+	protected int enemyExtraArmies = 0;
 	private float likelihood;
 	private State state;
+	
+	protected boolean enemyTurn = false;
 
 	private int attackerId = 0, defenderId = 0;
 
@@ -28,9 +31,9 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		int gamestate = game.getState();
 		switch (gamestate) {
 		case RiskGame.STATE_PLACE_ARMIES:
-			if(!game.NoEmptyCountries())
+			if(!game.NoEmptyCountries()){
 				state = State.INITIAL_PLACEMENT;
-			else if(!game.getSetup())
+			}else if(!game.getSetup())
 				state = State.INITIAL_FORTIFY;
 			else state = State.FORTIFY;
 			break;
@@ -57,12 +60,13 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 			}
 		}
 		extraArmies = game.getCurrentPlayer().getExtraArmies();
+		enemyExtraArmies = extraArmies;
 	}
 
 
 	public GameScenario(HashMap<Integer, Integer> countries,
 			HashSet<Integer> possessions, int extraArmies, float likelihood,
-			State state, int attackerId, int defenderId) {
+			State state, int attackerId, int defenderId, boolean enemyTurn, int enemyExtraArmies) {
 		this.countries = countries;
 		this.possessions = possessions;
 		this.extraArmies = extraArmies;
@@ -70,6 +74,8 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		this.state = state;
 		this.attackerId = attackerId;
 		this.defenderId = defenderId;
+		this.enemyTurn = enemyTurn;
+		this.enemyExtraArmies = enemyExtraArmies;
 	}
 
 	//TODO Definire utilità
@@ -82,23 +88,25 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		case INITIAL_FORTIFY:
 			return 0;
 		default:
-			return SearchUtility.getNextTurnArmies(this);
+			return SearchUtility.getNextTurnArmies(this, false);
 		}
 	}
 
 	public List<GameMutation> getMutations() {
 		List<GameMutation> mutations = new LinkedList<GameMutation>();
-		System.out.println(state);
+//		System.out.println(state);
 		switch(state) {
 		
 		case INITIAL_PLACEMENT: 
-			
+			boolean added = false;
 			for(Integer key: countries.keySet()){
-				if(!possessions.contains(key)){
+				if(countries.get(key) == 0){
 					mutations.add(new GameMutation(this, String.format("placearmies %d 1", key )));
+					added = true;
 				}
 			}
-			break;
+			if(added)
+				break;
 		case INITIAL_FORTIFY:	//È brutto da vedere
 		case FORTIFY:			// ma funziona
 			for(Integer key: countries.keySet()){
@@ -167,6 +175,8 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 			mutations.add(new GameMutation(this, "won").setLikelihood(dVictoryProbability));
 			mutations.add(new GameMutation(this, "lost").setLikelihood(1 - dVictoryProbability));
 			break;
+			
+		
 		}
 
 		return mutations;
@@ -188,7 +198,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		return new GameScenario((HashMap<Integer, Integer>) countries.clone(),(HashSet<Integer>) possessions.clone(), extraArmies, likelihood, state, attackerId, defenderId); 
+		return new GameScenario((HashMap<Integer, Integer>) countries.clone(),(HashSet<Integer>) possessions.clone(), extraArmies, likelihood, state, attackerId, defenderId, enemyTurn, enemyExtraArmies); 
 	}
 
 	public float getLikelihood() {

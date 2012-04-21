@@ -1,24 +1,28 @@
 package it.unisannio.ai.search;
 
 import java.util.StringTokenizer;
+import java.util.Vector;
+
+import net.yura.domination.engine.core.Country;
 
 public class GameMutation implements Comparable<GameMutation> {
 	private GameScenario origin;
 	private String command;
 	private GameScenario destination;
 	private float likelihood;
-	
+
 	private int attackerId, defenderId;
-	
-	
+
+
 	public GameMutation(GameScenario origin, String command){
 		this.origin = origin;
 		this.command = command;
 		attackerId = origin.getAttackerId();
 		defenderId = origin.getDefenderId();
 		calcDestination();
+		System.out.println(origin.getState() +" --" + command +"--> "+ destination.getState());
 	}
-	
+
 	public float getUtility() {
 		return 0.0f;
 	}
@@ -53,30 +57,46 @@ public class GameMutation implements Comparable<GameMutation> {
 		this.likelihood = likelihood;
 		return this;
 	}
-	
+
 	public GameMutation calcDestination(){
 		try {
 			GameScenario destination = (GameScenario) origin.clone();
 
 			StringTokenizer tokenizer = new StringTokenizer(command);
-			
-			if(origin.getState().equals(GameScenario.State.FORTIFY)
-					|| origin.getState().equals(GameScenario.State.INITIAL_PLACEMENT)
+
+			if(origin.getState().equals(GameScenario.State.INITIAL_PLACEMENT)){
+				if(tokenizer.nextToken().equals("placearmies")){
+					int nation = Integer.parseInt(tokenizer.nextToken());
+					destination.countries.put(nation, 1);
+					if(origin.enemyTurn){
+						destination.enemyExtraArmies--;
+					}else{
+						destination.possessions.add(nation);
+						destination.extraArmies--;
+					}
+					if(SearchUtility.thereAreEmptyCountries(destination)){
+						destination.setState(GameScenario.State.INITIAL_PLACEMENT);
+					}else
+						destination.setState(GameScenario.State.INITIAL_FORTIFY);
+					destination.enemyTurn = !origin.enemyTurn;
+				}else
+					throw new IllegalArgumentException("Wrong command: "+ command);
+			}
+
+			else if(origin.getState().equals(GameScenario.State.FORTIFY)
 					|| origin.getState().equals(GameScenario.State.INITIAL_FORTIFY)){
 				if(tokenizer.nextToken().equals("placearmies")){
 					int nation = Integer.parseInt(tokenizer.nextToken());
-					
+
 					destination.countries.put(nation,(Integer.parseInt(tokenizer.nextToken())));
-					if(origin.getState().equals(GameScenario.State.INITIAL_PLACEMENT))
-						destination.possessions.add(nation);
-					destination.extraArmies -= 1;
+					destination.extraArmies--;
 					if(destination.extraArmies == 0)
 						destination.setState(GameScenario.State.ATTACK);
 				}else
 					throw new IllegalArgumentException("Wrong command: "+ command);
 			}
-			
-			if(origin.getState().equals(GameScenario.State.ATTACK)){
+
+			else if(origin.getState().equals(GameScenario.State.ATTACK)){
 				String comm = tokenizer.nextToken(); 
 				if(comm.equals("attack")){
 					attackerId = Integer.parseInt(tokenizer.nextToken());
@@ -88,10 +108,10 @@ public class GameMutation implements Comparable<GameMutation> {
 					destination.setState(GameScenario.State.MOVE);
 				}else					
 					throw new IllegalArgumentException("Wrong command: "+ command);
-				
+
 			}
-			
-			if(origin.getState().equals(GameScenario.State.ROLL)){
+
+			else if(origin.getState().equals(GameScenario.State.ROLL)){
 				int lostArmies = 0;
 				int attackerArmies =  destination.countries.get(attackerId);
 				int defenderArmies = destination.countries.get(defenderId);
@@ -107,16 +127,16 @@ public class GameMutation implements Comparable<GameMutation> {
 					destination.setState(GameScenario.State.BATTLEWON);
 				}else if(command.equals("lost")){
 					lostArmies = SearchUtility.getDefenderLostArmies(attackerArmies, defenderArmies);
-					
+
 					int survivedArmies = 0;
 					if(lostArmies>=attackerArmies)
 						survivedArmies = 1;
 					else
 						survivedArmies = defenderArmies-lostArmies;
-					
+
 					destination.countries.put(attackerId, 1);
 					destination.countries.put(defenderId, survivedArmies);
-					
+
 					if(canAttack(destination))
 						destination.setState(GameScenario.State.ATTACK);
 					else
@@ -124,8 +144,8 @@ public class GameMutation implements Comparable<GameMutation> {
 				}else					
 					throw new IllegalArgumentException("Wrong command: "+ command);
 			}
-			
-			if(origin.getState().equals(GameScenario.State.BATTLEWON)){
+
+			else if(origin.getState().equals(GameScenario.State.BATTLEWON)){
 				if(command.equals("move all")){
 					int armies = destination.countries.get(attackerId) - 1;
 					destination.countries.put(defenderId, armies);
@@ -138,8 +158,8 @@ public class GameMutation implements Comparable<GameMutation> {
 				}else					
 					throw new IllegalArgumentException("Wrong command: "+ command + ". Solo \"move all\" è supportato.");
 			}
-			
-			if(origin.getState().equals(GameScenario.State.MOVE)){
+
+			else if(origin.getState().equals(GameScenario.State.MOVE)){
 				String c = tokenizer.nextToken();
 				if(c.equals("movearmies")){
 					int source = Integer.parseInt(tokenizer.nextToken());
@@ -153,22 +173,23 @@ public class GameMutation implements Comparable<GameMutation> {
 				else					
 					throw new IllegalArgumentException("Wrong command: "+ command);
 			}
-			
-			if(origin.getState().equals(GameScenario.State.DEFEND)){
+
+			else if(origin.getState().equals(GameScenario.State.DEFEND)){
+
 				String comm = tokenizer.nextToken(); 
 				if(comm.equals("defendattack")){
 					attackerId = Integer.parseInt(tokenizer.nextToken());
 					defenderId = Integer.parseInt(tokenizer.nextToken());
-					destination.setState(GameScenario.State.DEFENDROLL);
 					destination.setAttackerDefender(attackerId, defenderId);
+					destination.setState(GameScenario.State.DEFENDROLL);
 				}
 				else if(comm.equals("enddefend")){
 					destination.setState(GameScenario.State.END);
 				}else					
 					throw new IllegalArgumentException("Wrong command: "+ command);
 			}
-			
-			if(origin.getState().equals(GameScenario.State.DEFENDROLL)){
+
+			else if(origin.getState().equals(GameScenario.State.DEFENDROLL)){
 				//Si assume che il nemico sposta tutte le truppe rimaste (-1) se vince
 				int lostArmies = 0;
 				int attackerArmies =  destination.countries.get(attackerId);
@@ -180,20 +201,20 @@ public class GameMutation implements Comparable<GameMutation> {
 						survivedArmies = 2;
 					else
 						survivedArmies = attackerArmies-lostArmies;
-					
+
 					destination.countries.put(attackerId, 1);
 					destination.countries.put(defenderId, survivedArmies - 1);
 					destination.possessions.remove(defenderId);
 				}else if(command.equals("lost")){ //Il nemico perde
 					lostArmies = SearchUtility.getDefenderLostArmies(attackerArmies, defenderArmies);
-					
+
 					int survivedArmies = 0;
 					if(lostArmies>=attackerArmies)
 						survivedArmies = 1;
 					else
 						survivedArmies = defenderArmies-lostArmies;
-					
-					
+
+
 					destination.countries.put(attackerId, 1);
 					destination.countries.put(defenderId, survivedArmies );
 
@@ -204,12 +225,12 @@ public class GameMutation implements Comparable<GameMutation> {
 					destination.setState(GameScenario.State.DEFEND);
 				else
 					destination.setState(GameScenario.State.END);
+
 			}
-			
-			
+
 			setDestination(destination);
 			return this;
-			
+
 		} catch(NumberFormatException e){
 			throw new IllegalArgumentException("Wrong command: "+ command);
 		}  catch(NullPointerException e){
@@ -218,7 +239,7 @@ public class GameMutation implements Comparable<GameMutation> {
 			e.printStackTrace();
 		}
 		return null;
-		
+
 	}
 
 	private boolean canAttack(GameScenario scenario){
@@ -229,15 +250,19 @@ public class GameMutation implements Comparable<GameMutation> {
 		}			
 		return false;
 	}
-	
-	
-	
+
+
+
 	private boolean enemyCanAttack(GameScenario scenario) {
 		for(Integer country: scenario.countries.keySet()){
-			if(!scenario.possessions.contains(country) && scenario.countries.get(country)>1)
-				return true;
+			if(!scenario.possessions.contains(country) && scenario.countries.get(country)>1){
+				Vector<Country> neighbours =  scenario.getGame().getCountryInt(country).getNeighbours();
+				for(Country n: neighbours)
+					if(scenario.possessions.contains(n.getColor()))
+						return true;
+			}
 		}
 		return false;
 	}
-	
+
 }
