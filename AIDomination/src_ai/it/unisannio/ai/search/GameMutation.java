@@ -101,8 +101,8 @@ public class GameMutation implements Comparable<GameMutation> {
 				if(comm.equals("attack")){
 					attackerId = Integer.parseInt(tokenizer.nextToken());
 					defenderId = Integer.parseInt(tokenizer.nextToken());
-					destination.setState(GameScenario.State.ROLL);
 					destination.setAttackerDefender(attackerId, defenderId);
+					destination.setState(GameScenario.State.ROLL);
 				}
 				else if(comm.equals("endattack")){
 					destination.setState(GameScenario.State.MOVE);
@@ -245,8 +245,12 @@ public class GameMutation implements Comparable<GameMutation> {
 	private boolean canAttack(GameScenario scenario){
 		for(Integer country: scenario.possessions){
 			int armies = scenario.countries.get(country);
-			if( armies > 1)
-				return true;
+			if( armies > 1){
+				Vector<Country> neighbours = scenario.getGame().getCountryInt(country).getNeighbours();
+				for(Country n : neighbours)
+					if(!scenario.possessions.contains(n.getColor()))
+						return true;
+			}
 		}			
 		return false;
 	}

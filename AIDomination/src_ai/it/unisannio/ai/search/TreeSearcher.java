@@ -39,7 +39,8 @@ public class TreeSearcher {
 		GameScenario s = new GameScenario(game);
 		HashSet<GameScenario> scenari = new HashSet<GameScenario>();
 		scenari.add(s);
-		while (scenari.iterator().next().getState() != GameScenario.State.END){
+		GameScenario.State state;
+		while ((state = scenari.iterator().next().getState()) != GameScenario.State.END){
 			HashSet<GameScenario> temp = new HashSet<GameScenario>();
 			for(GameScenario sc: scenari){
 				List<GameMutation> mutations = sc.getMutations();
@@ -48,7 +49,7 @@ public class TreeSearcher {
 				}
 			}
 			scenari = temp;
-			p.append("	Ampiezza livello "+ scenari.iterator().next().getState()+"->"+scenari.iterator().next().getState() +": " + scenari.size()+"\n");
+			p.append("	Ampiezza livello "+state+"->"+scenari.iterator().next().getState() +": " + scenari.size()+"\n");
 		}
 	}
 	
@@ -69,5 +70,13 @@ public class TreeSearcher {
 			}
 			p.append("	Ampiezza livello "+ mutations.get(0).getOrigin().getState()+"->"+mutations.get(0).getDestination().getState() +": " + mutations.size()+"\n");
 		}
+	}
+	
+	
+	private boolean fatto(HashSet<GameScenario> scenari){
+		for (GameScenario s: scenari)
+			if(s.getState() != GameScenario.State.END)
+				return false;
+		return true;
 	}
 }

@@ -119,7 +119,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 
 		case ATTACK: 
 			for(Integer key: countries.keySet()){
-				if(possessions.contains(key)){
+				if(possessions.contains(key) && countries.get(key)>1){
 					Country country = game.getCountryInt(key);
 					Vector<Country> neighbours = country.getNeighbours();
 					for(Country n: neighbours){
