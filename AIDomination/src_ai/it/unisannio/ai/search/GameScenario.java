@@ -13,7 +13,7 @@ import net.yura.domination.engine.core.Country;
 import net.yura.domination.engine.core.RiskGame;
 
 public class GameScenario implements Comparable<GameScenario>, Cloneable {
-	public static enum State {INITIAL_PLACEMENT, INITIAL_FORTIFY, FORTIFY, ATTACK, ROLL, BATTLEWON, MOVE, DEFEND, DEFENDROLL, END; } //FIXME Serve uno stato END?
+	public static enum State {INITIAL_PLACEMENT, INITIAL_FORTIFY, FORTIFY, ATTACK, ROLL, BATTLEWON, MOVE, DEFEND, DEFENDROLL, END; } 
 
 	private static HashMap<GameScenario, List<GameMutation>> mutationCache = new HashMap<GameScenario, List<GameMutation>>();
 	private static HashMap<GameScenario, Float> utilityCache = new HashMap<GameScenario, Float>();
@@ -23,7 +23,6 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 	protected HashSet<Integer> possessions = new HashSet<Integer>();
 	protected int extraArmies = 0;
 	protected int enemyExtraArmies = 0;
-	private float likelihood = 1;
 	private State state;
 	
 	protected boolean enemyTurn = false;
@@ -51,7 +50,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 			state = State.ROLL;
 			break;
 		case RiskGame.STATE_FORTIFYING:
-			state = State.BATTLEWON;
+			state = State.MOVE;
 			break;
 		}
 //		state = State.INITIAL_PLACEMENT;
@@ -70,12 +69,11 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 
 
 	public GameScenario(HashMap<Integer, Integer> countries,
-			HashSet<Integer> possessions, int extraArmies, float likelihood,
+			HashSet<Integer> possessions, int extraArmies,
 			State state, int attackerId, int defenderId, boolean enemyTurn, int enemyExtraArmies) {
 		this.countries = countries;
 		this.possessions = possessions;
 		this.extraArmies = extraArmies;
-		this.likelihood = likelihood;
 		this.state = state;
 		this.attackerId = attackerId;
 		this.defenderId = defenderId;
@@ -83,7 +81,6 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		this.enemyExtraArmies = enemyExtraArmies;
 	}
 
-	//TODO Definire utilità
 	public float getUtility() {
 		if(utilityCache.containsKey(this))
 			return utilityCache.get(this);
@@ -108,7 +105,6 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 	
 //private static HashMap<GameScenario, Boolean> visiting = new HashMap<GameScenario, Boolean>();
 //	
-//	//TODO Definire utilità
 //	public float getUtility() {
 //		if(visiting.containsKey(this)  && visiting.get(this)) {
 //			return 0;
@@ -251,16 +247,9 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		return new GameScenario((HashMap<Integer, Integer>) countries.clone(),(HashSet<Integer>) possessions.clone(), extraArmies, likelihood, state, attackerId, defenderId, enemyTurn, enemyExtraArmies); 
+		return new GameScenario((HashMap<Integer, Integer>) countries.clone(),(HashSet<Integer>) possessions.clone(), extraArmies,  state, attackerId, defenderId, enemyTurn, enemyExtraArmies); 
 	}
 
-	public float getLikelihood() {
-		return likelihood;
-	}
-
-	public void setLikelihood(float likelihood) {
-		this.likelihood = likelihood;
-	}
 
 	public void setAttackerDefender(int attackerId, int defenderId){
 		this.attackerId = attackerId;
@@ -288,7 +277,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		if (!(obj instanceof GameScenario)) return false;
 		GameScenario other = (GameScenario) obj;
 		return (countries.equals(other.countries) && possessions.equals(other.possessions)
-				&& extraArmies == other.extraArmies && likelihood == other.likelihood &&
+				&& extraArmies == other.extraArmies && 
 				state == other.getState() && attackerId == other.getAttackerId() &&
 				defenderId == other.getDefenderId() && enemyTurn == other.enemyTurn && enemyExtraArmies == other.enemyExtraArmies);
 	}
@@ -297,7 +286,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 	public int hashCode() {
 		return Arrays.hashCode(new Object[] {
 			countries, possessions, extraArmies,
-			likelihood, state, attackerId, defenderId,
+			state, attackerId, defenderId,
 			enemyTurn, enemyExtraArmies
 		});
 	}

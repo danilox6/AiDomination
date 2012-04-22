@@ -20,7 +20,7 @@ public class GameMutation implements Comparable<GameMutation> {
 		attackerId = origin.getAttackerId();
 		defenderId = origin.getDefenderId();
 		calcDestination();
-		System.out.println(origin.getState() +" --" + command +"--> "+ destination.getState());
+//		System.out.println(origin.getState() +" --" + command +"--> "+ destination.getState());
 	}
 
 	public float getUtility() {
@@ -159,7 +159,10 @@ public class GameMutation implements Comparable<GameMutation> {
 						survivedArmies = attackerArmies-lostArmies;
 					destination.countries.put(attackerId,survivedArmies );
 					destination.possessions.add(defenderId);
-					destination.setState(GameScenario.State.BATTLEWON);
+					if(destination.countries.size() == destination.possessions.size())
+						destination.setState(GameScenario.State.END);
+					else
+						destination.setState(GameScenario.State.BATTLEWON);
 				}else if(command.equals("lost")){
 					lostArmies = SearchUtility.getDefenderLostArmies(attackerArmies, defenderArmies);
 
@@ -242,6 +245,8 @@ public class GameMutation implements Comparable<GameMutation> {
 					destination.countries.put(attackerId, 1);
 					destination.countries.put(defenderId, survivedArmies - 1);
 					destination.possessions.remove(defenderId);
+					if(destination.possessions.isEmpty())
+						destination.setState(GameScenario.State.END);
 				}else if(command.equals("lost")){ //Il nemico perde
 					lostArmies = SearchUtility.getDefenderLostArmies(attackerArmies, defenderArmies);
 
@@ -258,11 +263,14 @@ public class GameMutation implements Comparable<GameMutation> {
 				}else					
 					throw new IllegalArgumentException("Wrong command: "+ command);
 
-				if(enemyCanAttack(destination))
-					destination.setState(GameScenario.State.DEFEND);
-				else
+				if(destination.possessions.isEmpty())
 					destination.setState(GameScenario.State.END);
-
+				else{
+					if(enemyCanAttack(destination))
+						destination.setState(GameScenario.State.DEFEND);
+					else
+						destination.setState(GameScenario.State.END);
+				}
 			}
 
 			setDestination(destination);
@@ -271,7 +279,7 @@ public class GameMutation implements Comparable<GameMutation> {
 		} catch(NumberFormatException e){
 			throw new IllegalArgumentException("Wrong command: "+ command);
 		}  catch(NullPointerException e){
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 			throw new IllegalArgumentException("Wrong command: "+ command);
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();

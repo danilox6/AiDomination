@@ -17,8 +17,8 @@ public class AITreeBased extends AISimple{
 		return search.getBestMove(game).getCommand();
 	}
 	
-//	@Override
-//	public String getTacMove() {
-//		return search.getBestMove(game).getCommand();
-//	}
+	@Override
+	public String getTacMove() {
+		return search.getBestMove(game).getCommand();
+	}
 }
