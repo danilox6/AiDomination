@@ -111,7 +111,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		case INITIAL_FORTIFY:	//È brutto da vedere
 		case FORTIFY:			// ma funziona
 			for(Integer key: countries.keySet()){
-				if(possessions.contains(key)){
+				if(possessions.contains(key) != enemyTurn){
 					mutations.add(new GameMutation(this, String.format("placearmies %d 1", key )));
 				}
 			}

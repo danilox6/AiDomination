@@ -39,8 +39,8 @@ public class TreeSearcher {
 		GameScenario s = new GameScenario(game);
 		HashSet<GameScenario> scenari = new HashSet<GameScenario>();
 		scenari.add(s);
-		GameScenario.State state;
-		while ((state = scenari.iterator().next().getState()) != GameScenario.State.END){
+		GameScenario anOrigin;
+		while ((anOrigin = scenari.iterator().next()).getState() != GameScenario.State.END){
 			HashSet<GameScenario> temp = new HashSet<GameScenario>();
 			for(GameScenario sc: scenari){
 				List<GameMutation> mutations = sc.getMutations();
@@ -49,7 +49,9 @@ public class TreeSearcher {
 				}
 			}
 			scenari = temp;
-			p.append("	Ampiezza livello "+state+"->"+scenari.iterator().next().getState() +": " + scenari.size()+"\n");
+			GameScenario aDestination = scenari.iterator().next();
+			p.append("	Ampiezza livello "+anOrigin.getState()+"("+ ((anOrigin.enemyTurn)? "nemico":"amico")
+			+")->"+aDestination.getState() +"("+((aDestination.enemyTurn)? "nemico":"amico")+"): " + scenari.size()+"\n");
 		}
 	}
 	

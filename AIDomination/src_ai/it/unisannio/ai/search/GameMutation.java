@@ -83,15 +83,48 @@ public class GameMutation implements Comparable<GameMutation> {
 					throw new IllegalArgumentException("Wrong command: "+ command);
 			}
 
-			else if(origin.getState().equals(GameScenario.State.FORTIFY)
-					|| origin.getState().equals(GameScenario.State.INITIAL_FORTIFY)){
+			else if (origin.getState().equals(GameScenario.State.INITIAL_FORTIFY)){
+				if(tokenizer.nextToken().equals("placearmies")){
+					int nation = Integer.parseInt(tokenizer.nextToken());
+					destination.countries.put(nation, 1);
+					if(origin.enemyTurn){
+						destination.enemyExtraArmies--;
+					}else{
+						destination.extraArmies--;
+					}
+					destination.enemyTurn = !origin.enemyTurn;
+					if(destination.extraArmies != 0 || destination.enemyExtraArmies != 0){
+						destination.setState(GameScenario.State.INITIAL_FORTIFY);
+					}else{
+						if(destination.enemyTurn)
+							destination.enemyExtraArmies = SearchUtility.getNextTurnArmies(destination, true);
+						else
+							destination.extraArmies = SearchUtility.getNextTurnArmies(destination, false);
+						destination.setState(GameScenario.State.FORTIFY);
+					}
+					
+				}else
+					throw new IllegalArgumentException("Wrong command: "+ command);
+			}
+			
+			else if(origin.getState().equals(GameScenario.State.FORTIFY)){
 				if(tokenizer.nextToken().equals("placearmies")){
 					int nation = Integer.parseInt(tokenizer.nextToken());
 
 					destination.countries.put(nation,(Integer.parseInt(tokenizer.nextToken())));
-					destination.extraArmies--;
-					if(destination.extraArmies == 0)
-						destination.setState(GameScenario.State.ATTACK);
+					if(origin.enemyTurn){
+						destination.enemyExtraArmies--;
+					}else{
+						destination.extraArmies--;
+					}
+					if((origin.enemyTurn && destination.enemyExtraArmies != 0) || (!origin.enemyTurn && destination.extraArmies != 0)){
+						destination.setState(GameScenario.State.FORTIFY);
+					}else{
+						if(destination.enemyTurn)
+							destination.setState(GameScenario.State.DEFEND);
+						else
+							destination.setState(GameScenario.State.ATTACK);
+					}
 				}else
 					throw new IllegalArgumentException("Wrong command: "+ command);
 			}
@@ -167,11 +200,13 @@ public class GameMutation implements Comparable<GameMutation> {
 					int armies = Integer.parseInt(tokenizer.nextToken());
 					destination.countries.put(dest, destination.countries.get(dest)+armies);
 					destination.countries.put(source, destination.countries.get(source)-armies);
-					destination.setState(GameScenario.State.DEFEND);
-				}else if(c.equals("nomove"))
-					destination.setState(GameScenario.State.DEFEND);
-				else					
+				}else if(!c.equals("nomove"))
 					throw new IllegalArgumentException("Wrong command: "+ command);
+				
+				destination.enemyTurn = true;
+				destination.enemyExtraArmies = SearchUtility.getNextTurnArmies(destination, true);
+				destination.setState(GameScenario.State.FORTIFY);
+				
 			}
 
 			else if(origin.getState().equals(GameScenario.State.DEFEND)){
