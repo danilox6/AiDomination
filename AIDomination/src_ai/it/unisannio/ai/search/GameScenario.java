@@ -17,6 +17,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 
 	private static HashMap<GameScenario, List<GameMutation>> mutationCache = new HashMap<GameScenario, List<GameMutation>>();
 	
+	
 	private static RiskGame game;
 	protected HashMap<Integer, Integer> countries = new HashMap<Integer, Integer>();
 	protected HashSet<Integer> possessions = new HashSet<Integer>();
@@ -81,7 +82,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		this.enemyTurn = enemyTurn;
 		this.enemyExtraArmies = enemyExtraArmies;
 	}
-
+/*
 	//TODO Definire utilità
 	public float getUtility() {
 		switch(state) {
@@ -90,13 +91,48 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		case ROLL:
 			List<GameMutation> ms =  this.getMutations();
 			return (ms.get(0).getUtility() + ms.get(1).getUtility())/2;
-		default: 
+		default:
 			List<GameMutation> mutations =  this.getMutations();
-			Collections.sort(mutations);
-			return mutations.get(0).getUtility();
+			return Collections.max(mutations).getUtility();
 		}
 		
 	}
+	
+	*/
+	
+private static HashMap<GameScenario, Boolean> visiting = new HashMap<GameScenario, Boolean>();
+	
+	//TODO Definire utilità
+	public float getUtility() {
+		if(visiting.containsKey(this)  && visiting.get(this)) {
+			return 0;
+		}
+		
+		visiting.put(this, true);
+		
+		float utility = 0.0f;
+		
+		switch(state) {
+		case END:
+			utility = SearchUtility.getNextTurnArmies(this, false);
+			break;
+		case ROLL:
+			List<GameMutation> ms =  this.getMutations();
+			utility = (ms.get(0).getUtility() + ms.get(1).getUtility())/2;
+			break;
+		default: 
+			List<GameMutation> mutations =  this.getMutations();
+			utility = Collections.min(mutations).getUtility();
+			break;
+		}
+		
+		visiting.put(this, false);
+		return utility;
+	}
+	
+	
+	
+	
 
 	public List<GameMutation> getMutations() {
 		

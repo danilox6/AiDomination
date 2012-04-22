@@ -20,11 +20,11 @@ public class GameMutation implements Comparable<GameMutation> {
 		attackerId = origin.getAttackerId();
 		defenderId = origin.getDefenderId();
 		calcDestination();
-//		System.out.println(origin.getState() +" --" + command +"--> "+ destination.getState());
+		System.out.println(origin.getState() +" --" + command +"--> "+ destination.getState());
 	}
 
 	public float getUtility() {
-		return destination.getUtility() * destination.getLikelihood();
+		return destination.getUtility() * likelihood;
 	}
 
 	@Override

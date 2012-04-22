@@ -91,8 +91,7 @@ public class TreeSearcher {
 	public GameMutation getBestMove(RiskGame game){
 		GameScenario currentScenario = new GameScenario(game);
 		List<GameMutation> mutations = currentScenario.getMutations();
-		Collections.sort(mutations);
-		return mutations.get(0);
+		return Collections.max(mutations);
 	}
 	
 	
