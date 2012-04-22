@@ -1,6 +1,7 @@
 package it.unisannio.ai.search;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -14,12 +15,14 @@ import net.yura.domination.engine.core.RiskGame;
 public class GameScenario implements Comparable<GameScenario>, Cloneable {
 	public static enum State {INITIAL_PLACEMENT, INITIAL_FORTIFY, FORTIFY, ATTACK, ROLL, BATTLEWON, MOVE, DEFEND, DEFENDROLL, END; } //FIXME Serve uno stato END?
 
+	private static HashMap<GameScenario, List<GameMutation>> mutationCache = new HashMap<GameScenario, List<GameMutation>>();
+	
 	private static RiskGame game;
 	protected HashMap<Integer, Integer> countries = new HashMap<Integer, Integer>();
 	protected HashSet<Integer> possessions = new HashSet<Integer>();
 	protected int extraArmies = 0;
 	protected int enemyExtraArmies = 0;
-	private float likelihood;
+	private float likelihood = 1;
 	private State state;
 	
 	protected boolean enemyTurn = false;
@@ -82,18 +85,24 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 	//TODO Definire utilità
 	public float getUtility() {
 		switch(state) {
-		case INITIAL_PLACEMENT:
-			//Posti migliori per percentuale di occupazione di un contintente
-			//e vicinanza tra nazioni
-			return 0;
-		case INITIAL_FORTIFY:
-			return 0;
-		default:
+		case END:
 			return SearchUtility.getNextTurnArmies(this, false);
+		case ROLL:
+			List<GameMutation> ms =  this.getMutations();
+			return (ms.get(0).getUtility() + ms.get(1).getUtility())/2;
+		default: 
+			List<GameMutation> mutations =  this.getMutations();
+			Collections.sort(mutations);
+			return mutations.get(0).getUtility();
 		}
+		
 	}
 
 	public List<GameMutation> getMutations() {
+		
+		if (mutationCache.get(this)!=null)
+			return mutationCache.get(this);
+		
 		List<GameMutation> mutations = new LinkedList<GameMutation>();
 //		System.out.println(state);
 		switch(state) {
@@ -180,6 +189,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		
 		}
 
+		mutationCache.put(this, mutations);
 		return mutations;
 	}
 

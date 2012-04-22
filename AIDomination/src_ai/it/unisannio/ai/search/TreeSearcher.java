@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class TreeSearcher {
 		p.append("Turno "+turno+":\n");
 		long inizioTurno = System.currentTimeMillis();
 		attraversamentoLeggero(game);
+//		attraversamentoPesante(game);
 		p.append("Tempo per attraversamento completo turno "+ turno +": " + (System.currentTimeMillis()-inizioTurno)+"ms\n\n");
 	}
 	
@@ -40,7 +42,8 @@ public class TreeSearcher {
 		HashSet<GameScenario> scenari = new HashSet<GameScenario>();
 		scenari.add(s);
 		GameScenario anOrigin;
-		while ((anOrigin = scenari.iterator().next()).getState() != GameScenario.State.END){
+		while (!fatto(scenari)){
+			anOrigin = scenari.iterator().next();
 			HashSet<GameScenario> temp = new HashSet<GameScenario>();
 			for(GameScenario sc: scenari){
 				List<GameMutation> mutations = sc.getMutations();
@@ -81,4 +84,21 @@ public class TreeSearcher {
 				return false;
 		return true;
 	}
+	
+	
+	
+	
+	public GameMutation getBestMove(RiskGame game){
+		GameScenario currentScenario = new GameScenario(game);
+		List<GameMutation> mutations = currentScenario.getMutations();
+		Collections.sort(mutations);
+		return mutations.get(0);
+	}
+	
+	
+	
+	
+	
+	
+	
 }

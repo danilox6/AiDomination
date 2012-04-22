@@ -9,7 +9,8 @@ public class AITreeBased extends AISimple{
 	
 	@Override
 	public String getPlaceArmies() {
-		search.srotolaAlbero(game);
+		System.out.println(search.getBestMove(game).getCommand());
+//		search.srotolaAlbero(game);
 		return super.getPlaceArmies();
 	}
 }

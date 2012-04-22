@@ -9,7 +9,7 @@ public class GameMutation implements Comparable<GameMutation> {
 	private GameScenario origin;
 	private String command;
 	private GameScenario destination;
-	private float likelihood;
+	private float likelihood = 1;
 
 	private int attackerId, defenderId;
 
@@ -20,17 +20,16 @@ public class GameMutation implements Comparable<GameMutation> {
 		attackerId = origin.getAttackerId();
 		defenderId = origin.getDefenderId();
 		calcDestination();
-		System.out.println(origin.getState() +" --" + command +"--> "+ destination.getState());
+//		System.out.println(origin.getState() +" --" + command +"--> "+ destination.getState());
 	}
 
 	public float getUtility() {
-		return 0.0f;
+		return destination.getUtility() * destination.getLikelihood();
 	}
 
 	@Override
-	public int compareTo(GameMutation arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int compareTo(GameMutation m) {
+		return (int) (this.getUtility() - m.getUtility()); //FIXME controllare ordine
 	}
 
 	public GameScenario getDestination() {
@@ -145,9 +144,12 @@ public class GameMutation implements Comparable<GameMutation> {
 			}
 
 			else if(origin.getState().equals(GameScenario.State.ROLL)){
+//				destination.setLikelihood(likelihood);///FIXME Serve?
+				
 				int lostArmies = 0;
 				int attackerArmies =  destination.countries.get(attackerId);
 				int defenderArmies = destination.countries.get(defenderId);
+				
 				if(command.equals("won")){
 					lostArmies = SearchUtility.getAttackerLostArmies(attackerArmies, defenderArmies);
 					int survivedArmies = 0;
