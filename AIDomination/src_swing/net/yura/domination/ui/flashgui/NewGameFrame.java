@@ -126,6 +126,8 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 	private MyColor[] Colors;
 
 	private ResourceBundle resb;
+	
+	private String cardName, mapName;
 
 	/**
 	 * the tab focus cycle list
@@ -968,11 +970,11 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 
 		if (e.getSource()==chooseMap) {
 
-			String name = RiskUIUtil.getNewMap(this);
+			mapName = RiskUIUtil.getNewMap(this);
 
-			if (name != null) {
+			if (mapName != null) {
 
-				myrisk.parser("choosemap " + name );
+				myrisk.parser("choosemap " + mapName );
 
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
@@ -985,11 +987,11 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		}
 		else if (e.getSource()==chooseCards) {
 
-			String name = RiskUIUtil.getNewFile( this, RiskFileFilter.RISK_CARDS_FILES);
+			cardName = RiskUIUtil.getNewFile( this, RiskFileFilter.RISK_CARDS_FILES);
 
-			if (name != null) {
+			if (cardName != null) {
 
-				myrisk.parser("choosecards " + name );
+				myrisk.parser("choosecards " + cardName );
 
 			}
 
@@ -1045,6 +1047,8 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 				if (multipleGames.isSelected()){
 					AIPlayer.setWait(1);
 					RiskLogger.setGamesNumber(Integer.parseInt(numPartite.getText()));
+					cardName = cardsFile.getText();
+					RiskLogger.setMapCards(mapName, cardName);
 					RiskLogger.setRisk(myrisk);
 				}else{
 
