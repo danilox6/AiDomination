@@ -11,4 +11,14 @@ public class AITreeBased extends AISimple{
 	public String getPlaceArmies() {
 		return search.getBestMove(game).getCommand();
 	}
+	
+	@Override
+	public String getAttack() {
+		return search.getBestMove(game).getCommand();
+	}
+	
+//	@Override
+//	public String getTacMove() {
+//		return search.getBestMove(game).getCommand();
+//	}
 }

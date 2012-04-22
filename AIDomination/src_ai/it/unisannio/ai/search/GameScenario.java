@@ -16,7 +16,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 	public static enum State {INITIAL_PLACEMENT, INITIAL_FORTIFY, FORTIFY, ATTACK, ROLL, BATTLEWON, MOVE, DEFEND, DEFENDROLL, END; } //FIXME Serve uno stato END?
 
 	private static HashMap<GameScenario, List<GameMutation>> mutationCache = new HashMap<GameScenario, List<GameMutation>>();
-	
+	private static HashMap<GameScenario, Float> utilityCache = new HashMap<GameScenario, Float>();
 	
 	private static RiskGame game;
 	protected HashMap<Integer, Integer> countries = new HashMap<Integer, Integer>();
@@ -82,53 +82,59 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		this.enemyTurn = enemyTurn;
 		this.enemyExtraArmies = enemyExtraArmies;
 	}
-/*
+
 	//TODO Definire utilità
 	public float getUtility() {
+		if(utilityCache.containsKey(this))
+			return utilityCache.get(this);
+		float utility;
 		switch(state) {
 		case END:
-			return SearchUtility.getNextTurnArmies(this, false);
-		case ROLL:
-			List<GameMutation> ms =  this.getMutations();
-			return (ms.get(0).getUtility() + ms.get(1).getUtility())/2;
-		default:
-			List<GameMutation> mutations =  this.getMutations();
-			return Collections.max(mutations).getUtility();
-		}
-		
-	}
-	
-	*/
-	
-private static HashMap<GameScenario, Boolean> visiting = new HashMap<GameScenario, Boolean>();
-	
-	//TODO Definire utilità
-	public float getUtility() {
-		if(visiting.containsKey(this)  && visiting.get(this)) {
-			return 0;
-		}
-		
-		visiting.put(this, true);
-		
-		float utility = 0.0f;
-		
-		switch(state) {
-		case END:
-			utility = SearchUtility.getNextTurnArmies(this, false);
-			break;
+			utility = possessions.size();
+			utilityCache.put(this, utility);
+			return utility;
 		case ROLL:
 			List<GameMutation> ms =  this.getMutations();
 			utility = (ms.get(0).getUtility() + ms.get(1).getUtility())/2;
-			break;
-		default: 
+		default:
 			List<GameMutation> mutations =  this.getMutations();
-			utility = Collections.min(mutations).getUtility();
-			break;
+			utility = Collections.max(mutations).getUtility();
 		}
-		
-		visiting.put(this, false);
+		utilityCache.put(this, utility);
 		return utility;
 	}
+	
+	
+	
+//private static HashMap<GameScenario, Boolean> visiting = new HashMap<GameScenario, Boolean>();
+//	
+//	//TODO Definire utilità
+//	public float getUtility() {
+//		if(visiting.containsKey(this)  && visiting.get(this)) {
+//			return 0;
+//		}
+//		
+//		visiting.put(this, true);
+//		
+//		float utility = 0.0f;
+//		
+//		switch(state) {
+//		case END:
+//			utility = SearchUtility.getNextTurnArmies(this, false);
+//			break;
+//		case ROLL:
+//			List<GameMutation> ms =  this.getMutations();
+//			utility = (ms.get(0).getUtility() + ms.get(1).getUtility())/2;
+//			break;
+//		default: 
+//			List<GameMutation> mutations =  this.getMutations();
+//			utility = Collections.min(mutations).getUtility();
+//			break;
+//		}
+//		
+//		visiting.put(this, false);
+//		return utility;
+//	}
 	
 	
 	

@@ -271,6 +271,7 @@ public class GameMutation implements Comparable<GameMutation> {
 		} catch(NumberFormatException e){
 			throw new IllegalArgumentException("Wrong command: "+ command);
 		}  catch(NullPointerException e){
+			e.printStackTrace();
 			throw new IllegalArgumentException("Wrong command: "+ command);
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
