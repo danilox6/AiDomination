@@ -88,11 +88,11 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		switch(state) {
 		case END:
 			utility = possessions.size();
-			utilityCache.put(this, utility);
-			return utility;
+			break;
 		case ROLL:
 			List<GameMutation> ms =  this.getMutations();
-			utility = (ms.get(0).getUtility() + ms.get(1).getUtility())/2;
+			utility = (ms.get(0).getUtility() + ms.get(1).getUtility())/2.0f;
+			break;
 		default:
 			List<GameMutation> mutations =  this.getMutations();
 			utility = Collections.max(mutations).getUtility();
