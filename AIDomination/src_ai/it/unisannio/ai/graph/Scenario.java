@@ -272,7 +272,7 @@ public class Scenario {
 			switch(state) {
 				case SETUP_PLACE: //_SELF: case SETUP_PLACE_OTHER:
 					list = buildPlacementTransitions();
-					break;countryColor
+					break;
 					
 				case SETUP_FORTIFY: //_SELF: case SETUP_FORTIFY_OTHER:
 					list = buildSetupFortificationTransitions();
