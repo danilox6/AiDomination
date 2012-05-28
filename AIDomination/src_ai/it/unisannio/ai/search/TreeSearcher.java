@@ -92,8 +92,8 @@ public class TreeSearcher {
 		GameScenario currentScenario = new GameScenario(game);
 		List<GameMutation> mutations = currentScenario.getMutations();
 		GameMutation max = Collections.max(mutations);
-		GameMutation min = Collections.min(mutations);
-		System.out.println("max: "+max.getUtility() +", min: " +min.getUtility());
+//		GameMutation min = Collections.min(mutations);
+//		System.out.println("max: "+max.getUtility() +", min: " +min.getUtility());
 		return max;
 	}
 	

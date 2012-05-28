@@ -9,33 +9,40 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import net.yura.domination.engine.core.Country;
 import net.yura.domination.engine.core.Player;
 import net.yura.domination.engine.core.RiskGame;
 
 public class Scenario {
+	
+
 	public static class Builder {
 		private final GraphSetup setup;
 		
 		private int[] countryArmies;
-		private boolean[] countryIsOwned;
+		private HashMap<Integer, TPlayer> players;
+//		private boolean[] countryIsOwned;
 		private State state;
-		private int extraArmies;
+//		private int extraArmies;
+		private TPlayer currentPlayer;
 		
 		public Builder(Scenario s) {
 			setup = s.setup;
 			countryArmies = s.countryArmies.clone();
-			countryIsOwned = s.countryIsOwned.clone();
+//			countryIsOwned = s.countryIsOwned.clone();
+			players = s.players;
+			currentPlayer = s.currentPlayer;
 			state = s.state;
-			extraArmies = s.extraArmies;
+//			extraArmies = s.extraArmies;
 		}
 		
 		public Builder(GraphSetup setup) {
 			this.setup = setup;
 			
 			RiskGame game = setup.getGame();
-			Player player = setup.getPlayer();
+//			Player player = setup.getPlayer();
 			
 			Country[] countries = game.getCountries();
 			
@@ -44,11 +51,11 @@ public class Scenario {
 			switch (gamestate) {
 			case RiskGame.STATE_PLACE_ARMIES:
 				if(!game.NoEmptyCountries())
-					state = State.SETUP_PLACE_SELF;
+					state = State.SETUP_PLACE; //_SELF;
 				else if(!game.getSetup())
-					state = State.SETUP_FORTIFY_SELF;
+					state = State.SETUP_FORTIFY;
 				else 
-					state = State.FORTIFY_SELF;
+					state = State.FORTIFY;
 				break;
 			case RiskGame.STATE_ATTACKING:
 				state = State.ATTACK;
@@ -62,14 +69,28 @@ public class Scenario {
 			default:
 				throw new IllegalStateException("Cannot create a Scenario from this state!");
 			}
-			
-			extraArmies = player.getExtraArmies();
+			 
+//			extraArmies = player.getExtraArmies();
 			countryArmies = new int[countries.length];
-			countryIsOwned = new boolean[countries.length];
+//			countryIsOwned = new boolean[countries.length];
+			this.players = new HashMap<Integer, TPlayer>();
+			
+			Vector<Player> gPlayers = game.getPlayers();
+			
+			for(int i = 0; i< gPlayers.size(); i++){
+				Player p = gPlayers.get(i);
+				TPlayer tPlayer = new TPlayer(p.getColor(), i, p.getExtraArmies());
+				this.players.put(p.getColor(), tPlayer);
+				if (p == game.getCurrentPlayer())
+					currentPlayer = tPlayer;
+			}
 			
 			for(Country c : countries) {
 				countryArmies[c.getColor() - 1] = c.getArmies();
-				countryIsOwned[c.getColor() - 1] = c.getOwner() == player;
+				if(c.getOwner() != null)
+					this.players.get(c.getOwner().getColor()).addCountry(c.getColor());
+				
+//				countryIsOwned[c.getColor() - 1] = c.getOwner() == player;
 			}
 		}
 		
@@ -106,41 +127,41 @@ public class Scenario {
 			return this;
 		}
 		
-		public boolean ownsCountry(int countryId) {
-			return countryIsOwned[countryId];
-		}
+//		public boolean ownsCountry(int countryId) {
+//			return countryIsOwned[countryId];
+//		}
 		
-		public Builder setOwnsCountry(int countryId, boolean owns) {
-			countryIsOwned[countryId - 1] = owns;
-			return this;
-		}
-		
-		public Builder setExtraArmies(int extraArmies) {
-			this.extraArmies = extraArmies;
-			return this;
-		}
-		
-		public int getExtraArmies() {
-			return extraArmies;
-		}
-		
-		public Builder subExtraArmies(int n) {
-			this.extraArmies -= n;
-			return this;
-		}
+//		public Builder setOwnsCountry(int countryId, boolean owns) {
+//			countryIsOwned[countryId - 1] = owns;
+//			return this;
+//		}
+//		
+//		public Builder setExtraArmies(int extraArmies) {
+//			this.extraArmies = extraArmies;
+//			return this;
+//		}
+//		
+//		public int getExtraArmies() {
+//			return extraArmies;
+//		}
+//		
+//		public Builder subExtraArmies(int n) {
+//			this.extraArmies -= n;
+//			return this;
+//		}
 		
 		@Override
 		public String toString() {
-			return "Builder: " + computeId(state, countryArmies, countryIsOwned, extraArmies);
+			return "Builder: " + computeId(state, countryArmies, currentPlayer);
 		}
 		
 		public Scenario create() {
-			String id = computeId(state, countryArmies, countryIsOwned, extraArmies);
+			String id = computeId(state, countryArmies, currentPlayer);
 			SoftReference<Scenario> cachedEntry = nodeCache.get(id);
 			Scenario scenario = (cachedEntry == null) ? null : cachedEntry.get();
 			
 			if(scenario == null) {
-				scenario = new Scenario(setup, state, countryArmies, countryIsOwned, extraArmies);
+				scenario = new Scenario(setup, state, countryArmies, currentPlayer);
 				nodeCache.put(id, new SoftReference<Scenario>(scenario));
 			}
 			
@@ -149,13 +170,14 @@ public class Scenario {
 	}
 	
 	public static enum State {
-		SETUP_PLACE_SELF(true),
-		SETUP_PLACE_OTHER(false),
-		SETUP_FORTIFY_SELF(true),
-		SETUP_FORTIFY_OTHER(false), 
+		SETUP_PLACE(true),
+//		SETUP_PLACE_OTHER(false),
+//		SETUP_FORTIFY_SELF(true),
+		SETUP_FORTIFY(true),
+//		SETUP_FORTIFY_OTHER(false), 
 		END_SETUP(false, true), // if we're evaluating the setup stop here
 		
-		FORTIFY_SELF(true), 
+		FORTIFY(true), 
 		ATTACK(true), 
 		ATTACK_ROLL(false), 
 		OCCUPY(true), 
@@ -199,32 +221,47 @@ public class Scenario {
 	private final GraphSetup setup;
 	
 	private final int[] countryArmies;
-	private final boolean[] countryIsOwned;
+	private final HashMap<Integer, TPlayer> players = new HashMap<Integer, TPlayer>();
+//	private final boolean[] countryIsOwned;
 	private final State state;
-	private final int extraArmies;
+	private final TPlayer currentPlayer;
+//	private final int extraArmies;
 	
 	private transient Transition[] transitions;
 	private transient float utility = Float.MIN_VALUE;
 	
-	private static String computeId(State state, int[] countryArmies, boolean[] countryIsOwned, int extraArmies) {
+//	private static String computeId(State state, int[] countryArmies, boolean[] countryIsOwned, int extraArmies) {
+//		StringBuilder buf = new StringBuilder();
+//		buf.append(state);
+//		for(int i=0; i < countryArmies.length; ++i) {
+//			buf.append(' ').append(countryArmies[i]);
+//			if(countryIsOwned[i])
+//				buf.append('*');
+//		}
+//		buf.append(" (+").append(extraArmies).append(')');
+//		
+//		return buf.toString();
+//	}
+	
+	private static String computeId(State state, int[] countryArmies, TPlayer tPlayer) {
 		StringBuilder buf = new StringBuilder();
 		buf.append(state);
 		for(int i=0; i < countryArmies.length; ++i) {
 			buf.append(' ').append(countryArmies[i]);
-			if(countryIsOwned[i])
+			if(tPlayer.ownsCountry(i))
 				buf.append('*');
 		}
-		buf.append(" (+").append(extraArmies).append(')');
+		buf.append(" (+").append(tPlayer.getExtraArmies()).append(')');
 		
 		return buf.toString();
 	}
 	
-	private Scenario(GraphSetup setup, State state, int[] countryArmies, boolean[] countryIsOwned, int extraArmies) {
+	
+	private Scenario(GraphSetup setup, State state, int[] countryArmies, TPlayer currentPlayer) {
 		this.setup = setup;
 		this.state = state;
 		this.countryArmies = countryArmies;
-		this.countryIsOwned = countryIsOwned;
-		this.extraArmies = extraArmies;
+		this.currentPlayer = currentPlayer;
 	}
 
 	
@@ -233,15 +270,15 @@ public class Scenario {
 			List<Transition> list = null;
 
 			switch(state) {
-				case SETUP_PLACE_SELF: case SETUP_PLACE_OTHER:
+				case SETUP_PLACE: //_SELF: case SETUP_PLACE_OTHER:
 					list = buildPlacementTransitions();
-					break;
+					break;countryColor
 					
-				case SETUP_FORTIFY_SELF: case SETUP_FORTIFY_OTHER:
+				case SETUP_FORTIFY: //_SELF: case SETUP_FORTIFY_OTHER:
 					list = buildSetupFortificationTransitions();
 					break;
 					
-				case FORTIFY_SELF:
+				case FORTIFY: //_SELF:
 					list = buildFortificationTransitions();
 					break;
 					
@@ -286,9 +323,11 @@ public class Scenario {
 
 					@Override
 					protected Scenario buildNext() {
+						currentPlayer.addCountry(countryId);
 						return new Builder(Scenario.this)
 								.setArmies(countryId, 1)
-								.setState(state == State.SETUP_PLACE_SELF ? State.SETUP_PLACE_OTHER : State.SETUP_PLACE_SELF)
+								//FIXME Controllare fine stato e numero extraArmies
+//								.setState(state == State.SETUP_PLACE_SELF ? State.SETUP_PLACE_OTHER : State.SETUP_PLACE_SELF) 
 								.create();
 					}
 					
@@ -297,25 +336,23 @@ public class Scenario {
 		}
 		
 		if(list.isEmpty())
-			list.add(new StateTransition(this, state == State.SETUP_PLACE_SELF ? State.SETUP_FORTIFY_SELF : State.SETUP_FORTIFY_OTHER));
+			list.add(new StateTransition(this, state == State.SETUP_PLACE ? State.SETUP_FORTIFY : State.SETUP_FORTIFY));
 		
 		return list;
 	}
-	
-	private List<Transition> buildDefenseTransitions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
+//	private List<Transition> buildDefenseTransitions() {
+//		return null;
+//	}
 
 	private List<Transition> buildMoveTransitions() {
 		List<Transition> transitions = new LinkedList<Transition>();
-		
 		for(final Country country : setup.getGame().getCountries()) {
-			if(!countryIsOwned[country.getColor() - 1])
+			if(!currentPlayer.ownsCountry(country.getColor()))
 				continue;
 			
 			for(final Country neighbour : country.getNeighbours()) {
-				if(!countryIsOwned[neighbour.getColor() - 1])
+				if(!currentPlayer.ownsCountry(country.getColor()))
 					continue;
 				
 				transitions.add(new CommandTransition("movearmies %d %d", country.getColor(), neighbour.getColor()) {
@@ -358,13 +395,13 @@ public class Scenario {
 		List<Transition> transitions = new LinkedList<Transition>();
 		
 		for(Country country : setup.getGame().getCountries()) {
-			if(!countryIsOwned[country.getColor() - 1])
+			if(!currentPlayer.ownsCountry(country.getColor()))
 				continue;
 			
 			int myArmies = countryArmies[country.getColor() - 1];
 					
 			for(Country neighbour : country.getNeighbours()) {
-				if(countryIsOwned[neighbour.getColor() - 1])
+				if(currentPlayer.ownsCountry(country.getColor()))
 					continue;
 				
 				int neighbourArmies = countryArmies[neighbour.getColor() - 1];
@@ -436,7 +473,7 @@ public class Scenario {
 	
 	@Override
 	public String toString() {
-		return "Scenario: " + computeId(state, countryArmies, countryIsOwned, extraArmies);
+		return "Scenario: " + computeId(state, countryArmies, currentPlayer);
 	}
 	
 	@Override

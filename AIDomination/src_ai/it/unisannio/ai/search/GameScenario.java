@@ -23,6 +23,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 	protected HashSet<Integer> possessions = new HashSet<Integer>();
 	protected int extraArmies = 0;
 	protected int enemyExtraArmies = 0;
+	
 	private State state;
 	
 	protected boolean enemyTurn = false;
@@ -91,7 +92,7 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 			break;
 		case ROLL:
 			List<GameMutation> ms =  this.getMutations();
-			utility = (ms.get(0).getUtility() + ms.get(1).getUtility())/2.0f;
+			utility = (ms.get(0).getUtility() + ms.get(1).getUtility());
 			break;
 		default:
 			List<GameMutation> mutations =  this.getMutations();
@@ -101,10 +102,9 @@ public class GameScenario implements Comparable<GameScenario>, Cloneable {
 		return utility;
 	}
 	
-	
-	
+		
 //private static HashMap<GameScenario, Boolean> visiting = new HashMap<GameScenario, Boolean>();
-//	
+//
 //	public float getUtility() {
 //		if(visiting.containsKey(this)  && visiting.get(this)) {
 //			return 0;
