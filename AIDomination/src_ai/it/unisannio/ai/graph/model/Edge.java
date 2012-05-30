@@ -1,9 +1,9 @@
 package it.unisannio.ai.graph.model;
 
-public interface Edge {
+public interface Edge<T extends Node<?>, E extends Edge<T,E> > {
 	
-	public Node getChild();
+	public T getChild();
 	
-	public float getUtility(); 
+	public float getUtility(UtilityCalculator<T> calculator, GraphTraversal<T, E> traversal); 
 	
 }

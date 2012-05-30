@@ -432,7 +432,8 @@ transient - A keyword in the Java programming language that indicates that a fie
 	public Player endGo() {
 
 		if (gameState==STATE_END_TURN) {
-
+			
+			
 			//System.out.print("go ended\n"); // testing
 
 			// work out who is the next player
@@ -496,6 +497,15 @@ transient - A keyword in the Java programming language that indicates that a fie
 
 			capturedCountry=false;
 			tradeCap=false;
+			
+//			System.out.println("Players");
+//			for (int i = 0; i<Players.size(); i++){
+//				Player p = (Player) Players.elementAt(i);
+//				System.out.println("  "+ i+") "+p.getColor() + " "+ p.getName());
+//			}
+//			System.out.println("Current: " + currentPlayer.getColor() + " "+ currentPlayer.getName());
+			
+			
 
 			return currentPlayer;
 

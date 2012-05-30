@@ -1,5 +1,8 @@
 package it.unisannio.ai.graph;
 
+import it.unisannio.ai.graph.model.GraphTraversal;
+import it.unisannio.ai.graph.model.UtilityCalculator;
+
 public abstract class CommandTransition extends Transition {
 	private final String command;
 	
@@ -14,10 +17,11 @@ public abstract class CommandTransition extends Transition {
 	public String getCommand() {
 		return command;
 	}
-
+	
 	@Override
-	protected float computeUtility() {
-		return getNext().getUtility();
+	protected float computeUtility(UtilityCalculator<Scenario> calculator, GraphTraversal<Scenario, Transition> traversal) {
+		return getChild().getUtility(calculator, traversal);
 	}
+
 
 }

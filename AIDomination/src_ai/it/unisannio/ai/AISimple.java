@@ -261,7 +261,6 @@ public class AISimple extends AI{
 
 	@Override
 	public String getCapital() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

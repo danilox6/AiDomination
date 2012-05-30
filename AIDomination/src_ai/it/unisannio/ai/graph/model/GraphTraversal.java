@@ -1,12 +1,6 @@
 package it.unisannio.ai.graph.model;
 
-public abstract class GraphTraversal {
+public interface GraphTraversal<T extends Node, V extends Edge> {
 	
-	protected UtilityCalculator utilityCalculator;
-	
-	public GraphTraversal(UtilityCalculator utilityCalculator) {
-		this.utilityCalculator = utilityCalculator;
-	}
-	
-	public abstract void traverse(Node root);
+	public V traverse(T root, UtilityCalculator<T> calculator);
 }

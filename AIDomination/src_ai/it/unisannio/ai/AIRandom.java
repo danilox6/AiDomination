@@ -120,7 +120,6 @@ public class AIRandom extends AI {
 
 	@Override
 	public String getCapital() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

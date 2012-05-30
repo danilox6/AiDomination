@@ -1,6 +1,6 @@
 package it.unisannio.ai.graph.model;
 
-public interface UtilityCalculator {
+public interface UtilityCalculator<T extends Node> {
 	
-	float evaluateUtility(Node node);
+	float evaluateUtility(T node);
 }
