@@ -15,7 +15,7 @@ import java.util.List;
  *
  */
 public class AIManager {
-	private static HashMap<String, AI> AIs = new HashMap<String, AI>();
+	private static HashMap<String, AIClass> AIclasses = new HashMap<String, AIClass>();
 	
 	/**
 	 * Utilizzato per integrare le Ai nel gioco
@@ -34,6 +34,7 @@ public class AIManager {
 	 * @author Michele Piccirillo <michele.piccirillo@gmail.com>
 	 */
 	// TODO Implementa ricerca anche all'interno dei JAR
+	@SuppressWarnings("unchecked")
 	private static void autodiscovery() {
 		String classpath = System.getProperty("java.class.path");
 		String[] paths = classpath.split(File.pathSeparator);
@@ -49,8 +50,9 @@ public class AIManager {
 						
 						if(AI.class.isAssignableFrom(cl) && cl.isAnnotationPresent(Discoverable.class)) {
 							System.out.println("Discovered ai " + cl);
-							AI ai = (AI) cl.newInstance();
-							addAI(ai);
+							AIClass clazz = new AIClass((Class<? extends AI>) cl); 
+							AIclasses.put(clazz.getId(), clazz);
+
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -88,44 +90,61 @@ public class AIManager {
 	 * @param id
 	 * @return
 	 */
-	public static AI getAI(String id){
-		return AIs.get(id);
+	public static Class<? extends AI> getAIClass(String id){
+		return AIclasses.get(id).getAIclass();
 	}
 	
-	/**
-	 * Aggiunge una AI all'AIManager controllando che l'AI sia valida
-	 * 
-	 * @param ai
-	 */
-	public static void addAI(AI ai){
-		try{
-			ai.getName().toString(); //Serve solo per far scaturire un eventuale NullPointerExeption
-			String id = ai.getId();
-			if (AIs.containsKey(id))
-				throw new IllegalArgumentException("Esiste già una AI con id: "+id);
-			AIs.put(id, ai);
-			ai.onInit();
-		}catch (NullPointerException e) {
-			throw new IllegalArgumentException("L'AI deve avere nome e id non null");
-		}
-	}
-	
-	/**
-	 * Aggiunge più AI
-	 * 
-	 * @param ais
-	 */
-	public static void addAIs(AI... ais){
-		for (AI ai: ais)
-			addAI(ai);
-	}
 	
 	/**
 	 * Viene utilizzato dall'interfaccia grafica per visualizzare le AI disponibili
 	 * @return
 	 */
-	public static Collection<AI> getAIs(){
-		return AIs.values();
+	public static Collection<AIClass> getAIs(){
+		return AIclasses.values();
 	}
 	
+	
+	public static String getAIClassId(Class<? extends AI> clazz){
+		if(clazz.getSimpleName().equals("AIHuman"))
+			return "human";
+		return "ai "+clazz.getSimpleName();
+	}
+	
+	
+	public static class AIClass{
+		
+		private String name, id;
+		private Class<? extends AI> AIclass;
+		
+		public AIClass(Class<? extends AI> clazz) {
+			this.AIclass = clazz;
+			if(clazz.getSimpleName().equals("AIHuman")){
+				id = "human";
+				name = "Umano";
+			}else{
+				id = "ai "+clazz.getSimpleName().toLowerCase().substring(2);
+				name = clazz.getSimpleName().substring(2);
+			}
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public Class<? extends AI> getAIclass() {
+			return AIclass;
+		}
+	
+		
+		@Override
+		public String toString() {
+			return name;
+		}
+		
+		
+	}
 }

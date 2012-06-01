@@ -1334,7 +1334,14 @@ public class Risk extends Thread {
 						// name.replaceAll(" ","")+"#"+String.valueOf(
 						// Math.round(Math.random()*Long.MAX_VALUE) )
 
-						AI ai = AIManager.getAI(type);
+						Class<? extends AI> clazz = AIManager.getAIClass(type);
+						AI ai = null;
+						try {
+							ai = (AI) clazz.newInstance();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						
 						int color = RiskUtil.getColor(c);
 
 						if (color != 0
@@ -3055,8 +3062,7 @@ public class Risk extends Thread {
 							&& game.getCurrentPlayer().getAutoDefend()) {
 
 						parser(AIPlayer.getOutput(game,
-								new AICrap().setID("ai crap")
-										.setName("AI Crap")));
+								new AICrap()));
 
 					}
 

@@ -4,12 +4,13 @@ import it.unisannio.ai.graph.CommandTransition;
 import it.unisannio.ai.graph.GraphSetup;
 import it.unisannio.ai.graph.Scenario;
 import it.unisannio.ai.graph.traversal.*;
-import it.unisannio.ai.graph.traversal.PositionUtilityCalculator;
 import it.unisannio.ai.search.TreeSearcher;
 import net.yura.domination.engine.ai.Discoverable;
+import net.yura.domination.engine.ai.EnemyCommandsListener;
+import net.yura.domination.engine.core.Player;
 
 @Discoverable
-public class AITreeBased extends AISimple{
+public class AITreeBased extends AISimple implements EnemyCommandsListener{
 	TreeSearcher search = new TreeSearcher();
 
 	@Override
@@ -21,5 +22,10 @@ public class AITreeBased extends AISimple{
 		}
 		else
 			return super.getPlaceArmies();
+	}
+
+	@Override
+	public void onEnemyCommand(Player enemy, String command) {
+		System.out.println(enemy.getName() + " ha fatto questa mossa: "+command);
 	}
 }

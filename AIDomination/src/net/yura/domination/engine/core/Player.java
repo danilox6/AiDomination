@@ -53,6 +53,7 @@ public class Player implements Serializable {
 	 */
 	public Player(AI ai, String n, int c, String a) {
 		this.ai = ai;
+		this.ai.setPlayer(this);
 		name = n;
 		color = c;
 		territoriesOwned = new Vector();
@@ -71,7 +72,6 @@ public class Player implements Serializable {
 		Statistics = new Vector();
 		currentStatistic = new Statistic();
 		Statistics.add(currentStatistic);
-
 	}
 
 	public void rename(String na) {

@@ -20,12 +20,8 @@ public class MinMaxTraversal implements GraphTraversal<Scenario, Transition>{
 			}
 		};
 		
-		
 		return (root.getGraphSetup().getPlayer().getColor()==root.getPlayers().getFirst())?
 			Collections.max(root.getEdges(), comparator) : Collections.min(root.getEdges(), comparator);
 	}
-	
-	
-	
 
 }

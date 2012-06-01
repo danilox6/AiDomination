@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 import net.yura.domination.engine.Risk;
 import net.yura.domination.engine.RiskUtil;
 import net.yura.domination.engine.ai.AI;
+import net.yura.domination.engine.ai.EnemyCommandsEventSource;
+import net.yura.domination.engine.ai.EnemyCommandsListener;
 import net.yura.domination.engine.translation.MapTranslator;
 import net.yura.domination.logger.RiskLogger;
 
@@ -1053,6 +1055,9 @@ transient - A keyword in the Java programming language that indicates that a fie
 						// gameState=STATE_BATTLE_WON;
 						tradeCap=true;
 					}
+					
+					if(lostPlayer.getAI() instanceof EnemyCommandsListener)
+						EnemyCommandsEventSource.removeEnemyCommandsListener((EnemyCommandsListener) lostPlayer.getAI());
 					
 					if(Risk.isLogLosersWinner())
 						logger.info("\n!!! "+lostPlayer.getName()+"("+lostPlayer.getAI().getName()+") ELIMINATO!!!\n\n");

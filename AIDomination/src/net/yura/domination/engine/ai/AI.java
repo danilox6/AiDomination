@@ -17,12 +17,11 @@ public abstract class AI {
 	protected Player player;
 	
 	public AI() {
-		String className = getClass().getSimpleName();
-		if(className.startsWith("AI"))
-			className = className.substring(2);
+		id = "ai "+this.getClass().getSimpleName().toLowerCase().substring(2);
+		name = this.getClass().getSimpleName().substring(2);	
 		
-		name = className + " (AI)";
-		id = "ai " + getClass().getName();	
+		if(this instanceof EnemyCommandsListener)
+			EnemyCommandsEventSource.addEnemyCommandsListener((EnemyCommandsListener) this);
 	}
 	
 	public void onInit() {}
@@ -43,29 +42,6 @@ public abstract class AI {
 		this.player = player;
 	}
 	
-	/**
-	 * Assegna un id all'AI
-	 * @param id
-	 * @return this
-	 */
-	public AI setID(String id){
-		if(!id.startsWith("ai ") || id.substring(3).contains(" "))
-			throw new IllegalArgumentException("L'id deve inizare con \"ai \" e non deve contenere ulteriori spazi vuoti " );
-		this.id = id;
-		return this;
-	}
-	
-	/**
-	 * Assegna un nome all'AI
-	 * 
-	 * @param name
-	 * @return this
-	 */
-	public AI setName(String name){
-		this.name = name;
-		return this;
-	}
-
 	public String getName() {
 		return name;
 	}

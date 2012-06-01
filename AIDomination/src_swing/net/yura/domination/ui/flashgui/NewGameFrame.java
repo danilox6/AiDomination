@@ -48,6 +48,7 @@ import net.yura.domination.engine.RiskUIUtil;
 import net.yura.domination.engine.RiskUtil;
 import net.yura.domination.engine.ai.AI;
 import net.yura.domination.engine.ai.AIManager;
+import net.yura.domination.engine.ai.AIManager.AIClass;
 import net.yura.domination.engine.ai.AIPlayer;
 import net.yura.domination.engine.core.RiskGame;
 import net.yura.domination.engine.guishared.AboutDialog;
@@ -1025,7 +1026,7 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 			 */
 
 
-			myrisk.parser("newplayer "+ ((AI)aiChooser.getSelectedItem()).getId() +" "+ color +" "+ playerName.getText() );
+			myrisk.parser("newplayer "+ ((AIClass)aiChooser.getSelectedItem()).getId() +" "+ color +" "+ playerName.getText() );
 
 		}
 		else if (e.getSource()==start) {
