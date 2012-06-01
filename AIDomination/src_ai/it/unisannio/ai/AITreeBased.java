@@ -7,10 +7,11 @@ import it.unisannio.ai.graph.traversal.*;
 import it.unisannio.ai.search.TreeSearcher;
 import net.yura.domination.engine.ai.Discoverable;
 import net.yura.domination.engine.ai.EnemyCommandsListener;
+import net.yura.domination.engine.ai.core.AIHard;
 import net.yura.domination.engine.core.Player;
 
 @Discoverable
-public class AITreeBased extends AISimple implements EnemyCommandsListener{
+public class AITreeBased extends AIHard implements EnemyCommandsListener{
 	TreeSearcher search = new TreeSearcher();
 
 	@Override
@@ -26,6 +27,6 @@ public class AITreeBased extends AISimple implements EnemyCommandsListener{
 
 	@Override
 	public void onEnemyCommand(Player enemy, String command) {
-		System.out.println(enemy.getName() + " ha fatto questa mossa: "+command);
+		// TODO Auto-generated method stub
 	}
 }

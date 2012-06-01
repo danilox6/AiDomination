@@ -97,6 +97,9 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 	private JRadioButton capital;
 	private JRadioButton mission;
 
+	
+	private JLabel lblAITimeout;
+	private JTextField txtAITimeout;
 	private JComboBox aiChooser;
 	/*
 	private JRadioButton human;
@@ -414,7 +417,11 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 		//String[] difficulties = { resb.getString("newgame.player.type.human"), resb.getString("newgame.player.type.crapai"), resb.getString("newgame.player.type.easyai"), resb.getString("newgame.player.type.hardai"), "Molto Difficile" };
 		aiChooser = new JComboBox(AIManager.getAIs().toArray());
 		aiChooser.setBounds(520, 335, 150 , 28);
-
+		lblAITimeout = new JLabel("AI Timeout (sec.):");
+		lblAITimeout.setBounds(520, 370, 100 , 28);
+		
+		txtAITimeout = new JTextField("30");
+		txtAITimeout.setBounds(620, 370, 30 , 28);
 
 		color = "black";
 		thecolor = Color.black;
@@ -516,6 +523,9 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 
 		ngp.add(aiChooser);
 		ngp.add(playerColor);
+		
+		ngp.add(lblAITimeout);
+		ngp.add(txtAITimeout);
 
 		ngp.add(resetplayers);
 		ngp.add(addplayer);
@@ -1043,6 +1053,8 @@ public class NewGameFrame extends JFrame implements ActionListener,MouseListener
 					RiskUtil.savePlayers(myrisk, getClass());
 				}
 
+				AIPlayer.setTimout(Integer.parseInt(txtAITimeout.getText()));
+				
 				if (fast.isSelected())
 					AIPlayer.setWait(80);
 				if (multipleGames.isSelected()){

@@ -11,7 +11,7 @@ import net.yura.domination.engine.core.RiskGame;
 public class AIPlayer {
 
 	private static int wait=500;
-	private static int timer = 30;
+	private static int timeout = 30;
 
 	public static int getWait() {
 		return wait;
@@ -48,13 +48,11 @@ public class AIPlayer {
 		
 		String output = null;
 		try{
-			output = future.get(timer, TimeUnit.SECONDS);
+			output = future.get(timeout, TimeUnit.SECONDS);
 		} catch (Exception ex) {
 			output = getOutput(game, new AICrap());
 		}
 
-		EnemyCommandsEventSource.fireEnemyCommandsEvent(game.getCurrentPlayer(), output);
-		
 		try { Thread.sleep(wait); }
 		catch(InterruptedException e) {}
 
@@ -63,11 +61,11 @@ public class AIPlayer {
 	}
 
 
-	public static int getTimer() {
-		return timer;
+	public static int getTimeout() {
+		return timeout;
 	}
-	public static void setTimer(int timer) {
-		AIPlayer.timer = timer;
+	public static void setTimout(int timeout) {
+		AIPlayer.timeout = timeout;
 	}
 	public static String getOutput(RiskGame game,AI usethisAI) {
 		game.NoEmptyCountries();
