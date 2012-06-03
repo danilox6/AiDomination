@@ -72,6 +72,11 @@ public class AIManager {
 		}
 	}
 	
+	/**
+	 * Esamina una directory alla ricerca di classi candidate per essere AI.
+	 * 
+	 * @author Michele Piccirillo <michele.piccirillo@gmail.com>
+	 */
 	private static List<String> autodiscoverDirectory(File root, File path) {
 		List<String> classes = new LinkedList<String>();
 		FileFilter classFilter = new FileFilter() {
@@ -102,6 +107,11 @@ public class AIManager {
 		return classes;
 	}
 
+	/**
+	 * Esamina un JAR alla ricerca di classi candidate per essere AI.
+	 * 
+	 * @author Michele Piccirillo <michele.piccirillo@gmail.com>
+	 */
 	private static List<String> autodiscoverJar(File file) {
 		JarFile jar = null;
 		try {
