@@ -42,6 +42,7 @@ public class AIManager {
 	 * 
 	 * @author Michele Piccirillo <michele.piccirillo@gmail.com>
 	 */
+	@SuppressWarnings("unchecked")
 	private static void autodiscoverAIs() {
 		String classpath = System.getProperty("java.class.path");
 		String[] paths = classpath.split(File.pathSeparator);
