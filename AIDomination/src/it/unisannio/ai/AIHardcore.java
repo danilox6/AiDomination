@@ -25,10 +25,19 @@ public class AIHardcore extends AIEasy {
 		setMissionAI(new AIHardMission());
 	}
 
+	/*
+	 * = Strategies =
+	 * 
+	 * ## For initial placement
+	 * 1.a. Rank continents according to a formula and pick the first available country there
+	 * 1.b. If that fails, pick the first available country
+	 * 2. If an opponent has almost conquered a continent, place an army there
+	 */
 	public String getPlaceArmies() {
 
 		String output;
 
+		// initial placement
 		if ( game.NoEmptyCountries()==false ) {
 
 			Continent[] cont = game.getContinents();
@@ -53,10 +62,12 @@ public class AIHardcore extends AIEasy {
 				Vector ct = new Vector();
 				Continent co = cont[i];
 				
+				// army bonus for that continent
 				extraArmiesForContinent = co.getArmyValue();
 				
 				ct = co.getTerritoriesContained();
 
+				// number of own territories and enemy territories
 				for (int j=0; j<ct.size(); j++) {
 					if ( ((Country)ct.elementAt(j)).getOwner() == player ) { 
 						/* This territory belongs to the player */
@@ -73,7 +84,11 @@ public class AIHardcore extends AIEasy {
 							}
 						}
 					}
+					
+					// calculate borders
 					Vector w = ((Country)ct.elementAt(j)).getNeighbours();
+					
+					// enemy neighbors outside continent
 					for (int k=0; k<w.size(); k++) {
 						if (((Country)w.elementAt(k)).getContinent() != co) {
 							/* This is a territory to protect from */
@@ -81,6 +96,8 @@ public class AIHardcore extends AIEasy {
 							isBorder = true;
 						}
 					}
+					
+					// number of borders
 					if (isBorder) {
 						numberOfBorders++;
 					}
@@ -90,6 +107,7 @@ public class AIHardcore extends AIEasy {
 
 				ratio = extraArmiesForContinent - numberOfBorders - (neighborTerritories - numberOfBorders)+(territorynum * 0.9) - (numberofEnemyUnits * 1.2);
 
+				// pick the best continent according to the ratio
 				if (check <= ratio && hasFreeTerritories(ct) == true) {
 					check = ratio;
 					val = i;
@@ -102,7 +120,11 @@ public class AIHardcore extends AIEasy {
 			}
 			if (val==-1) { val=0; } // YURA: val is not being set
 
+			// at this point we have our "best" continent
+			
 			/* ..pick country from that continent */
+			
+			// choose the first available territory
 			boolean picked = false;
 			if (check > 0) {
 				Continent co = cont[val];
@@ -117,6 +139,8 @@ public class AIHardcore extends AIEasy {
 				}
 			}
 
+			// if nothing can be picked with that method
+			// select the first available nation
 			if (picked == false) {
 				Continent co = cont[val];
 				Vector ct = co.getTerritoriesContained();
@@ -127,6 +151,7 @@ public class AIHardcore extends AIEasy {
 
 						Vector v = ((Country)ct.elementAt(j)).getNeighbours();
 						for (int k=0; k<v.size(); k++) { // YURA: was ct.size()
+							// redundant logic: v = country.getNeighbours() => v[i].isNeighbours(country)
 							if (((Country)v.elementAt(k)).getOwner() != player && ((Country)ct.elementAt(j)).isNeighbours((Country)v.elementAt(k))) {
 								name=((Country)ct.elementAt(j)).getColor()+"";
 								break;
@@ -136,6 +161,8 @@ public class AIHardcore extends AIEasy {
 				}
 			}
 
+			// if an opponent has almost conquered a continent (1 free country left)
+			// block him
 			String s = blockOpponent(player);
 			if( s != null )
 				name = s;
@@ -147,11 +174,16 @@ public class AIHardcore extends AIEasy {
 				output = "placearmies " + name +" 1";
 		}
 		else {
-
+			// placement during game
 
 			Vector t = player.getTerritoriesOwned();
 //			Vector n;
 			String name = null;
+			
+			// -------
+			// PASS #1
+			// Pick the first country with < 11 armies which is not surrounded by friendly nations
+			// -------
 
 			for (int a=0; a< t.size() ; a++) {
 
@@ -164,22 +196,48 @@ public class AIHardcore extends AIEasy {
 				if ( name != null ) { break; }
 
 			}
+			
+			// -------
+			// PASS #2
+			// Reinforces a country that is the only one not owned by a enemy in a continent,
+			// if it has < 5 armies on it
+			// -------
 
 			String s = keepBlocking(player);
 			if( s != null )
 				name = s;
+			
+			// -------
+			// PASS #3
+			// Attempts to free a continent from an enemy player if it is possible to do so
+			// -------
 
 			String f = freeContinent(player);
 			if( f != null )
 				name = f;
+			
+			// -------
+			// PASS #4			
+			// Reinforces a nation next to one of those belonging to a weak player (< 4 countries owned)
+			// -------
 
 			String k = NextToEnemyToEliminate();
 			if (k != null)
 				name = k;
+			
+			// -------
+			// PASS #5
+			// If nothing has been found up to now, reinforce the first country that has an enemy neighbor
+			// -------
 
 			if (name == null)
 				name = findAttackableTerritory(player);
 
+			// -------
+			// PASS #6
+			// If nothing has been found yet, reinforce the first country among our possessions
+			// -------
+			
 			if ( name == null )
 				output = "placearmies " + ((Country)t.elementAt(0)).getColor() +" "+player.getExtraArmies();
 
@@ -251,8 +309,6 @@ public class AIHardcore extends AIEasy {
 			// move from the sender nation
 			receiver = check1(sender);
 
-			// badly written code: it's just making the same search again
-			// just selects the last neighbor of the sender nation
 			if (receiver == null) {
 				n = sender.getNeighbours();
 				for (int i=0; i<n.size(); i++) {
@@ -663,26 +719,6 @@ public class AIHardcore extends AIEasy {
 			}
 		}
 
-		//       Continent[] continents = game.getContinents();
-		//       Vector players = game.getPlayers();
-		//
-		//       for (int i=0; i<players.size(); i++) {
-		//          for (int j=0; j<continents.length; j++) {
-		//              if ( continents[j].isOwned((Player) players.elementAt(i)) == true
-		//                   && (Player) players.elementAt(i) != p ) {
-		//
-		//                        Vector v = continents[j].getTerritoriesContained();
-		//                        for (int k=0; k<v.size(); k++) {
-		//                            Vector neighbours = ((Country) v.elementAt(k)).getNeighbours();
-		//                             for (int l=0; l<neighbours.size(); l++) {             // .equals(p.getName())
-		//                                 if ( (((Country) neighbours.elementAt(l)).getOwner()) == p                && ((Country) neighbours.elementAt(l)).getArmies() < 5) {
-		//                                        return ((Country) neighbours.elementAt(l)).getColor()+"";
-		//                                 }
-		//                             }
-		//                        }
-		//                }
-		//            }
-		//        }
 		return null;
 	}
 
@@ -861,6 +897,8 @@ public class AIHardcore extends AIEasy {
 	}
 
 	public String NextToEnemyToEliminate() {
+		
+		// picks the players with < 4 countries
 		Vector weakPlayers = new Vector();
 		for (int i=0; i<game.getPlayers().size(); i++) {
 			if (((Player)game.getPlayers().get(i)).getTerritoriesOwnedSize() < 4)
@@ -868,6 +906,8 @@ public class AIHardcore extends AIEasy {
 		}
 		if (weakPlayers.size() == 0)
 			return null;
+		
+		// collects their territories
 		Vector t = player.getTerritoriesOwned();
 		Vector targetCountries = new Vector();
 		for (int i=0; i<weakPlayers.size(); i++) {
@@ -875,6 +915,8 @@ public class AIHardcore extends AIEasy {
 				targetCountries.add(((Player)weakPlayers.get(i)).getTerritoriesOwned().get(j));
 			}
 		}
+		
+		// select the first neighboring country from the list 
 		for (int i=0; i<t.size(); i++) {
 			for (int j=0; j<targetCountries.size(); j++) {
 				if (((Country)t.get(i)).isNeighbours((Country)targetCountries.get(j)))
