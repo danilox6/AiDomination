@@ -1,6 +1,8 @@
 package it.unisannio.ai.graph.model;
 
-public interface UtilityCalculator<T extends Node> {
+import aima.core.search.adversarial.Game;
+
+public interface UtilityCalculator< G extends Game<STATE, ACTION, PLAYER>, STATE, PLAYER, ACTION> {
 	
-	float evaluateUtility(T node);
+	float evaluateUtility(G tGame, STATE state, PLAYER player);
 }
