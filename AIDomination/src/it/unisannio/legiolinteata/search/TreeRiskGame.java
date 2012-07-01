@@ -4,21 +4,21 @@ package it.unisannio.legiolinteata.search;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.yura.domination.engine.core.Country;
-import net.yura.domination.engine.core.Player;
-import net.yura.domination.engine.core.RiskGame;
+import net.yura.domination.engine.core.AbstractCountry;
+import net.yura.domination.engine.core.AbstractPlayer;
+import net.yura.domination.engine.core.AbstractRiskGame;
 
 import aima.core.search.adversarial.Game;
 
 //FIXME qualcuno ha un nome migliore?
-public class TreeRiskGame implements Game<GameState, PlacementAction, TPlayer>{
+public class TreeRiskGame implements Game<GameState, FortificationAction, TPlayer>{
 	
 	private static TPlayer[] players = null;
-	private final RiskGame game;
+	private final AbstractRiskGame game;
 //	private final Player myPlayer;
 	private static int myPlayerIndex;
 	
-	public TreeRiskGame(RiskGame game, Player myPlayer){ 
+	public TreeRiskGame(AbstractRiskGame game, AbstractPlayer myPlayer){ 
 		this.game = game;
 //		this.myPlayer = myPlayer;
 		
@@ -26,7 +26,7 @@ public class TreeRiskGame implements Game<GameState, PlacementAction, TPlayer>{
 			players = new TPlayer[game.getPlayers().size()];
 
 			for(int i = 0; i < game.getPlayers().size();i++){
-				Player p = game.getPlayers().get(i);
+				AbstractPlayer p = (AbstractPlayer) game.getPlayers().get(i);
 				players[i] = new TPlayer(p);
 				if (p == myPlayer)
 					myPlayerIndex = i;
@@ -35,10 +35,10 @@ public class TreeRiskGame implements Game<GameState, PlacementAction, TPlayer>{
 	}
 
 	@Override
-	public List<PlacementAction> getActions(GameState state) {
-		List<PlacementAction> actions = new ArrayList<PlacementAction>();
+	public List<FortificationAction> getActions(GameState state) {
+		List<FortificationAction> actions = new ArrayList<FortificationAction>();
 		for(Integer country : state.getFreeCountries())
-			actions.add(new PlacementAction(country, getPlayer(state).getColor()));
+			actions.add(new FortificationAction(country, getPlayer(state).getColor()));
 		return actions;
 	}
 
@@ -46,7 +46,7 @@ public class TreeRiskGame implements Game<GameState, PlacementAction, TPlayer>{
 	public GameState getInitialState() {
 		int[] countryArmies = new int[game.getCountries().length];
 		int[] countryOwner = new int[game.getCountries().length];
-		for(Country country: game.getCountries()){
+		for(AbstractCountry country: game.getCountries()){
 			countryArmies[country.getColor()-1] = country.getArmies();
 			countryOwner[country.getColor()-1] = country.getOwner() != null ? country.getOwner().getColor(): 0; //FIXME un Player può avere color 0?
 		}
@@ -64,7 +64,7 @@ public class TreeRiskGame implements Game<GameState, PlacementAction, TPlayer>{
 	}
 
 	@Override
-	public GameState getResult(GameState state, PlacementAction action) {
+	public GameState getResult(GameState state, FortificationAction action) {
 		GameState newState = null;
 		try {
 			newState = (GameState) state.clone();
@@ -87,32 +87,8 @@ public class TreeRiskGame implements Game<GameState, PlacementAction, TPlayer>{
 		return (state.getFreeCountries().isEmpty());
 	}
 	
-	public RiskGame getGame() {
+	public AbstractRiskGame getGame() {
 		return game;
-	}
-	
-//	public Player getMyPlayer() {
-//		return myPlayer;
-//	}
-
-	//FIXME Roba di GraphSetup. Serve ancora? 
-	private boolean noInnerFortification = true;
-	private float attackThreshold = 0.3f;
-	
-	public boolean getNoInnerFortification() {
-		return noInnerFortification;
-	}
-	
-	public float getAttackThreshold() {
-		return attackThreshold;
-	}
-	
-	public void setNoInnerFortification(boolean value) {
-		noInnerFortification = value;
-	}
-	
-	public void setAttackThreshold(float value) {
-		attackThreshold = value;
 	}
 	
 }

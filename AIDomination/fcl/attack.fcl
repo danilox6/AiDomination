@@ -1,0 +1,64 @@
+// Block definition (there may be more than one block per file)
+FUNCTION_BLOCK strategy_one
+
+	// Define input variables
+	VAR_INPUT
+	    victory : REAL;
+	    enemy : REAL;
+	END_VAR
+	
+	// Define output variable
+	VAR_OUTPUT
+	    attack : REAL;
+	END_VAR
+	
+	FUZZIFY victory
+		TERM unlikely := sigm -0.25 30;
+	    TERM possible := sigm 0.25 50;
+	    TERM probable := sigm 0.25 75;
+	    TERM certain := (90, 0) (100, 1);	    
+	END_FUZZIFY
+	
+	FUZZIFY enemy
+	    TERM weak := sigm -3 3; 
+	    TERM average := gbell 2 4 5;
+	    TERM powerful := sigm 3 7;
+	END_FUZZIFY
+	
+	DEFUZZIFY attack
+	    TERM discouraged := (0,1) (3,0);
+	    TERM advised := (3,0) (6,1);
+	    TERM strategic := (6,0) (9,1) (10, 1);
+	    // Use 'Center Of Gravity' defuzzification method
+	    METHOD : COG;
+	    // Default value is 0 (if no rule activates defuzzifier)
+	    DEFAULT := 0;
+	END_DEFUZZIFY
+	
+	RULEBLOCK No1
+	    // Use 'min' for 'and' (also implicit use 'max'
+	    // for 'or' to fulfill DeMorgan's Law)
+	    AND : MIN;
+	    // Use 'min' activation method
+	    ACT : MIN;
+	    // Use 'max' accumulation method
+	    ACCU : MAX;
+	
+	    RULE 1 : IF victory IS probable AND enemy IS powerful
+	                THEN attack IS strategic;
+	
+	    RULE 2 : IF victory IS probable
+	                THEN attack IS advised; 
+	
+	    RULE 3 : IF victory IS possible AND enemy IS weak 
+	                THEN attack is strategic;
+	                
+	    RULE 4 : IF victory IS unlikely
+	    			THEN attack is discouraged;
+	   	
+	   	RULE 5 : IF victory IS certain 
+	   				THEN attack is strategic;
+	                
+	END_RULEBLOCK
+
+END_FUNCTION_BLOCK

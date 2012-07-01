@@ -4,6 +4,8 @@ import java.util.*;
 
 import net.yura.domination.engine.ai.AI;
 import net.yura.domination.engine.ai.Discoverable;
+import net.yura.domination.engine.core.AbstractContinent;
+import net.yura.domination.engine.core.AbstractCountry;
 import net.yura.domination.engine.core.Card;
 import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
@@ -45,19 +47,19 @@ public class AISimple extends AI{
 	}
 	
 	public String getInitialArmyPlacement() {
-		Continent[] continents = game.getContinents();
+		AbstractContinent[] continents = game.getContinents();
 		
-		Country[] candidates = new Country[continents.length];
+		AbstractCountry[] candidates = new AbstractCountry[continents.length];
 		int[] candidateScores = new int[continents.length];
 		int[] freeCountries = new int[continents.length];
 		
 		for(int i = 0; i < continents.length; ++i){
-			for(Country country:(Vector<Country>)continents[i].getTerritoriesContained()) {
+			for(AbstractCountry country:(Vector<Country>)continents[i].getTerritoriesContained()) {
 				if(country.getOwner() == null) {
 					freeCountries[i]++;
 					
 					int score = 0;
-					for(Country neightbour: (Vector<Country>) country.getNeighbours()) {
+					for(AbstractCountry neightbour: (Vector<Country>) country.getNeighbours()) {
 						if(neightbour.getOwner() == player || neightbour.getContinent() != continents[i])
 							score++;
 					}
@@ -144,17 +146,17 @@ public class AISimple extends AI{
 		
 		int armiesForDefense = (int) Math.floor(defendQuota * extraArmies);
 		if(armiesForDefense > 0) {			
-			Country mostNeedful = borders.get(0);
+			AbstractCountry mostNeedful = borders.get(0);
 			return "placearmies " + mostNeedful.getColor() + " 1";// + Math.min(getDefenseNeeded(mostNeedful), armiesForDefense);
 		}
 		
-		Country strongest = borders.get(borders.size() - 1);
+		AbstractCountry strongest = borders.get(borders.size() - 1);
 		return "placearmies " + strongest.getColor() + " 1";// + extraArmies;
 	}
 	
 	private int getThreatLevel(Set<Country> countries) {
 		int threatLevel = 0;
-		for(Country country : countries) {
+		for(AbstractCountry country : countries) {
 			if(getDefenseNeeded(country) > 0)
 				threatLevel++;
 		}
@@ -162,12 +164,12 @@ public class AISimple extends AI{
 		return threatLevel;
 	}
 	
-	private int getDefenseNeeded(Country country) {
+	private int getDefenseNeeded(AbstractCountry country) {
 		if(country.getOwner() != player) 
 			return 0;
 		
 		int neededArmies = 0, countryArmies = country.getArmies();
-		for(Country neighbour : (Vector<Country>) country.getNeighbours()) {
+		for(AbstractCountry neighbour : (Vector<Country>) country.getNeighbours()) {
 			if(neighbour.getOwner() != player && neighbour.getArmies() >= countryArmies + neededArmies) 
 				neededArmies = neighbour.getArmies() - countryArmies + 1;
 		}
@@ -175,7 +177,7 @@ public class AISimple extends AI{
 		return neededArmies;
 	}
 	
-	private Set<Country> getConfiningTerritories(Continent continent) {
+	private Set<Country> getConfiningTerritories(AbstractContinent continent) {
 		LinkedList<Country> toVisit = new LinkedList<Country>();
 		Set<Country> visited = new HashSet<Country>();
 		Set<Country> confiningTerritories = new HashSet<Country>();
@@ -199,10 +201,10 @@ public class AISimple extends AI{
 		return confiningTerritories;
 	}
 	
-	private float getForceRatio(Continent arg0) {
+	private float getForceRatio(AbstractContinent arg0) {
 		float myForces = 0.0f;
 		float otherForces = 0.0f;
-		for(Country c : (Vector<Country>) arg0.getTerritoriesContained()) {
+		for(AbstractCountry c : (Vector<Country>) arg0.getTerritoriesContained()) {
 			if(c.getOwner() == player) {
 				myForces += c.getArmies();
 			} else {
@@ -216,11 +218,11 @@ public class AISimple extends AI{
 	@Override
 	public String getAttack() {
 		Vector<Country> countries = player.getTerritoriesOwned();
-		Country attacker = null;
-		Country defender = null;
-		for(Country c : countries){
+		AbstractCountry attacker = null;
+		AbstractCountry defender = null;
+		for(AbstractCountry c : countries){
 			Vector<Country> neighbours = c.getNeighbours();
-			for(Country n: neighbours){
+			for(AbstractCountry n: neighbours){
 				if(n.getOwner() != player) {
 					if (
 							(attacker == null && defender == null)

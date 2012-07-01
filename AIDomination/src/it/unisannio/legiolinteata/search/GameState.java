@@ -25,7 +25,7 @@ public class GameState implements State, Cloneable{
 		return freeCountries;
 	}
 	
-	public void place(PlacementAction placamentAction){
+	public void place(FortificationAction placamentAction){
 		countryArmies[placamentAction.getCountryToOccupy()] = 1;
 		countryOwners[placamentAction.getCountryToOccupy()] = placamentAction.getOccupyingPlayer();
 	}

@@ -7,8 +7,9 @@ import java.util.Vector;
 
 import net.yura.domination.engine.ai.AI;
 import net.yura.domination.engine.ai.Discoverable;
+import net.yura.domination.engine.core.AbstractContinent;
+import net.yura.domination.engine.core.AbstractCountry;
 import net.yura.domination.engine.core.Card;
-import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 
 @Discoverable
@@ -45,20 +46,20 @@ public class AIRandom extends AI {
 
 	@Override
 	public String getPlaceArmies() {
-		Continent[] continents = game.getContinents();
+		AbstractContinent[] continents = game.getContinents();
 		List<Country> countries = new ArrayList<Country>();
-		for(Continent c:continents){
+		for(AbstractContinent c:continents){
 			countries.addAll(c.getTerritoriesContained());
 		}
 		Collections.shuffle(countries);
 		if(game.NoEmptyCountries()==false){
-			for(Country c:countries){
+			for(AbstractCountry c:countries){
 				if(c.getOwner()==null){
 					return "placearmies "+c.getColor()+" 1";
 				}
 			}
 		}
-		for(Country c: countries){
+		for(AbstractCountry c: countries){
 			if(c.getOwner()==player){
 				return "placearmies "+c.getColor()+" 1";
 			}
@@ -70,10 +71,10 @@ public class AIRandom extends AI {
 	public String getAttack() {
 		Vector<Country> countries = player.getTerritoriesOwned();
 		Collections.shuffle(countries);
-		for(Country c:countries){
+		for(AbstractCountry c:countries){
 			Vector<Country> neighbours = c.getNeighbours();
 			Collections.shuffle(neighbours);
-			for(Country ncountry:neighbours){
+			for(AbstractCountry ncountry:neighbours){
 				if(ncountry.getOwner()!=player && c.getArmies()>1)
 					return "attack "+c.getColor()+" "+ ncountry.getColor();
 			}
@@ -98,10 +99,10 @@ public class AIRandom extends AI {
 	public String getTacMove() {
 		Vector<Country> countries = player.getTerritoriesOwned();
 		Collections.shuffle(countries);
-		for(Country c:countries){
+		for(AbstractCountry c:countries){
 			Vector<Country> neighbours = c.getNeighbours();
 			Collections.shuffle(neighbours);
-			for(Country ncountry:neighbours){
+			for(AbstractCountry ncountry:neighbours){
 				if(ncountry.getOwner()==player && c.getArmies()>1){
 					long armies =(long)Math.floor(Math.random()*(c.getArmies()-1)+ 1) ;
 					return "movearmies "+c.getColor()+" "+ ncountry.getColor()+" "+armies;

@@ -2,13 +2,13 @@ package it.unisannio.legiolinteata.search;
 
 import aima.core.agent.Action;
 
-public class PlacementAction implements Action{
+public class FortificationAction implements Action{
 
 	private int countryToOccupy;
 	private int occupyingPlayer;
 	private String commandString;
 	
-	public PlacementAction(int countryToOccupy, int occupyingPlayer) {
+	public FortificationAction(int countryToOccupy, int occupyingPlayer) {
 		this.countryToOccupy = countryToOccupy;
 		this.occupyingPlayer = occupyingPlayer;
 		
