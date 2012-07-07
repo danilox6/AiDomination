@@ -1,6 +1,7 @@
 package it.unisannio.ai;
 
 import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
@@ -12,6 +13,7 @@ import net.yura.domination.engine.core.AbstractCountry;
 import net.yura.domination.engine.core.Card;
 import net.yura.domination.engine.core.Country;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 @Discoverable
 public class AIRandom extends AI {
 
@@ -43,6 +45,8 @@ public class AIRandom extends AI {
 		}
 		return "endtrade";
 	}
+
+	
 
 	@Override
 	public String getPlaceArmies() {

@@ -1,17 +1,6 @@
 package it.unisannio.legiolinteata.advisor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.plaf.ListUI;
-
-import org.jfree.util.ArrayUtilities;
+import java.util.*;
 
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.yura.domination.engine.ai.commands.Attack;
@@ -73,6 +62,7 @@ public class AttackAdvisor implements Advisor<Attack> {
 	public List<Attack> getAdvices() {
 		List<Attack> candidates = new ArrayList<Attack>();
 		for(AbstractCountry<?, ?, ?> country : player.getTerritoriesOwned()) {
+			@SuppressWarnings("unchecked")
 			Vector<AbstractCountry<?, ?, ?>> neighbours = (Vector<AbstractCountry<?, ?, ?>>) country.getNeighbours();
 			for(AbstractCountry<?, ?, ?> neighbour : neighbours) {
 				if(neighbour.getOwner() != player) {
@@ -135,6 +125,7 @@ public class AttackAdvisor implements Advisor<Attack> {
 	 * @param defenderArmies
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private int getAttackerLostArmies(int attackerArmies, int defenderArmies){
 		double probab  = 0, temp = 0;	
 		double lostArmies = 0;
@@ -154,6 +145,7 @@ public class AttackAdvisor implements Advisor<Attack> {
 	 * @param defenderArmies
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private int getDefenderLostArmies(int attackerArmies, int defenderArmies){
 		double probab  = 0, temp = 0;	
 		double lostArmies = 0;

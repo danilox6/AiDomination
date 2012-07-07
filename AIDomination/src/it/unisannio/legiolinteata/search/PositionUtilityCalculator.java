@@ -1,6 +1,7 @@
 package it.unisannio.legiolinteata.search;
 
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Vector;
 
@@ -11,10 +12,12 @@ import net.yura.domination.engine.core.Country;
 
 import it.unisannio.ai.graph.model.UtilityCalculator;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class PositionUtilityCalculator implements UtilityCalculator<TreeRiskGame, GameState, TPlayer, FortificationAction> {
 
 	@Override
 	public float evaluateUtility(TreeRiskGame tGame, GameState state, TPlayer player) {
+		
 		AbstractRiskGame game = tGame.getGame();
 
 		float utility = -1;

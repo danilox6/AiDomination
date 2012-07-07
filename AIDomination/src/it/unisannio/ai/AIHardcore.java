@@ -9,8 +9,6 @@ import net.yura.domination.engine.ai.core.*;
 import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 import net.yura.domination.engine.core.Player;
-import net.yura.domination.engine.core.Country;
-import net.yura.domination.engine.core.Player;
 
 /**
  * <p> Class for AIHardPlayer </p>

@@ -2,6 +2,7 @@ package it.unisannio.ai;
 
 import java.util.*;
 
+
 import net.yura.domination.engine.ai.AI;
 import net.yura.domination.engine.ai.Discoverable;
 import net.yura.domination.engine.core.AbstractContinent;
@@ -10,6 +11,7 @@ import net.yura.domination.engine.core.Card;
 import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 @Discoverable
 public class AISimple extends AI{
 	
@@ -46,6 +48,7 @@ public class AISimple extends AI{
 		return "endtrade";
 	}
 	
+	
 	public String getInitialArmyPlacement() {
 		AbstractContinent[] continents = game.getContinents();
 		
@@ -54,12 +57,12 @@ public class AISimple extends AI{
 		int[] freeCountries = new int[continents.length];
 		
 		for(int i = 0; i < continents.length; ++i){
-			for(AbstractCountry country:(Vector<Country>)continents[i].getTerritoriesContained()) {
+			for(AbstractCountry country:(Vector<AbstractCountry>)continents[i].getTerritoriesContained()) {
 				if(country.getOwner() == null) {
 					freeCountries[i]++;
 					
 					int score = 0;
-					for(AbstractCountry neightbour: (Vector<Country>) country.getNeighbours()) {
+					for(AbstractCountry neightbour: (Vector<AbstractCountry>) country.getNeighbours()) {
 						if(neightbour.getOwner() == player || neightbour.getContinent() != continents[i])
 							score++;
 					}
@@ -169,7 +172,7 @@ public class AISimple extends AI{
 			return 0;
 		
 		int neededArmies = 0, countryArmies = country.getArmies();
-		for(AbstractCountry neighbour : (Vector<Country>) country.getNeighbours()) {
+		for(AbstractCountry neighbour : (Vector<AbstractCountry>) country.getNeighbours()) {
 			if(neighbour.getOwner() != player && neighbour.getArmies() >= countryArmies + neededArmies) 
 				neededArmies = neighbour.getArmies() - countryArmies + 1;
 		}
@@ -201,10 +204,11 @@ public class AISimple extends AI{
 		return confiningTerritories;
 	}
 	
+
 	private float getForceRatio(AbstractContinent arg0) {
 		float myForces = 0.0f;
 		float otherForces = 0.0f;
-		for(AbstractCountry c : (Vector<Country>) arg0.getTerritoriesContained()) {
+		for(AbstractCountry c : (Vector<AbstractCountry>) arg0.getTerritoriesContained()) {
 			if(c.getOwner() == player) {
 				myForces += c.getArmies();
 			} else {

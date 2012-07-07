@@ -11,9 +11,11 @@ import net.yura.domination.engine.core.AbstractRiskGame;
 import aima.core.search.adversarial.Game;
 
 //FIXME qualcuno ha un nome migliore?
+@SuppressWarnings("rawtypes")
 public class TreeRiskGame implements Game<GameState, FortificationAction, TPlayer>{
 	
 	private static TPlayer[] players = null;
+	
 	private final AbstractRiskGame game;
 //	private final Player myPlayer;
 	private static int myPlayerIndex;

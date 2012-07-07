@@ -24,7 +24,7 @@ public class FuzzyTest {
             
             // Evaluate
             fis.evaluate();
-            double value = fis.getVariable("attack").getDefuzzifier().defuzzify();
+            fis.getVariable("attack").getDefuzzifier().defuzzify();
             long end = System.nanoTime();
         	
             System.out.println("Evaluation: " + (end - start) + " ns (" + ((end - start) / 1000000.0) + " ms)");

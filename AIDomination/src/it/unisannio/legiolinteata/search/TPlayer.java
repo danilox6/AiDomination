@@ -8,7 +8,7 @@ public class TPlayer  {
 
 	private int color;
 	
-	public TPlayer(AbstractPlayer player) {
+	public TPlayer(AbstractPlayer<?> player) {
 		color = player.getColor();
 	}
 
