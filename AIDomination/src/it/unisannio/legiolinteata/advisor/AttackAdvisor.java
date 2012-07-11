@@ -8,35 +8,21 @@ import net.yura.domination.engine.core.AbstractCountry;
 import net.yura.domination.engine.core.AbstractPlayer;
 import net.yura.domination.engine.core.AbstractRiskGame;
 
-public class AttackAdvisor implements Advisor<Attack> {
-	private static Comparator<Attack> comparator = null;
+public class AttackAdvisor extends Advisor<Attack> {
+
+	private final AbstractRiskGame<?, ?, ?> game;
+	private final AbstractPlayer<?> player;
 	
-	private Comparator<Attack> getComparator() {
-		if(comparator == null) {
-			comparator = new Comparator<Attack>() {
-				{
-					if(fis == null) {
-						fis = FIS.load("fcl/attack.fcl");
-						if(fis == null) {
-							throw new RuntimeException("Cannot load FCL logic");
-						}
-					}
-				}
-				
-				@Override
-				public int compare(Attack arg0, Attack arg1) {
-					return (int) Math.round(evaluate(arg1) - evaluate(arg0));
-				}
-				
-			};
-		}
+	public AttackAdvisor(AbstractRiskGame<?, ?, ?> game, AbstractPlayer<?> player) {
+		super("fcl/attack.fcl");
 		
-		return comparator;
+		this.game = game;
+		this.player = player;
 	}
 	
-	private static FIS fis;
-	
-	private double evaluate(Attack a) {
+	protected double evaluate(Attack a) {
+		FIS fis = getFuzzyInferenceSystem();
+		
 		fis.setVariable("enemy", (double) 10.0 * a.getDestination().getOwner().getTerritoriesOwnedSize()/game.getNoCountries());
 		fis.setVariable("victory", getVictoryProbability(a.getOrigin().getArmies(), a.getDestination().getArmies()) * 100.0);
 		
@@ -44,22 +30,8 @@ public class AttackAdvisor implements Advisor<Attack> {
 		return fis.getVariable("attack").getDefuzzifier().defuzzify();
 	}
 	
-	private final AbstractRiskGame<?, ?, ?> game;
-	private final AbstractPlayer<?> player;
-	private final double cutoff;
-	
-	public AttackAdvisor(AbstractRiskGame<?, ?, ?> game, AbstractPlayer<?> player, double cutoff) {
-		this.game = game;
-		this.player = player;
-		this.cutoff = cutoff;
-	}
-	
-	public AttackAdvisor(AbstractRiskGame<?, ?, ?> game, AbstractPlayer<?> player) {
-		this(game, player, 5.0);
-	}
-	
 	@Override
-	public List<Attack> getAdvices() {
+	protected List<Attack> generate() {
 		List<Attack> candidates = new ArrayList<Attack>();
 		for(AbstractCountry<?, ?, ?> country : player.getTerritoriesOwned()) {
 			@SuppressWarnings("unchecked")
@@ -71,20 +43,7 @@ public class AttackAdvisor implements Advisor<Attack> {
 			}
 		}
 		
-		Collections.sort(candidates, getComparator());
-		
 		return candidates;
-	}
-
-	@Override
-	public Attack getBestAdvice() {
-		Attack attack = getAdvices().get(0);
-		return (evaluate(attack) > cutoff) ? attack : null;
-	}
-
-	@Override
-	public List<Attack> getAdvices(int limit) {
-		return getAdvices().subList(0, limit);
 	}
 
 	/**
