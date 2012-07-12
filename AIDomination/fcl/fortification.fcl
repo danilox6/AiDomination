@@ -3,12 +3,14 @@ FUNCTION_BLOCK strategy_one
 
 	// Define input variables
 	VAR_INPUT
-	    defeat 			 : REAL; // probability of being defeated by a neighbour nation
-	    player 			 : REAL; // power of the player
-	    enemy 			 : REAL; // power of the enemy
-	    player_ownership : REAL; // player ownership of the continent
-	    enemy_ownership  : REAL; // enemy ownership of the continent
-	    continent		 : REAL; // breakability of a neighbour continent
+	    defeat 			 				: REAL; // probability of being defeated by a neighbour nation
+	    player 			 				: REAL; // power of the player
+	    enemy 			 				: REAL; // power of the enemy
+	    this_continent_ownership 		: REAL; // player ownership of "this" continent
+	    that_continent_ownership		: REAL; // player ownership of "that" continent
+	    this_continent_enemy_ownership  : REAL; // enemy ownership of "this" continent
+	    that_continent_enemy_ownership  : REAL; // enemy ownership of "that" continent
+	    that_continent		 			: REAL; // breakability of a neighbour continent
 	END_VAR
 	
 	// Define output variable
@@ -16,20 +18,56 @@ FUNCTION_BLOCK strategy_one
 	    fortification 		: REAL;
 	END_VAR
 	
-	FUZZIFY defeat
+	FUZZIFY defeat 							// [0, 100]
 		TERM unlikely := sigm -0.25 30;
 	    TERM possible := sigm 0.25 50;
 	    TERM probable := sigm 0.25 75;
 	    TERM certain  := (90, 0) (100, 1);	    
 	END_FUZZIFY
 	
-	FUZZIFY enemy
+	FUZZIFY enemy 							// [0, 10]
 	    TERM weak := sigm -3 3; 
 	    TERM average := gbell 2 4 5;
 	    TERM powerful := sigm 3 7;
 	END_FUZZIFY
 	
-	DEFUZZIFY fortification
+	FUZZIFY player 							// [0, 10]
+	    TERM weak := sigm -3 3; 
+	    TERM average := gbell 2 4 5;
+	    TERM powerful := sigm 3 7;
+	END_FUZZIFY
+	
+	FUZZIFY this_continent_ownership 		// [0, 10]
+	    TERM null := sigm -3 3; 
+	    TERM average := gbell 2 4 5;
+	    TERM full := sigm 3 7;
+	END_FUZZIFY
+	
+	FUZZIFY that_continent_ownership 		// [0, 10]
+	    TERM null := sigm -3 3; 
+	    TERM average := gbell 2 4 5;
+	    TERM full := sigm 3 7;
+	END_FUZZIFY
+	
+	FUZZIFY this_continent_enemy_ownership	// [0, 10]
+	    TERM null := sigm -3 3; 
+	    TERM average := gbell 2 4 5;
+	    TERM full := sigm 3 7;
+	END_FUZZIFY
+	
+	FUZZIFY that_continent_enemy_ownership	// [0, 10]
+	    TERM null := sigm -3 3; 
+	    TERM average := gbell 2 4 5;
+	    TERM full := sigm 3 7;
+	END_FUZZIFY
+	
+	FUZZIFY that_continent					// [0, 10]
+	    TERM not_breakable := sigm -3 3; 
+	    TERM average := gbell 2 4 5;
+	    TERM breakable := sigm 3 7;
+	END_FUZZIFY
+	
+	DEFUZZIFY fortification 				// [0, 10]
 	    TERM useless := (0,1) (3,0);
 	    TERM advised := (3,0) (6,1);
 	    TERM strategic := (6,0) (9,1) (10, 1);
@@ -48,20 +86,20 @@ FUNCTION_BLOCK strategy_one
 	    // Use 'max' accumulation method
 	    ACCU : MAX;
 	
-	    RULE 1 : IF victory IS probable AND enemy IS powerful
-	                THEN attack IS strategic;
+	    RULE 1 : IF defeat IS probable AND enemy IS powerful
+	                THEN fortification IS strategic;
 	
-	    RULE 2 : IF victory IS probable
-	                THEN attack IS advised; 
+	    RULE 2 : IF defeat IS probable
+	                THEN fortification IS advised; 
 	
-	    RULE 3 : IF victory IS possible AND enemy IS weak 
-	                THEN attack is strategic;
+	    RULE 3 : IF defeat IS possible AND enemy IS weak 
+	                THEN fortification is strategic;
 	                
-	    RULE 4 : IF victory IS unlikely
-	    			THEN attack is discouraged;
+	    RULE 4 : IF defeat IS unlikely
+	    			THEN fortification is useless;
 	   	
-	   	RULE 5 : IF victory IS certain 
-	   				THEN attack is strategic;
+	   	RULE 5 : IF defeat IS certain 
+	   				THEN fortification is strategic;
 	                
 	END_RULEBLOCK
 

@@ -28,7 +28,7 @@ public abstract class Advisor<C extends Command> {
 		
 		@Override
 		public int compareTo(Advice<C> arg0) {
-			return (int) (arg0.value - value);
+			return (int) (value - arg0.value);
 		}
 		
 	}

@@ -14,6 +14,7 @@ import java.util.Vector;
 import net.yura.domination.engine.ai.BaseAI;
 import net.yura.domination.engine.ai.Discoverable;
 import net.yura.domination.engine.ai.commands.Attack;
+import net.yura.domination.engine.ai.commands.Fortification;
 import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 
@@ -150,6 +151,11 @@ public class AISimple2 extends BaseAI {
 		return strongest;// + extraArmies;
 	}
 	
+	
+	@Override
+	protected Fortification onFortification() {
+		return new Fortification(onCountryFortification(), player.getExtraArmies());
+	}
 
 	private int getThreatLevel(Set<Country> countries) {
 		int threatLevel = 0;
