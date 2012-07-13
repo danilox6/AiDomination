@@ -4,7 +4,6 @@ package it.unisannio.legiolinteata.search;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.yura.domination.engine.core.AbstractCountry;
 import net.yura.domination.engine.core.AbstractPlayer;
 import net.yura.domination.engine.core.AbstractRiskGame;
 
@@ -12,67 +11,50 @@ import aima.core.search.adversarial.Game;
 
 //FIXME qualcuno ha un nome migliore?
 @SuppressWarnings("rawtypes")
-public class TreeRiskGame implements Game<GameState, FortificationAction, TPlayer>{
+public class TreeRiskGame implements Game<GameState, PlacementAction, TreePlayer>{
 	
-	private static TPlayer[] players = null;
+	private static TreePlayer[] players = null;
 	
 	private final AbstractRiskGame game;
-//	private final Player myPlayer;
-	private static int myPlayerIndex;
 	
 	public TreeRiskGame(AbstractRiskGame game, AbstractPlayer myPlayer){ 
 		this.game = game;
-//		this.myPlayer = myPlayer;
 		
 		if(players == null){
-			players = new TPlayer[game.getPlayers().size()];
-
-			for(int i = 0; i < game.getPlayers().size();i++){
-				AbstractPlayer p = (AbstractPlayer) game.getPlayers().get(i);
-				players[i] = new TPlayer(p);
-				if (p == myPlayer)
-					myPlayerIndex = i;
-			}
+			players = new TreePlayer[game.getPlayers().size()];
 		}
 	}
 
 	@Override
-	public List<FortificationAction> getActions(GameState state) {
-		List<FortificationAction> actions = new ArrayList<FortificationAction>();
-		for(Integer country : state.getFreeCountries())
-			actions.add(new FortificationAction(country, getPlayer(state).getColor()));
+	public List<PlacementAction> getActions(GameState state) {
+		List<PlacementAction> actions = new ArrayList<PlacementAction>();
+		for(Integer country : state.getFreeCountriesColor())
+			actions.add(new PlacementAction(country, getPlayer(state).getColor(), 1));
 		return actions;
 	}
 
 	@Override
 	public GameState getInitialState() {
-		int[] countryArmies = new int[game.getCountries().length];
-		int[] countryOwner = new int[game.getCountries().length];
-		for(AbstractCountry country: game.getCountries()){
-			countryArmies[country.getColor()-1] = country.getArmies();
-			countryOwner[country.getColor()-1] = country.getOwner() != null ? country.getOwner().getColor(): 0; //FIXME un Player può avere color 0?
-		}
-		return new GameState(countryArmies, countryOwner,  myPlayerIndex);
+		return new GameState(players, game);
 	}
 
 	@Override
-	public TPlayer getPlayer(GameState state) {
-		return players[state.getCurrentPlayerIndex()];
+	public TreePlayer getPlayer(GameState state) {
+		return state.getCurrentPlayer();
 	}
 
 	@Override
-	public TPlayer[] getPlayers() {
+	public TreePlayer[] getPlayers() {
 		return players;
 	}
 
 	@Override
-	public GameState getResult(GameState state, FortificationAction action) {
+	public GameState getResult(GameState state, PlacementAction action) {
 		GameState newState = null;
 		try {
 			newState = (GameState) state.clone();
 			newState.place(action);
-			newState.updateCurrentPlayerIndex(players);
-			
+			newState.updateCurrentPlayerIndex();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
@@ -80,13 +62,13 @@ public class TreeRiskGame implements Game<GameState, FortificationAction, TPlaye
 	}
 
 	@Override
-	public double getUtility(GameState state, TPlayer player) {
+	public double getUtility(GameState state, TreePlayer player) {
 		return new PositionUtilityCalculator().evaluateUtility(this, state, player);
 	}
 
 	@Override
 	public boolean isTerminal(GameState state) {
-		return (state.getFreeCountries().isEmpty());
+		return (state.getFreeCountriesColor().isEmpty());
 	}
 	
 	public AbstractRiskGame getGame() {
