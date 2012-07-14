@@ -31,6 +31,10 @@ public abstract class Advisor<C extends Command> {
 			return (int) (value - arg0.value);
 		}
 		
+		@Override
+		public String toString() {
+			return "\"" + command + "\" (" + getValue() + ")";
+		}
 	}
 	
 	private FIS logic;
@@ -87,7 +91,8 @@ public abstract class Advisor<C extends Command> {
 	
 	public C getBestAdvice(double cutoff) {
 		List<Advice<C>> advices = buildAdvices();
-		Advice<C> best = Collections.max(advices);
+		System.out.println(advices);
+		Advice<C> best = Collections.min(advices);
 		
 		return (best.getValue() < cutoff) ? null : best.getCommand();
 	}

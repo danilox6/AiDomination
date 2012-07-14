@@ -1,6 +1,7 @@
 package it.unisannio.ai;
 
 import it.unisannio.legiolinteata.advisor.AttackAdvisor;
+import it.unisannio.legiolinteata.advisor.FortificationAdvisor;
 import net.yura.domination.engine.ai.Discoverable;
 import net.yura.domination.engine.ai.commands.Attack;
 import net.yura.domination.engine.ai.commands.Fortification;
@@ -19,7 +20,8 @@ public class AIFuzzy extends AISimple2 {
 
 	@Override
 	protected Fortification onFortification() {
-		// TODO Auto-generated method stub
-		return super.onFortification();
+		FortificationAdvisor fa = new FortificationAdvisor(game, player);
+		Fortification best = fa.getBestAdvice(0.0);
+		return best;
 	}
 }

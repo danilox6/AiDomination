@@ -11,7 +11,7 @@ public class Indices {
 	private Indices() {}
 	
 	public static double victory(AbstractCountry<?, ?, ?> attacker, AbstractCountry<?, ?, ?> defender) {
-		return Attacks.getVictoryProbability(attacker.getArmies(), defender.getArmies());
+		return 100.0 * Attacks.getVictoryProbability(attacker.getArmies(), defender.getArmies());
 	}
 	
 	public static double power(AbstractPlayer<?> p, AbstractRiskGame<?, ?, ?> game) {
@@ -28,6 +28,6 @@ public class Indices {
 				count++;
 		}
 		
-		return 10.0 * count / countries.size();
+		return (double) count / countries.size();
 	}
 }
