@@ -2,17 +2,19 @@ package it.unisannio.legiolinteata.search;
 
 import aima.core.agent.Action;
 
-public class FortificationAction implements Action{
+public class PlacementAction implements Action{
 
 	private int countryToOccupy;
 	private int occupyingPlayer;
+	private int armies;
 	private String commandString;
 	
-	public FortificationAction(int countryToOccupy, int occupyingPlayer) {
+	public PlacementAction(int countryToOccupy, int occupyingPlayer, int armies) {
 		this.countryToOccupy = countryToOccupy;
 		this.occupyingPlayer = occupyingPlayer;
+		this.armies = armies;
 		
-		commandString = String.format("placearmies %d 1", countryToOccupy+1);
+		commandString = String.format("placearmies %d %d", countryToOccupy, armies);
 	}
 
 	public int getCountryToOccupy() {
@@ -26,11 +28,14 @@ public class FortificationAction implements Action{
 	public String getCommand(){
 		return commandString;
 	}
+	
+	public int getArmies() {
+		return armies;
+	}
 
 	@Override
 	public boolean isNoOp() {
 		return false;
 	}
-	
 
 }
