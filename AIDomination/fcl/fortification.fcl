@@ -3,8 +3,6 @@ FUNCTION_BLOCK country
 
 	// Define input variables
 	VAR_INPUT
-	    player 			 				: REAL; // power of the player
-	    enemy 			 				: REAL; // power of the enemy
 	    continent						: REAL; // "goodness" of a continent
 	    cost							: REAL; 
 	END_VAR
@@ -19,28 +17,12 @@ FUNCTION_BLOCK country
 	END_FUZZIFY
 	
 	FUZZIFY cost
-		TERM high := (0,0) (1,1);
-	END_FUZZIFY
-	
-	
-	FUZZIFY enemy 							// [0, 10]
-	    TERM weak := sigm -3 3; 
-	    TERM average := gbell 2 4 5;
-	    TERM powerful := sigm 3 7;
-	END_FUZZIFY
-	
-	FUZZIFY player 							// [0, 10]
-	    TERM weak := sigm -3 3; 
-	    TERM average := gbell 2 4 5;
-	    TERM powerful := sigm 3 7;
+		TERM high := (0,0) (0.5,0.25) (0.75, 0.5) (1,1);
 	END_FUZZIFY
 	
 	DEFUZZIFY fortification 				// [0, 10]
-	    TERM advised := (0,0) (6,1);
-	    TERM strategic := (6,0) (8,1) (10, 1);
-	    TERM critical := (9,0) (10,1);
-	    // Use 'Center Of Gravity' defuzzification method
-	    METHOD : COG;
+	    TERM advised := (0,0) (1,1);
+	    METHOD : LM;
 	    // Default value is 0 (if no rule activates defuzzifier)
 	    DEFAULT := 0;
 	END_DEFUZZIFY
@@ -53,12 +35,9 @@ FUNCTION_BLOCK country
 	    ACT : MIN;
 	    // Use 'max' accumulation method
 	    ACCU : MAX;
-	
+	    
 	    RULE 1 : IF continent IS good AND cost IS NOT high
-	    			THEN fortification IS critical;
-	
-	    RULE 2 : IF continent IS good
-	                THEN fortification IS strategic; 
+	    			THEN fortification IS advised;
 	               
 	END_RULEBLOCK
 

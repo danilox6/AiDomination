@@ -44,7 +44,7 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 		private int getDistanceToContinent(AbstractCountry<?,?,?> origin, 
 				AbstractContinent<?,?> destination, Collection<AbstractCountry<?,?,?>> visited, 
 				int maxCost, int maxHops) {
-			if(origin.getContinent() == destination)
+			if(origin.getContinent() == destination && origin.getOwner() != player)
 				return 0;
 			
 			if(maxCost < 0 || maxHops < 0)
@@ -97,19 +97,17 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 		if(cost == Double.POSITIVE_INFINITY)
 			return Double.NEGATIVE_INFINITY;
 		
-		FIS fis = getFuzzyInferenceSystem();
-		FunctionBlock block = fis.getFunctionBlock("country");
+		FunctionBlock block = getFunctionBlock();
 		block.reset(true);
 		block.setVariable("continent", tf.getTarget().getValue());
 		block.setVariable("cost", tf.getCost());
-		block.setVariable("player", Indices.power(player, game));
 		block.evaluate();
 		double val = block.getVariable("fortification").getDefuzzifier().defuzzify();
 		
-		/*System.out.println("[" + val + "] continent: " + tf.getTarget().getObject() + " " + tf.getTarget().getValue()
+		System.out.println("[" + val + "] continent: " + tf.getTarget().getObject() + " " + tf.getTarget().getValue()
 				+ " cost: " + tf.getCost()
 				+ " player: " + Indices.power(player, game)
-				+ " country: " + tf.getCountry());*/
+				+ " country: " + tf.getCountry());
 		
 		return val;
 	}
