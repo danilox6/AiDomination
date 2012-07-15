@@ -3,6 +3,7 @@ package it.unisannio.legiolinteata.advisor;
 import java.util.*;
 
 import net.sourceforge.jFuzzyLogic.FIS;
+import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import net.yura.domination.engine.ai.commands.Attack;
 import net.yura.domination.engine.core.AbstractCountry;
 import net.yura.domination.engine.core.AbstractPlayer;
@@ -14,14 +15,14 @@ public class AttackAdvisor extends Advisor<Attack> {
 	private final AbstractPlayer<?> player;
 	
 	public AttackAdvisor(AbstractRiskGame<?, ?, ?> game, AbstractPlayer<?> player) {
-		super("fcl/attack.fcl");
+		super("fcl/attack.fcl", "attack");
 		
 		this.game = game;
 		this.player = player;
 	}
 	
 	protected double evaluate(Attack a) {
-		FIS fis = getFuzzyInferenceSystem();
+		FunctionBlock fis = getFunctionBlock();
 		
 		fis.setVariable("enemy", Indices.power(a.getDestination().getOwner(), game));
 		fis.setVariable("victory", Indices.victory(a.getOrigin(), a.getDestination()));

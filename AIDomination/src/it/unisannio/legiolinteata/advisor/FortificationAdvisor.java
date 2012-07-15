@@ -18,51 +18,12 @@ import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 
 public class FortificationAdvisor extends Advisor<Fortification> {
-	private class Target implements Comparable<Target>{
-		private AbstractContinent continent;
-		private double value = -1;
-		
-		Target(AbstractContinent continent) {
-			this.continent = continent;
-		}
-		
-		AbstractContinent getContinent() {
-			return continent;
-		}
-		
-		double getValue() {
-			if(value == -1) {
-				FIS fis = getFuzzyInferenceSystem();
-				FunctionBlock block = fis.getFunctionBlock("continent");
-				block.setVariable("player_ownership", Indices.ownership(player, continent));
-				
-				double maxOwnership = 0.0;
-				for(AbstractPlayer p : game.getPlayers()) {
-					if(p != player) 
-						maxOwnership = Math.max(maxOwnership, Indices.ownership(p, continent));
-				}
-				block.setVariable("enemy_ownership",maxOwnership);
-				
-				block.evaluate();
-				value = block.getVariable("target").getDefuzzifier().defuzzify();
-			}
-			
-			return value;
-		}
-		
-		@Override
-		public int compareTo(Target arg0) {
-			return value == arg0.value ? 0 :
-				(value < arg0.value ? 1 : -1);
-		}
-		
-		
-	}
+
 	private class TargettedFortification extends Fortification {
-		private Target target;
+		private Advice<AbstractContinent<?,?>> target;
 		private double cost = -1;
 
-		public TargettedFortification(Target target, 
+		public TargettedFortification(Advice<AbstractContinent<?,?>> target, 
 				AbstractCountry<?, ?, ?> country2, int armies) {
 			super(country2, armies);
 			this.target = target;
@@ -71,18 +32,20 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 		public double getCost() {
 			if(cost == -1) {
 				int totalArmies = getCountry().getArmies() + getArmies();
-				int distance = getDistanceToContinent(getCountry(), target.getContinent(), new ArrayList<AbstractCountry<?,?,?>>(), totalArmies, 4);
+				int distance = getDistanceToContinent(getCountry(), target.getObject(), new ArrayList<AbstractCountry<?,?,?>>(), totalArmies, 4);
 				cost = (distance == Integer.MAX_VALUE) ? Double.POSITIVE_INFINITY : (double) distance / totalArmies;
 			}
 			
 			return cost;
 		}
 
-		public Target getTarget() {
+		public Advice<AbstractContinent<?,?>> getTarget() {
 			return target;
 		}
 		
-		private int getDistanceToContinent(AbstractCountry<?,?,?> origin, AbstractContinent<?,?> destination, Collection<AbstractCountry<?,?,?>> visited, int maxCost, int maxHops) {
+		private int getDistanceToContinent(AbstractCountry<?,?,?> origin, 
+				AbstractContinent<?,?> destination, Collection<AbstractCountry<?,?,?>> visited, 
+				int maxCost, int maxHops) {
 			if(origin.getContinent() == destination)
 				return 0;
 			
@@ -93,7 +56,7 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 			visits.add(origin);
 			int currentCost = origin.getOwner() == player ? 0 : origin.getArmies();
 			int minDistance = Integer.MAX_VALUE;
-			for(AbstractCountry neighbour : (Vector<AbstractCountry>) origin.getNeighbours()) {
+			for(AbstractCountry<?,?,?> neighbour : (Vector<AbstractCountry<?,?,?>>) origin.getNeighbours()) {
 				if(neighbour.getOwner() != player && !visits.contains(neighbour)) {
 					minDistance = Math.min(minDistance, getDistanceToContinent(neighbour, destination, visits, maxCost - currentCost, maxHops - 1));
 				}
@@ -116,7 +79,7 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 	private final AbstractPlayer<?> player;
 	
 	public FortificationAdvisor(AbstractRiskGame<?, ?, ?> game, AbstractPlayer<?> player) {
-		super("fcl/fortification.fcl");
+		super("fcl/fortification.fcl", "country");
 		
 		this.game = game;
 		this.player = player;
@@ -140,7 +103,7 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 		block.evaluate();
 		double val = block.getVariable("fortification").getDefuzzifier().defuzzify();
 		
-		System.out.println("[" + val + "] continent: " + tf.getTarget().getContinent() + " " + tf.getTarget().getValue()
+		System.out.println("[" + val + "] continent: " + tf.getTarget().getObject() + " " + tf.getTarget().getValue()
 				+ " cost: " + tf.getCost()
 				+ " player: " + Indices.power(player, game)
 				+ " country: " + tf.getCountry());
@@ -150,17 +113,14 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 
 	@Override
 	protected List<Fortification> generate() {
-		List<Target> targets = new ArrayList<Target>(game.getContinents().length);
-		for(AbstractContinent continent : game.getContinents()) {
-			targets.add(new Target(continent));
-		}
+		List<Advice<AbstractContinent<?,?>>> targets = new ContinentAdvisor(game, player).getAdvices();
 		
 		
 		List<Fortification> candidates = new LinkedList<Fortification>();
 		for(AbstractCountry<?,?,?> country : player.getTerritoriesOwned()) {
 			for(AbstractCountry<?, ?, ?> neighbour : country.getNeighbours()) {
 				if(neighbour.getOwner() != player) {
-					for(Target t : targets) {
+					for(Advice<AbstractContinent<?,?>> t : targets) {
 						TargettedFortification tf = new TargettedFortification(t, country, player.getExtraArmies());
 						if(tf.getCost() != Double.POSITIVE_INFINITY)
 							candidates.add(tf);

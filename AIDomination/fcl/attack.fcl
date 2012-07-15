@@ -1,5 +1,5 @@
 // Block definition (there may be more than one block per file)
-FUNCTION_BLOCK strategy_one
+FUNCTION_BLOCK attack
 
 	// Define input variables
 	VAR_INPUT
