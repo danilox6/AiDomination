@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.Vector;
 
 import net.sourceforge.jFuzzyLogic.FIS;
@@ -14,8 +13,6 @@ import net.yura.domination.engine.core.AbstractContinent;
 import net.yura.domination.engine.core.AbstractCountry;
 import net.yura.domination.engine.core.AbstractPlayer;
 import net.yura.domination.engine.core.AbstractRiskGame;
-import net.yura.domination.engine.core.Continent;
-import net.yura.domination.engine.core.Country;
 
 public class FortificationAdvisor extends Advisor<Fortification> {
 
@@ -43,6 +40,7 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 			return target;
 		}
 		
+		@SuppressWarnings("unchecked")
 		private int getDistanceToContinent(AbstractCountry<?,?,?> origin, 
 				AbstractContinent<?,?> destination, Collection<AbstractCountry<?,?,?>> visited, 
 				int maxCost, int maxHops) {
