@@ -1,6 +1,7 @@
 package it.unisannio.legiolinteata.advisor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -34,6 +35,17 @@ public abstract class Advisor<T> {
 		}
 		
 		@Override
+		public boolean equals(Object obj) {
+			if(!(obj instanceof Advice))
+				return false;
+			
+			@SuppressWarnings("unchecked")
+			Advice<T> other = (Advice<T>) obj;
+			
+			return other.getObject().equals(obj) && other.getValue() == getValue();
+		}
+		
+		@Override
 		public String toString() {
 			return "\"" + object + "\" (" + getValue() + ")";
 		}
@@ -61,20 +73,17 @@ public abstract class Advisor<T> {
 	public FunctionBlock getFunctionBlock() {
 		return function;
 	}
-	
-	protected SortedSet<Advice<T>> buildAdvices() {
+
+	public List<Advice<T>> getAdvices() {
 		List<T> candidates = generate();
-		TreeSet<Advice<T>> advices = new TreeSet<Advice<T>>();
+		List<Advice<T>> advices = new ArrayList<Advice<T>>();
 		
 		for(T candidate : candidates) {
 			advices.add(new Advice<T>(this, candidate));
 		}
+		Collections.sort(advices);
 		
 		return advices;
-	}
-	
-	public List<Advice<T>> getAdvices() {
-		return new ArrayList<Advice<T>>(buildAdvices());
 	}
 	
 	public List<T> getBestAdvices(int limit, double cutoff) {
@@ -96,9 +105,9 @@ public abstract class Advisor<T> {
 	}
 	
 	public T getBestAdvice(double cutoff) {
-		SortedSet<Advice<T>> advices = buildAdvices();
-		System.out.println(advices);
-		Advice<T> best = advices.first();
+		List<Advice<T>> advices = getAdvices();
+		//System.out.println(advices.size() + " " + advices);
+		Advice<T> best = advices.get(0);
 		System.out.println("Picked " + best);
 		
 		return (best.getValue() < cutoff) ? null : best.getObject();

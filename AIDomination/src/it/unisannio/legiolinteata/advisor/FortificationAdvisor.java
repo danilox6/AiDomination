@@ -71,7 +71,12 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 				return false;
 			
 			TargettedFortification other = (TargettedFortification) obj;
-			return other.target == target && other.getCountry() == getCountry() && getArmies() == other.getArmies();
+			return other.getTarget().equals(target) && other.getCountry() == getCountry() && getArmies() == other.getArmies();
+		}
+		
+		@Override
+		public String toString() { // TODO delete this
+			return super.toString() + " " + target.getObject();
 		}
 	}
 
@@ -103,10 +108,10 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 		block.evaluate();
 		double val = block.getVariable("fortification").getDefuzzifier().defuzzify();
 		
-		System.out.println("[" + val + "] continent: " + tf.getTarget().getObject() + " " + tf.getTarget().getValue()
+		/*System.out.println("[" + val + "] continent: " + tf.getTarget().getObject() + " " + tf.getTarget().getValue()
 				+ " cost: " + tf.getCost()
 				+ " player: " + Indices.power(player, game)
-				+ " country: " + tf.getCountry());
+				+ " country: " + tf.getCountry());*/
 		
 		return val;
 	}
@@ -125,9 +130,11 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 						if(tf.getCost() != Double.POSITIVE_INFINITY)
 							candidates.add(tf);
 					}
+					break;
 				}
 			}
 		}
+		//System.out.println(candidates.size() + " " + candidates);
 		return candidates;
 	}
 }
