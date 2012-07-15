@@ -21,7 +21,7 @@ public class AIFuzzy extends AISimple2 {
 	@Override
 	protected Fortification onFortification() {
 		FortificationAdvisor fa = new FortificationAdvisor(game, player);
-		Fortification best = fa.getBestAdvice(0.0);
+		Fortification best = fa.getBestAdvice(Double.NEGATIVE_INFINITY);
 		return best;
 	}
 }

@@ -1,5 +1,7 @@
 package it.unisannio.legiolinteata.advisor;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -50,7 +52,8 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 		
 		@Override
 		public int compareTo(Target arg0) {
-			return (int) (value - arg0.value);
+			return value == arg0.value ? 0 :
+				(value < arg0.value ? 1 : -1);
 		}
 		
 		
@@ -68,7 +71,7 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 		public double getCost() {
 			if(cost == -1) {
 				int totalArmies = getCountry().getArmies() + getArmies();
-				int distance = getDistanceToContinent(getCountry(), target.getContinent(), totalArmies);
+				int distance = getDistanceToContinent(getCountry(), target.getContinent(), new ArrayList<AbstractCountry<?,?,?>>(), totalArmies, 4);
 				cost = (distance == Integer.MAX_VALUE) ? Double.POSITIVE_INFINITY : (double) distance / totalArmies;
 			}
 			
@@ -79,22 +82,33 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 			return target;
 		}
 		
-		private int getDistanceToContinent(AbstractCountry<?,?,?> origin, AbstractContinent<?,?> destination, int maxDistance) {
+		private int getDistanceToContinent(AbstractCountry<?,?,?> origin, AbstractContinent<?,?> destination, Collection<AbstractCountry<?,?,?>> visited, int maxCost, int maxHops) {
 			if(origin.getContinent() == destination)
 				return 0;
 			
-			if(maxDistance < 0)
+			if(maxCost < 0 || maxHops < 0)
 				return Integer.MAX_VALUE;
 			
+			Collection<AbstractCountry<?,?,?>> visits = new ArrayList<AbstractCountry<?,?,?>>(visited);
+			visits.add(origin);
 			int currentCost = origin.getOwner() == player ? 0 : origin.getArmies();
 			int minDistance = Integer.MAX_VALUE;
 			for(AbstractCountry neighbour : (Vector<AbstractCountry>) origin.getNeighbours()) {
-				if(neighbour.getOwner() != player) {
-					minDistance = Math.min(minDistance, getDistanceToContinent(neighbour, destination, maxDistance - currentCost));
+				if(neighbour.getOwner() != player && !visits.contains(neighbour)) {
+					minDistance = Math.min(minDistance, getDistanceToContinent(neighbour, destination, visits, maxCost - currentCost, maxHops - 1));
 				}
 			}
 			
 			return minDistance == Integer.MAX_VALUE ? Integer.MAX_VALUE : currentCost + minDistance;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if(!(obj instanceof TargettedFortification))
+				return false;
+			
+			TargettedFortification other = (TargettedFortification) obj;
+			return other.target == target && other.getCountry() == getCountry() && getArmies() == other.getArmies();
 		}
 	}
 
@@ -119,18 +133,24 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 		
 		FIS fis = getFuzzyInferenceSystem();
 		FunctionBlock block = fis.getFunctionBlock("country");
-		
+		block.reset(true);
 		block.setVariable("continent", tf.getTarget().getValue());
 		block.setVariable("cost", tf.getCost());
 		block.setVariable("player", Indices.power(player, game));
+		block.evaluate();
+		double val = block.getVariable("fortification").getDefuzzifier().defuzzify();
 		
-		return block.getVariable("fortification").getDefuzzifier().defuzzify();
+		System.out.println("[" + val + "] continent: " + tf.getTarget().getContinent() + " " + tf.getTarget().getValue()
+				+ " cost: " + tf.getCost()
+				+ " player: " + Indices.power(player, game)
+				+ " country: " + tf.getCountry());
 		
+		return val;
 	}
 
 	@Override
 	protected List<Fortification> generate() {
-		TreeSet<Target> targets = new TreeSet<Target>();
+		List<Target> targets = new ArrayList<Target>(game.getContinents().length);
 		for(AbstractContinent continent : game.getContinents()) {
 			targets.add(new Target(continent));
 		}
@@ -141,7 +161,9 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 			for(AbstractCountry<?, ?, ?> neighbour : country.getNeighbours()) {
 				if(neighbour.getOwner() != player) {
 					for(Target t : targets) {
-						candidates.add(new TargettedFortification(t, country, player.getExtraArmies()));
+						TargettedFortification tf = new TargettedFortification(t, country, player.getExtraArmies());
+						if(tf.getCost() != Double.POSITIVE_INFINITY)
+							candidates.add(tf);
 					}
 				}
 			}

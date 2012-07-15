@@ -3,6 +3,8 @@ package it.unisannio.legiolinteata.advisor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.yura.domination.engine.ai.commands.Command;
@@ -28,7 +30,7 @@ public abstract class Advisor<C extends Command> {
 		
 		@Override
 		public int compareTo(Advice<C> arg0) {
-			return (int) (value - arg0.value);
+			return (int) Math.round(arg0.value - value);
 		}
 		
 		@Override
@@ -53,9 +55,9 @@ public abstract class Advisor<C extends Command> {
 		return logic;
 	}
 	
-	protected List<Advice<C>> buildAdvices() {
+	protected SortedSet<Advice<C>> buildAdvices() {
 		List<C> candidates = generate();
-		List<Advice<C>> advices = new ArrayList<Advice<C>>(candidates.size());
+		TreeSet<Advice<C>> advices = new TreeSet<Advice<C>>();
 		
 		for(C candidate : candidates) {
 			advices.add(new Advice<C>(this, candidate));
@@ -65,10 +67,7 @@ public abstract class Advisor<C extends Command> {
 	}
 	
 	public List<Advice<C>> getAdvices() {
-		List<Advice<C>> advices = buildAdvices();
-		Collections.sort(advices);
-		
-		return advices;
+		return new ArrayList<Advice<C>>(buildAdvices());
 	}
 	
 	public List<C> getBestAdvices(int limit, double cutoff) {
@@ -90,9 +89,10 @@ public abstract class Advisor<C extends Command> {
 	}
 	
 	public C getBestAdvice(double cutoff) {
-		List<Advice<C>> advices = buildAdvices();
+		SortedSet<Advice<C>> advices = buildAdvices();
 		System.out.println(advices);
-		Advice<C> best = Collections.min(advices);
+		Advice<C> best = advices.first();
+		System.out.println("Picked " + best);
 		
 		return (best.getValue() < cutoff) ? null : best.getCommand();
 	}

@@ -15,7 +15,7 @@ FUNCTION_BLOCK country
 	END_VAR
 	
 	FUZZIFY continent
-		TERM good := (0,0) (1,1);
+		TERM good := (0,0) (10,1);
 	END_FUZZIFY
 	
 	FUZZIFY cost
