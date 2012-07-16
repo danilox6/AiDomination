@@ -1,7 +1,13 @@
 package it.unisannio.ai;
 
+import aima.core.search.adversarial.AdversarialSearch;
+import aima.core.search.adversarial.AlphaBetaSearch;
+import it.unisannio.ai.graph.model.UtilityHelper;
 import it.unisannio.legiolinteata.advisor.AttackAdvisor;
 import it.unisannio.legiolinteata.advisor.FortificationAdvisor;
+import it.unisannio.legiolinteata.search.GameState;
+import it.unisannio.legiolinteata.search.PlacementAction;
+import it.unisannio.legiolinteata.search.TreeRiskGame;
 import net.yura.domination.engine.ai.Discoverable;
 import net.yura.domination.engine.ai.commands.Attack;
 import net.yura.domination.engine.ai.commands.Fortification;
@@ -27,7 +33,21 @@ public class AIFuzzy extends AISimple2 {
 	}
 	
 	@Override
-	protected Country onCountryFortification() {
-		return game.getCountryInt(new FortificationAdvisor(game, player, 1).getBestAdvice(Double.NEGATIVE_INFINITY).getCountry().getColor());
+	protected Country onCountrySelection() {
+		TreeRiskGame tRiskGame = new TreeRiskGame(game, player);
+		
+		/**
+		 * Algoritimi di ricerca disponibili:
+		 * 	- MinimaxSearch.createFor(tRiskGame);
+		 *  - AlphaBetaSearch.createFor(tRiskGame);
+		 *  - IterativeDeepeningAlphaBetaSearch.createFor(tRiskGame, double utilMin, double utilMax, int time); ???
+		 *  	 (In un esempio sul gioco del Tris, vengono usati i seguenti valori .createFor(game, 0.0, 1.0, 1000); )	
+		 */
+		AdversarialSearch<GameState, PlacementAction> search = AlphaBetaSearch.createFor(tRiskGame);
+		PlacementAction action = search.makeDecision(tRiskGame.getInitialState());
+		System.out.println(search.getMetrics().toString());
+		System.out.println(UtilityHelper.bestUtility +"\n"+UtilityHelper.bestState.dump(false));
+		UtilityHelper.clear();
+		return game.getCountryInt(action.getCountryToOccupy());
 	}
 }
