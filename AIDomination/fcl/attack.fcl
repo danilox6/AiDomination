@@ -1,5 +1,5 @@
 // Block definition (there may be more than one block per file)
-FUNCTION_BLOCK strategy_one
+FUNCTION_BLOCK attack
 
 	// Define input variables
 	VAR_INPUT
@@ -12,20 +12,20 @@ FUNCTION_BLOCK strategy_one
 	    attack : REAL;
 	END_VAR
 	
-	FUZZIFY victory
+	FUZZIFY victory // [0, 100]
 		TERM unlikely := sigm -0.25 30;
 	    TERM possible := sigm 0.25 50;
 	    TERM probable := sigm 0.25 75;
 	    TERM certain := (90, 0) (100, 1);	    
 	END_FUZZIFY
 	
-	FUZZIFY enemy
+	FUZZIFY enemy // [0, 10]
 	    TERM weak := sigm -3 3; 
 	    TERM average := gbell 2 4 5;
 	    TERM powerful := sigm 3 7;
 	END_FUZZIFY
 	
-	DEFUZZIFY attack
+	DEFUZZIFY attack // [0, 10]
 	    TERM discouraged := (0,1) (3,0);
 	    TERM advised := (3,0) (6,1);
 	    TERM strategic := (6,0) (9,1) (10, 1);

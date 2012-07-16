@@ -1,14 +1,10 @@
 // Block definition (there may be more than one block per file)
-FUNCTION_BLOCK strategy_one
+FUNCTION_BLOCK country
 
 	// Define input variables
 	VAR_INPUT
-	    defeat 			 : REAL; // probability of being defeated by a neighbour nation
-	    player 			 : REAL; // power of the player
-	    enemy 			 : REAL; // power of the enemy
-	    player_ownership : REAL; // player ownership of the continent
-	    enemy_ownership  : REAL; // enemy ownership of the continent
-	    continent		 : REAL; // breakability of a neighbour continent
+	    continent						: REAL; // "goodness" of a continent
+	    cost							: REAL; 
 	END_VAR
 	
 	// Define output variable
@@ -16,25 +12,17 @@ FUNCTION_BLOCK strategy_one
 	    fortification 		: REAL;
 	END_VAR
 	
-	FUZZIFY defeat
-		TERM unlikely := sigm -0.25 30;
-	    TERM possible := sigm 0.25 50;
-	    TERM probable := sigm 0.25 75;
-	    TERM certain  := (90, 0) (100, 1);	    
+	FUZZIFY continent
+		TERM good := (0,0) (10,1);
 	END_FUZZIFY
 	
-	FUZZIFY enemy
-	    TERM weak := sigm -3 3; 
-	    TERM average := gbell 2 4 5;
-	    TERM powerful := sigm 3 7;
+	FUZZIFY cost
+		TERM high := (0,0) (0.5,0.25) (0.75, 0.5) (1,1);
 	END_FUZZIFY
 	
-	DEFUZZIFY fortification
-	    TERM useless := (0,1) (3,0);
-	    TERM advised := (3,0) (6,1);
-	    TERM strategic := (6,0) (9,1) (10, 1);
-	    // Use 'Center Of Gravity' defuzzification method
-	    METHOD : COG;
+	DEFUZZIFY fortification 				// [0, 10]
+	    TERM advised := (0,0) (1,1);
+	    METHOD : LM;
 	    // Default value is 0 (if no rule activates defuzzifier)
 	    DEFAULT := 0;
 	END_DEFUZZIFY
@@ -47,22 +35,46 @@ FUNCTION_BLOCK strategy_one
 	    ACT : MIN;
 	    // Use 'max' accumulation method
 	    ACCU : MAX;
-	
-	    RULE 1 : IF victory IS probable AND enemy IS powerful
-	                THEN attack IS strategic;
-	
-	    RULE 2 : IF victory IS probable
-	                THEN attack IS advised; 
-	
-	    RULE 3 : IF victory IS possible AND enemy IS weak 
-	                THEN attack is strategic;
-	                
-	    RULE 4 : IF victory IS unlikely
-	    			THEN attack is discouraged;
-	   	
-	   	RULE 5 : IF victory IS certain 
-	   				THEN attack is strategic;
-	                
+	    
+	    RULE 1 : IF continent IS good AND cost IS NOT high
+	    			THEN fortification IS advised;
+	               
 	END_RULEBLOCK
 
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK continent
+	VAR_INPUT 
+		player_ownership : REAL;
+		enemy_ownership : REAL;
+	END_VAR
+	
+	VAR_OUTPUT
+		target : REAL;
+	END_VAR
+	
+	FUZZIFY enemy_ownership 		// [0, 100] 
+	    TERM high    := (0,0) (1,1);
+	    TERM very_high := (0.8, 0) (1,1);
+	    TERM full    := 1;
+	END_FUZZIFY
+	
+	FUZZIFY player_ownership 		// [0, 100] 
+	    TERM high    := (0,0) (1,1);
+	    TERM full    := 1;
+	END_FUZZIFY
+	
+	DEFUZZIFY target
+		TERM good := (0,0) (7,1) (10,1);
+		TERM very_good := (7,0) (9,1) (10,1);
+		TERM critical :=  (9,0) (10,1);
+		METHOD : LM;
+	END_DEFUZZIFY
+	
+	RULEBLOCK No1
+		RULE 1 : if enemy_ownership is full then target is critical;
+		RULE 2 : if player_ownership is full then target is very_good;
+		RULE 3 : if player_ownership is high then target is good;
+		RULE 4 : if enemy_ownership is very_high then target is good;
+	END_RULEBLOCK
 END_FUNCTION_BLOCK
