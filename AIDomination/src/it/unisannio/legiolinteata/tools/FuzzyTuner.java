@@ -28,11 +28,11 @@ import net.sourceforge.jFuzzyLogic.rule.Variable;
  * 
  * @author Michele Piccirillo
  */
-public class FuzzyTester extends JFrame {
+public class FuzzyTuner extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
-	FuzzyTester(String file, String functionBlock) {
-		super("Fuzzy Tester - " + file + " [" + functionBlock + "]");
+	FuzzyTuner(String file, String functionBlock) {
+		super("Fuzzy Tuner - " + file + " [" + functionBlock + "]");
 		
 		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		add(splitPane);
@@ -112,7 +112,7 @@ public class FuzzyTester extends JFrame {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new FuzzyTester("fcl/fortification.fcl", "country").setVisible(true);
+		new FuzzyTuner("fcl/fortification.fcl", "country").setVisible(true);
 	}
 
 }
