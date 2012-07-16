@@ -293,16 +293,16 @@ public class GameState implements State, Cloneable, AbstractRiskGame<TreePlayer,
 		String dump = "";
 		dump += "Players:\n";
 		for(TreePlayer p: players){
-			dump += p.getName() +"("+ p.getColor()+ ") owenedCountries: ";
+			dump += p.getName() +"("+ p.getColor()+ ") owenedCountries: \n";
 			Vector<TreeCountry> owned = p.getTerritoriesOwned();
 			for(TreeCountry c: owned)
-				dump += c.getColor()+" ";
+				dump += c.getName()+"\n";
 			dump += "\n";
 		}
 		if(country){
 			dump+="Countries:\n";
 			for(TreeCountry c: countries){
-				int owner = c.getOwner()==null?0: c.getOwner().getColor();
+				String owner = c.getOwner()==null?"null": c.getOwner().getName();
 				dump += c.getName() +" owner: " +owner +"\n" ;
 			}
 		}
