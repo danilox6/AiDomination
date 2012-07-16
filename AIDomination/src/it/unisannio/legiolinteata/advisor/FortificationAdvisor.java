@@ -80,12 +80,18 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 
 	private final AbstractRiskGame<?, ?, ?> game;
 	private final AbstractPlayer<?> player;
+	private final int extraArmies;
 	
-	public FortificationAdvisor(AbstractRiskGame<?, ?, ?> game, AbstractPlayer<?> player) {
+	public FortificationAdvisor(AbstractRiskGame<?, ?, ?> game, AbstractPlayer<?> player, int extraArmies) {
 		super("fcl/fortification.fcl", "country");
 		
 		this.game = game;
 		this.player = player;
+		this.extraArmies = extraArmies;
+	}
+	
+	public FortificationAdvisor(AbstractRiskGame<?, ?, ?> game, AbstractPlayer<?> player) {
+		this(game, player, player.getExtraArmies());
 	}
 	
 	
@@ -122,7 +128,7 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 			for(AbstractCountry<?, ?, ?> neighbour : country.getNeighbours()) {
 				if(neighbour.getOwner() != player) {
 					for(Advice<AbstractContinent<?,?>> t : targets) {
-						TargettedFortification tf = new TargettedFortification(t, country, player.getExtraArmies());
+						TargettedFortification tf = new TargettedFortification(t, country, extraArmies);
 						if(tf.getCost() != Double.POSITIVE_INFINITY)
 							candidates.add(tf);
 					}

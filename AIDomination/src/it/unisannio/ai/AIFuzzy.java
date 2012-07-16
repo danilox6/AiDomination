@@ -5,10 +5,11 @@ import it.unisannio.legiolinteata.advisor.FortificationAdvisor;
 import net.yura.domination.engine.ai.Discoverable;
 import net.yura.domination.engine.ai.commands.Attack;
 import net.yura.domination.engine.ai.commands.Fortification;
+import net.yura.domination.engine.core.Country;
 
 @Discoverable
 public class AIFuzzy extends AISimple2 {
-
+	
 	@Override
 	protected Attack onAttack() {
         AttackAdvisor aa = new AttackAdvisor(game, player);
@@ -23,5 +24,10 @@ public class AIFuzzy extends AISimple2 {
 		FortificationAdvisor fa = new FortificationAdvisor(game, player);
 		Fortification best = fa.getBestAdvice(Double.NEGATIVE_INFINITY);
 		return best;
+	}
+	
+	@Override
+	protected Country onCountryFortification() {
+		return game.getCountryInt(new FortificationAdvisor(game, player, 1).getBestAdvice(Double.NEGATIVE_INFINITY).getCountry().getColor());
 	}
 }
