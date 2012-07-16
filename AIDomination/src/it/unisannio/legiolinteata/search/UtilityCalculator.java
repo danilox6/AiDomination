@@ -1,4 +1,4 @@
-package it.unisannio.ai.graph.model;
+package it.unisannio.legiolinteata.search;
 
 import aima.core.search.adversarial.Game;
 

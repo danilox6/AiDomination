@@ -1,4 +1,4 @@
-package it.unisannio.ai;
+package it.unisannio.legiolinteata.ai;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,7 +19,7 @@ import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 
 @Discoverable
-public class AISimple2 extends BaseAI {
+public class FallbackAI extends BaseAI {
 
 	@Override
 	protected Country onCountrySelection() {

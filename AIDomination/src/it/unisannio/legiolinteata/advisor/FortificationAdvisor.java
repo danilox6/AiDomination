@@ -110,10 +110,10 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 		block.evaluate();
 		double val = block.getVariable("fortification").getDefuzzifier().defuzzify();
 		
-		System.out.println("[" + val + "] continent: " + tf.getTarget().getObject() + " " + tf.getTarget().getValue()
+		/*System.out.println("[" + val + "] continent: " + tf.getTarget().getObject() + " " + tf.getTarget().getValue()
 				+ " cost: " + tf.getCost()
 				+ " player: " + Indices.power(player, game)
-				+ " country: " + tf.getCountry());
+				+ " country: " + tf.getCountry());*/
 		
 		return val;
 	}

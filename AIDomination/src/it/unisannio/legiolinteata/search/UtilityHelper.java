@@ -1,6 +1,5 @@
-package it.unisannio.ai.graph.model;
+package it.unisannio.legiolinteata.search;
 
-import it.unisannio.legiolinteata.search.GameState;
 
 public class UtilityHelper {
 	public static GameState bestState = null;
@@ -17,4 +16,5 @@ public class UtilityHelper {
 		bestState = null;
 		bestUtility = Float.MIN_VALUE;
 	}
+	
 }

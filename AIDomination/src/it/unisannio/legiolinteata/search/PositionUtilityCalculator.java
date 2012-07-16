@@ -2,8 +2,6 @@ package it.unisannio.legiolinteata.search;
 
 import java.util.Vector;
 
-import it.unisannio.ai.graph.model.UtilityCalculator;
-import it.unisannio.ai.graph.model.UtilityHelper;
 
 public class PositionUtilityCalculator implements UtilityCalculator<TreeRiskGame, GameState, TreePlayer, PlacementAction> {
 
@@ -37,7 +35,7 @@ public class PositionUtilityCalculator implements UtilityCalculator<TreeRiskGame
 				else if(ownedCountries==0)
 					utility -= 1500;
 			}
-			UtilityHelper.setGameState(state, utility);
+			//UtilityHelper.setGameState(state, utility);
 		}
 		else
 			throw new IllegalArgumentException("State is not terminal.");

@@ -1,6 +1,6 @@
 //  Group D
 
-package it.unisannio.ai;
+package it.unisannio.legiolinteata.ai;
 
 import java.util.Vector;
 
@@ -15,7 +15,6 @@ import net.yura.domination.engine.core.Player;
  * @author SE Group D
  */
 
-@Discoverable
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class AIHardcore extends AIEasy {
 	

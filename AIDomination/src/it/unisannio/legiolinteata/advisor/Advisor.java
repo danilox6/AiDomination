@@ -53,7 +53,7 @@ public abstract class Advisor<T> {
 	private FunctionBlock function;
 	
 	public Advisor(String fcl, String block) {
-		logic = FIS.load(fcl);
+		logic = FIS.load(getClass().getResourceAsStream(fcl), false);
 		if(logic == null) {
 			throw new RuntimeException("Cannot load fuzzy inference system '" + fcl + "'");
 		}
@@ -106,7 +106,7 @@ public abstract class Advisor<T> {
 		List<Advice<T>> advices = getAdvices();
 		//System.out.println(advices.size() + " " + advices);
 		Advice<T> best = advices.get(0);
-		System.out.println("Picked " + best);
+		//System.out.println("Picked " + best);
 		
 		return (best.getValue() < cutoff) ? null : best.getObject();
 	}
