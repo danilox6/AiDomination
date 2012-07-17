@@ -1,5 +1,10 @@
 package it.unisannio.legiolinteata.ai;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -10,8 +15,10 @@ import java.util.concurrent.TimeUnit;
 
 import aima.core.search.adversarial.AdversarialSearch;
 import aima.core.search.adversarial.IterativeDeepeningAlphaBetaSearch;
+import it.unisannio.legiolinteata.advisor.Advisor.Advice;
 import it.unisannio.legiolinteata.advisor.AttackAdvisor;
-import it.unisannio.legiolinteata.advisor.AttackAdvisor2;
+import it.unisannio.legiolinteata.advisor.Attacks;
+import it.unisannio.legiolinteata.advisor.ContinentAdvisor;
 import it.unisannio.legiolinteata.advisor.FortificationAdvisor;
 import it.unisannio.legiolinteata.search.GameState;
 import it.unisannio.legiolinteata.search.PlacementAction;
@@ -20,6 +27,9 @@ import net.yura.domination.engine.ai.api.AIPlayer;
 import net.yura.domination.engine.ai.api.Discoverable;
 import net.yura.domination.engine.ai.commands.Attack;
 import net.yura.domination.engine.ai.commands.Fortification;
+import net.yura.domination.engine.ai.commands.Move;
+import net.yura.domination.engine.core.AbstractContinent;
+import net.yura.domination.engine.core.AbstractCountry;
 import net.yura.domination.engine.core.Country;
 
 @Discoverable
@@ -69,4 +79,5 @@ public class AIFuzzy extends FallbackAI {
 			return super.onCountrySelection();
 		} 
 	}
+	
 }
