@@ -15,12 +15,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.jfree.chart.ChartPanel;
 
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
+import net.sourceforge.jFuzzyLogic.rule.Rule;
 import net.sourceforge.jFuzzyLogic.rule.Variable;
 
 /**
@@ -39,22 +41,28 @@ public class FuzzyTuner extends JFrame {
 		
 		JPanel left = new JPanel();
 		left.setLayout(new BoxLayout(left, BoxLayout.PAGE_AXIS));
-		final JPanel right = new JPanel();
-		right.setLayout(new BoxLayout(right, BoxLayout.PAGE_AXIS));
-		final JScrollPane rightScroll = new JScrollPane(right);
 		
-		splitPane.add(left);
-		splitPane.add(rightScroll);
+		final JSplitPane graphs = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		
 		final JPanel input = new JPanel();
 		input.setLayout(new BoxLayout(input, BoxLayout.PAGE_AXIS));
-		input.setBorder(BorderFactory.createTitledBorder("Input"));
-		right.add(input, BorderLayout.NORTH);
+		graphs.add(new JScrollPane(input));
+		
 		
 		final JPanel output = new JPanel();
 		output.setLayout(new BoxLayout(output, BoxLayout.PAGE_AXIS));
-		output.setBorder(BorderFactory.createTitledBorder("Output"));
-		right.add(output, BorderLayout.SOUTH);
+		graphs.add(new JScrollPane(output));
+		
+		final JSplitPane rightSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		
+		splitPane.add(left);
+		splitPane.add(rightSplit);
+		
+		final JTextArea rulesDescription = new JTextArea(5, 80);
+		rulesDescription.setEditable(false);
+		
+		rightSplit.add(graphs);
+		rightSplit.add(rulesDescription);
 		
 		final FIS fis = FIS.load(file, true);
 
@@ -94,25 +102,37 @@ public class FuzzyTuner extends JFrame {
 				output.removeAll();
 				for(Variable var : block.getVariables().values()) {
 					ChartPanel chart = new ChartPanel(var.chart(false));
-					chart.setMaximumSize(new Dimension(500,200));
+					chart.setMaximumSize(new Dimension(400,200));
 					(var.isOutputVarable() ? output : input).add(chart);
 				}
-				output.validate();
+				
+				StringBuilder buf = new StringBuilder();
+				for( Rule r : block.getFuzzyRuleBlock("No1").getRules() )
+                    buf.append(r).append("\n");
+				
+				rulesDescription.setText(buf.toString());
+				
 				input.validate();
-				right.validate();
-				rightScroll.validate();
+				output.validate();
+				
+				graphs.setDividerLocation(0.5);
+				rightSplit.setDividerLocation(0.8);
+				
+				rightSplit.validate();
+				
 			}
         	
         });
         
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(1024, 600);
+        validate();
 	}
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new FuzzyTuner("fcl/fortification.fcl", "country").setVisible(true);
+		new FuzzyTuner(args[0], args[1]).setVisible(true);
 	}
 
 }

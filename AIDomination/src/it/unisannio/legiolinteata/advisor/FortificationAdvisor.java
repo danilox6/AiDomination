@@ -41,7 +41,7 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 		private int getDistanceToContinent(AbstractCountry<?,?,?> origin, 
 				AbstractContinent<?,?> destination, Collection<AbstractCountry<?,?,?>> visited, 
 				int maxCost, int maxHops, boolean mine) {
-			return Utility.getDistanceToContinent(origin, destination, player, visited, maxCost, maxHops, mine);
+			return Attacks.getDistanceToContinent(origin, destination, player, visited, maxCost, maxHops, mine);
 		}
 		
 		@Override

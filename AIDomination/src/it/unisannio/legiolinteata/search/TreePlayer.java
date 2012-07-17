@@ -2,7 +2,7 @@ package it.unisannio.legiolinteata.search;
 
 import java.util.Vector;
 
-import net.yura.domination.engine.ai.AI;
+import net.yura.domination.engine.ai.api.AI;
 import net.yura.domination.engine.core.AbstractCountry;
 import net.yura.domination.engine.core.AbstractPlayer;
 import net.yura.domination.engine.core.Card;

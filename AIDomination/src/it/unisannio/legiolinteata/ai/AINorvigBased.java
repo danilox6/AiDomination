@@ -5,7 +5,7 @@ import it.unisannio.legiolinteata.search.GameState;
 import it.unisannio.legiolinteata.search.PlacementAction;
 import it.unisannio.legiolinteata.search.TreeRiskGame;
 import it.unisannio.legiolinteata.search.UtilityHelper;
-import net.yura.domination.engine.ai.Discoverable;
+import net.yura.domination.engine.ai.api.Discoverable;
 import net.yura.domination.engine.core.Country;
 
 @Discoverable

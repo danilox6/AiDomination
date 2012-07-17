@@ -23,7 +23,6 @@ public class AttackAdvisor extends Advisor<Attack> {
 	
 	protected double evaluate(Attack a) {
 		FunctionBlock fis = getFunctionBlock();
-		
 		fis.setVariable("enemy", Indices.power(a.getDestination().getOwner(), game));
 		fis.setVariable("victory", Indices.victory(a.getOrigin(), a.getDestination()));
 

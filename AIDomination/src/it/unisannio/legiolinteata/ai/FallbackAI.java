@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import net.yura.domination.engine.ai.BaseAI;
-import net.yura.domination.engine.ai.Discoverable;
+import net.yura.domination.engine.ai.api.BaseAI;
+import net.yura.domination.engine.ai.api.Discoverable;
 import net.yura.domination.engine.ai.commands.Attack;
 import net.yura.domination.engine.ai.commands.Fortification;
 import net.yura.domination.engine.core.Continent;
@@ -218,4 +218,8 @@ public class FallbackAI extends BaseAI {
 		return myForces / (myForces + otherForces);
 	}
 
+	@Override
+	protected int onAttackRoll() {
+		return Math.min(game.getAttacker().getArmies() - 1, 3);
+	}
 }
