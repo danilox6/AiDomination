@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
-import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import net.yura.domination.engine.ai.commands.Fortification;
 import net.yura.domination.engine.core.AbstractContinent;
@@ -29,7 +27,7 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 		public double getCost() {
 			if(cost == -1) {
 				int totalArmies = getCountry().getArmies() + getArmies();
-				int distance = getDistanceToContinent(getCountry(), target.getObject(), new ArrayList<AbstractCountry<?,?,?>>(), totalArmies, 4);
+				int distance = getDistanceToContinent(getCountry(), target.getObject(), new ArrayList<AbstractCountry<?,?,?>>(), totalArmies, 4, true);
 				cost = (distance == Integer.MAX_VALUE) ? Double.POSITIVE_INFINITY : (double) distance / totalArmies;
 			}
 			
@@ -40,27 +38,10 @@ public class FortificationAdvisor extends Advisor<Fortification> {
 			return target;
 		}
 		
-		@SuppressWarnings("unchecked")
 		private int getDistanceToContinent(AbstractCountry<?,?,?> origin, 
 				AbstractContinent<?,?> destination, Collection<AbstractCountry<?,?,?>> visited, 
-				int maxCost, int maxHops) {
-			if(origin.getContinent() == destination && origin.getOwner() != player)
-				return 0;
-			
-			if(maxCost < 0 || maxHops < 0)
-				return Integer.MAX_VALUE;
-			
-			Collection<AbstractCountry<?,?,?>> visits = new ArrayList<AbstractCountry<?,?,?>>(visited);
-			visits.add(origin);
-			int currentCost = origin.getOwner() == player ? 0 : origin.getArmies();
-			int minDistance = Integer.MAX_VALUE;
-			for(AbstractCountry<?,?,?> neighbour : (Vector<AbstractCountry<?,?,?>>) origin.getNeighbours()) {
-				if(neighbour.getOwner() != player && !visits.contains(neighbour)) {
-					minDistance = Math.min(minDistance, getDistanceToContinent(neighbour, destination, visits, maxCost - currentCost, maxHops - 1));
-				}
-			}
-			
-			return minDistance == Integer.MAX_VALUE ? Integer.MAX_VALUE : currentCost + minDistance;
+				int maxCost, int maxHops, boolean mine) {
+			return Utility.getDistanceToContinent(origin, destination, player, visited, maxCost, maxHops, mine);
 		}
 		
 		@Override

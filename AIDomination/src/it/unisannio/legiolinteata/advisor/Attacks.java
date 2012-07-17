@@ -1,6 +1,13 @@
 package it.unisannio.legiolinteata.advisor;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Vector;
+
+import net.yura.domination.engine.core.AbstractContinent;
+import net.yura.domination.engine.core.AbstractCountry;
+import net.yura.domination.engine.core.AbstractPlayer;
 
 public class Attacks {
 	private Attacks() {}
@@ -266,4 +273,25 @@ public class Attacks {
 		return pOut;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static int getDistanceToContinent(AbstractCountry<?,?,?> origin, AbstractContinent<?,?> destination, AbstractPlayer player,Collection<AbstractCountry<?,?,?>> visited, 
+			int maxCost, int maxHops, boolean mine) {
+		if(origin.getContinent() == destination && origin.getOwner() != player == mine)
+			return 0;
+		
+		if(maxCost < 0 || maxHops < 0)
+			return Integer.MAX_VALUE;
+		
+		Collection<AbstractCountry<?,?,?>> visits = new ArrayList<AbstractCountry<?,?,?>>(visited);
+		visits.add(origin);
+		int currentCost = origin.getOwner() == player == mine ? 0 : origin.getArmies();
+		int minDistance = Integer.MAX_VALUE;
+		for(AbstractCountry<?,?,?> neighbour : (Vector<AbstractCountry<?,?,?>>) origin.getNeighbours()) {
+			if(neighbour.getOwner() != player == mine && !visits.contains(neighbour)) {
+				minDistance = Math.min(minDistance, getDistanceToContinent(neighbour, destination, player, visits, maxCost - currentCost, maxHops - 1, mine));
+			}
+		}
+		
+		return minDistance == Integer.MAX_VALUE ? Integer.MAX_VALUE : currentCost + minDistance;
+	}
 }
