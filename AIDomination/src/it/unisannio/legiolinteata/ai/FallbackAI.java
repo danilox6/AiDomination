@@ -25,7 +25,6 @@ import net.yura.domination.engine.core.AbstractCountry;
 import net.yura.domination.engine.core.Continent;
 import net.yura.domination.engine.core.Country;
 
-@Discoverable
 public class FallbackAI extends BaseAI {
 
 	@Override

@@ -53,7 +53,7 @@ public abstract class Advisor<T> {
 	private FunctionBlock function;
 	
 	public Advisor(String fcl, String block) {
-		logic = FIS.load(fcl, false);
+		logic = FIS.load(getClass().getClassLoader().getResourceAsStream(fcl), false);
 		if(logic == null) {
 			throw new RuntimeException("Cannot load fuzzy inference system '" + fcl + "'");
 		}
